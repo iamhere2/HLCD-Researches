@@ -1,0 +1,19 @@
+// by convention:
+/*
+    module Chess.RulesChecker
+    {
+        ...<all the content of this file>...
+    }
+*/
+
+value type RuleVioation 
+{ 
+    string ErrorMessage; 
+}
+
+// convention: pure function
+RuleVioation? Check(BoardState state, Turn turn)
+{
+    ...
+}
+

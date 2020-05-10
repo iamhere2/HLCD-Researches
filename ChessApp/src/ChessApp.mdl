@@ -8,7 +8,7 @@ module ChessApp
     uses ChessEngine, FileStorage, ConsoleUI;
 
     // singleton component created as single instance by RunEnv
-    singleton component Chess
+    singleton component ChessApp
         provides
         {
             IConsoleApplication via ConsoleUI
@@ -20,11 +20,24 @@ module ChessApp
         }
         children
         {
-            ChessEngine as ChessEngine;
-            FileStorage as FileStorage with { FileIO };
-            ConsoleUI as ConsoleUI with { ConsoleIO, FileStorage.IStorage, ChessEngine };
-        }
-    {
+	    // Required interfaces delegated into children components
+            FileStorage as FileStorage
+                with { FileIO: FileIO };
+	
+	    // Children components can be linked between each other
+            ConsoleUI as ConsoleUI
+                with { ConsoleIO: ConsoleIO, Storage: FileStorage.IStorage, GameFlow: GameFlow, RulesChecker };
 
+            RulesChecker;
+            AIPlayer with { RulesChecker };
+            GameFlow with { PlayerA: ConsoleUI.IPLayer, PlayerB: AIPLayer.IPlayer }
+        }
+
+    // In that particular case the component doesn't have any "body" with it's own data or methods.
+    // Quite probable, that it would be common for high-level design.
+    // All the required functionality obtained by delegation and interconnections to children components.
+    // At the same time, it can't be said, that the component itself is "useless", 
+    // because the interconnection/delegation scheme is not trivial!
+    {
     }
 }
