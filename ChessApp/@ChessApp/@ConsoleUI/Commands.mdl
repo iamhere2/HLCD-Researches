@@ -1,0 +1,28 @@
+// by convention:
+/*
+    module Chess.ConsoleUI.Commands
+    {
+    }
+*/
+
+value type Command<TTurn> : union
+{
+    GameCommand : union
+    {
+        Exit,
+
+        NewGame,
+
+        SaveGame
+        {
+            FileName : string
+        },
+
+        LoadGame
+        {
+            FileName : string;
+        },
+    }
+
+    Turn : TTurn
+}

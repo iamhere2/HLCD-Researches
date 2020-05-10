@@ -1,0 +1,70 @@
+// by convention:
+/*
+    module Chess.ConsoleUI.BoardPrinter
+    {
+        component type BoardPrinter
+        {
+            ...<all the content of this file>...
+        }
+    }
+*/
+
+uses Chess.ChessEngine;
+uses System.Console;
+
+requires
+{
+    IConsoleIO as Console
+}
+
+Print(BoardState boardState)
+{
+    for (v in [Board.High.. Board.Low])
+    {
+        for (h in [Board.Left.. Board.Right])
+        {
+            let cell = Cell(h, v);
+            PrintCell(Board.ColorOr(cell), boardState.GetFigureAt(cell));
+        }
+    }
+}
+
+private
+{
+    PrintCell(Color cellColor, (Figure, Color)? figure)
+    {
+        Console.SetBackground(TranslateBackgroundColor(color));
+        switch (figure)
+        {
+            None -> Console.Write("  ");
+            Some (f, c) ->
+            {
+                Console.SetForeground(TranslateForegroundColor(c));
+                Console.Write(TranslateFigure(f));
+            }
+        }
+    }
+
+    TranslateBackgroundColor(Color color)
+        => switch (color)
+        {
+            Black: ConsoleColor.DarkBrown,
+            White: ConsoleColor.LightBiege
+        }
+
+    TranslateForegroundColor(Color color)
+        => switch (color)
+        {
+            Black: ConsoleColor.Black,
+            White: ConsoleColor.White
+        }
+
+    TranslateFigure(Figure figure)
+        => switch (figure)
+        {
+            Knight: "Kn",
+            Tower: "Tw",
+            King: "Kg",
+            ...
+        }
+}

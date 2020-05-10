@@ -1,0 +1,30 @@
+// We don't use here a lot of conventions intentionally, just for explanation reasons
+// Children component's modules use much more conventions
+
+module ChessApp
+{
+    // "use" is relation between modules
+    // To _compile_ some module, you should have that modules, either already compiled or not.
+    uses ChessEngine, FileStorage, ConsoleUI;
+
+    // singleton component created as single instance by RunEnv
+    singleton component Chess
+        provides
+        {
+            IConsoleApplication via ConsoleUI
+        }
+        requires
+        {
+            IConsoleIO as ConsoleIO,
+            IFileIO as IFileIO
+        }
+        children
+        {
+            ChessEngine as ChessEngine;
+            FileStorage as FileStorage with { FileIO };
+            ConsoleUI as ConsoleUI with { ConsoleIO, FileStorage.IStorage, ChessEngine };
+        }
+    {
+
+    }
+}

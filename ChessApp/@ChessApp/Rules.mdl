@@ -1,0 +1,14 @@
+// by convention:
+/*
+    module Chess.Rules
+    {
+        ...<all the content of this file>...
+    }
+*/
+
+// convention: pure function
+bool IsCorrectTurn(BoardState state, Turn turn)
+{
+    ...
+}
+

@@ -1,0 +1,82 @@
+// by convention:
+/*
+    module ChessApp.Concepts
+    {
+        ...<all the content of this file>...
+    }
+*/
+
+value type Color : enum
+{
+    Black,
+    White
+}
+
+value type Figure : enum
+{
+    King,
+    Knight,
+    Tower,
+    ...
+}
+
+// Constrained value type contains validator expression
+value type HCoord : int where value in [1..8]
+
+value type VCoord : Char where value in ['A'..'H']
+
+const Board
+{
+    Low : VCoord = 'A';
+    High : VCoord = 'H';
+
+    Left : HCoord = 1;
+    Right : VCoord = 8;
+}
+
+CellColorAt(Cell) => ...;
+
+value type Cell : ( VCoord, HCoord )
+
+value type Turn : union
+{
+    MoveEat
+    {
+        From : Cell,
+        To: Cell
+    },
+    Transform
+    {
+        From : Cell,
+        To: Figure
+    }
+    Castle
+    {
+        To: Cell
+    },
+    Surrend,
+    DrawOffer,
+    DrawAccept
+}
+
+value type BoardState
+{
+    Figures: map { Cell -> (Figure, Color)? }
+}
+
+const ClassicInitialState : BoardState
+{
+    Figures =
+    {
+        ('A', 1) -> (Tower, White),
+        ...
+    }
+}
+
+value type GameHistory
+{
+    States: BoardState[];
+    Turns: Turn[];
+}
+where Turns.Length == States.Length - 1;
+

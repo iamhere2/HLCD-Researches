@@ -1,0 +1,44 @@
+uses Concepts, IStorage, System.Console;
+
+provides
+{
+    IConsoleApplication
+}
+
+requires
+{
+    IConsoleIO as Console,
+    IStorage as Storage,
+    ChessEngine as Engine
+}
+
+children
+{
+    BoardState : Mutable<CurrentState>;
+    GameHistory: Mutable<GameHistory>();
+}
+
+Run(string[] args) : ExitCode
+{
+    while (true)
+    {
+        BoardPrinter.Print(CurrentState);
+        string cmdStr = Console.ReadLine();
+        Command? cmd = TryParseCommand(cmdStr);
+        switch (cmd)
+        {
+            None -> ShowUnknownCommandHelp();
+            Turn as turn -> MakeTurn(turn);
+            Exit -> break;
+            LoadGame as lg -> Load(lg.Name);
+            SaveGame as sg -> Save(sg.Name);
+        }
+    }
+
+    return 0 as ExitCode;
+}
+
+private
+{
+...
+}

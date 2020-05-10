@@ -1,0 +1,13 @@
+// by convention:
+/*
+    module CommandParser
+    {
+        component type CommandParser
+        {
+            ...<all the content of this file>...
+        }
+    }
+*/
+
+provides {}
+requires {}

@@ -1,0 +1,24 @@
+// by convention:
+/*
+    module Chess.IStorage
+    {
+        interface IStorage
+        {
+            ...<all the content of this file>...
+        }
+    }
+*/
+
+uses Concepts;
+
+// it isn't a query because of IO side effects
+command List : string[];
+
+// convention: no result -> command
+Save(string name, GameHistory game);
+
+// it isn't a query because of IO side effects
+command Load(string name) : GameHistory;
+
+// convention: no result -> command
+Delete(string name);
