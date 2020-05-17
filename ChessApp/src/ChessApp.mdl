@@ -3,41 +3,58 @@
 
 module ChessApp
 {
-    // "use" is relation between modules
+    // "import" is relation between modules
     // To _compile_ some module, you should have that modules, either already compiled or not.
-    uses ChessEngine, FileStorage, ConsoleUI;
+    import GameFlow, FileStorage, ConsoleUI, AiPlayer, RulesChecker,
+           System.Console, System.ConsoleApplication;
 
-    // singleton component created as single instance by RunEnv
-    singleton component ChessApp
+    component type ChessApp
         provides
         {
+            // IConsoleApplication - "main" interface, which will be used by RunEnv
+            // Here it's provided by delegating to internal component
             IConsoleApplication via ConsoleUI
         }
         requires
         {
+            // Our app reads/writes from console
             IConsoleIO as ConsoleIO,
+
+            // and also the app can read/write files.
+            // All the "system" interfaces must be consumed explicitly at the highest level!
+            // If some internal components needs to use them, the interfaces should be explicitly
+            // provided with up-to-down manner.
             IFileIO as IFileIO
         }
         children
         {
-	    // Required interfaces delegated into children components
+            // Required interfaces provided to children components
             FileStorage as FileStorage
-                with { FileIO: FileIO };
-	
-	    // Children components can be linked between each other
-            ConsoleUI as ConsoleUI
-                with { ConsoleIO: ConsoleIO, Storage: FileStorage.IStorage, GameFlow: GameFlow, RulesChecker };
+                with { FileIO: FileIO },
 
-            RulesChecker;
-            AIPlayer with { RulesChecker };
-            GameFlow with { PlayerA: ConsoleUI.IPLayer, PlayerB: AIPLayer.IPlayer }
+            // Children components can be linked between each other
+            ConsoleUI as ConsoleUI
+                with { ConsoleIO, Storage: FileStorage.IStorage, GameFlow, RulesChecker },
+
+            RulesChecker,
+
+            AiPlayer with { RulesChecker },
+
+            GameFlow with { PlayerA: ConsoleUI.IPLayer, PlayerB: AiPlayer.IPlayer }
+
+            // Some small children types can be declared just here, in parent component:
+            interface type IPlayer
+            {
+                Promise<Turn> NextTurn(GameHistory gameHistory);
+            }
         }
 
     // In that particular case the component doesn't have any "body" with it's own data or methods.
     // Quite probable, that it would be common for high-level design.
     // All the required functionality obtained by delegation and interconnections to children components.
-    // At the same time, it can't be said, that the component itself is "useless", 
+    // At the same time, it can't be said, that the component itself is "useless",
     // because the interconnection/delegation scheme is not trivial!
     {
+        // own ("body") members for implementing external interfaces
     }
 }

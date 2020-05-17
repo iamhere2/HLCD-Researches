@@ -6,14 +6,24 @@
     }
 */
 
-value type RuleVioation 
-{ 
-    string ErrorMessage; 
-}
+value type RuleViolation : Error;
 
-// convention: pure function
-RuleVioation? Check(BoardState state, Turn turn)
+// pure function
+RuleViolation? Check(GameHistory gameHistory, Turn turn)
 {
-    ...
+    let turnNumber = gameHistory.Turns.Length + 1;
+    let turnColor = TurnColor(turnNumber);
+
+    // Only one castle allowed
+    if (turn is Castle)
+    {
+        let castleHasOccured = gameHistory.Turns.Where((t, n) => t is Castle && TurnColor(n) == turnColor).Any();
+        if (castleHasOccured)
+            return new RuleViolation("Only one castle allowed for each player");
+    }
+
+    ... // other rules
 }
 
+// This function will not be visible from outside of that module
+private TurnColor TurnColor(int turnNumber) => turnNumber % 2 == 1 ? White : Black;

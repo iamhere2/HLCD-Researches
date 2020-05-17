@@ -9,7 +9,7 @@
     }
 */
 
-uses Concepts;
+import Concepts;
 
 // it isn't a query because of IO side effects
 command List : string[];

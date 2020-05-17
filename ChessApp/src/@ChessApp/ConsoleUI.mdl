@@ -1,44 +1,45 @@
-uses Concepts, IStorage, System.Console;
+// implicit, by convention:
+/*
+    private module ChessApp.ConsoleUI
+    {
+        component ChessApp.ConsoleUI
+        {
+            ...<all the content of this file>...
+        }
+    }
+*/
+
+// We have to import System.Console to use interface types,
+// but we can't call Console commands without explicit requiring interface link
+// from parent component
+import Concepts, IStorage, System.Console, IPlayer;
 
 provides
 {
-    IConsoleApplication
+    IConsoleApplication via CommandCycle,
+    IPlayer via TurnCmdHandler
 }
 
 requires
 {
     IConsoleIO as Console,
     IStorage as Storage,
-    ChessEngine as Engine
+    IGameFlow as GameFlow,
+    IRulesChecker as RulesChecker,
 }
 
 children
 {
-    BoardState : Mutable<CurrentState>;
-    GameHistory: Mutable<GameHistory>();
+    CommandParser with { CommandParser, TurnCmdHandler, GameCmdHandler, BoardPrinter },
+    BoardPrinter with { Console },
+    GameCmdHandler with { Storage, GameFlow },
+    TurnCmdHandler with { RulesChecker },
+    CommandCycle with { Console, GameCmdHandler, TurnCmdHandler, CommandParser }
 }
 
-Run(string[] args) : ExitCode
+// private
 {
-    while (true)
-    {
-        BoardPrinter.Print(CurrentState);
-        string cmdStr = Console.ReadLine();
-        Command? cmd = TryParseCommand(cmdStr);
-        switch (cmd)
-        {
-            None -> ShowUnknownCommandHelp();
-            Turn as turn -> MakeTurn(turn);
-            Exit -> break;
-            LoadGame as lg -> Load(lg.Name);
-            SaveGame as sg -> Save(sg.Name);
-        }
-    }
-
-    return 0 as ExitCode;
-}
-
-private
-{
-...
+    // and again, here are no "body" in this component,
+    // because all the implementation or provided interfaces
+    // are obtained by interconnection of children components
 }

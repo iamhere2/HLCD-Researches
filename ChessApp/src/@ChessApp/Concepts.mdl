@@ -23,7 +23,7 @@ value type Figure : enum
 // Constrained value type contains validator expression
 value type HCoord : int where value in [1..8]
 
-value type VCoord : Char where value in ['A'..'H']
+value type VCoord : char where value in ['A'..'H']
 
 const Board
 {
@@ -42,12 +42,12 @@ value type Turn : union
 {
     MoveEat
     {
-        From : Cell,
+        From: Cell,
         To: Cell
     },
     Transform
     {
-        From : Cell,
+        From: Cell,
         To: Figure
     }
     Castle
@@ -55,8 +55,8 @@ value type Turn : union
         To: Cell
     },
     Surrend,
-    DrawOffer,
-    DrawAccept
+    OfferDraw,
+    AcceptDraw
 }
 
 value type BoardState
@@ -69,6 +69,7 @@ const ClassicInitialState : BoardState
     Figures =
     {
         ('A', 1) -> (Tower, White),
+        ('A', 8) -> (Tower, White),
         ...
     }
 }

@@ -9,12 +9,12 @@
     }
 */
 
-uses Chess.ChessEngine;
-uses System.Console;
+import Chess.ChessEngine;
+import System.Console;
 
 requires
 {
-    IConsoleIO as Console
+    IConsoleIO as Console,
 }
 
 Print(BoardState boardState)

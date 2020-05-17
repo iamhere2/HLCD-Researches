@@ -1,0 +1,64 @@
+requires
+{
+    CommandParser,
+    TurnCmdHandler,
+    GameCmdHandler,
+    BoardPrinter,
+    IConsoleIO as Console,
+}
+
+
+// implementation on IConsoleApplication
+Run(string[] args) : ExitCode
+{
+    PrintWelcome();
+
+    while (true)
+    {
+        BoardPrinter.PrintCurrentGameState();
+
+        string cmdStr = Console.ReadLine();
+
+        (Command? cmd, CommandError? e) = TryParseCommand(cmdStr);
+
+        if (e.HasValue)
+        {
+            PrintError(e);
+            PrintHelp();
+        }
+        else
+        {
+            switch (cmd)
+            {
+                TurnCommand as tc -> MakeTurn(tc.Turn);
+                GameCommand as gc -> GameCmdHandler.Execute(gc);
+                Exit -> return 0 as ExitCode;
+            }
+        }
+    }
+}
+
+PrintWelcome()
+{
+    Console.Write("Welcome to ChessApp!");
+}
+
+PrintHelp()
+{
+    Console.Write(
+        CommandParser.GetHelp());
+}
+
+MakeTurn(Turn turn)
+{
+    TurnError? e = TurnCmdHandler.MakeTurn(tc.Turn);
+    if (e.HasValue)
+    {
+        PrintError(e);
+    }
+}
+
+PrintError(Error e)
+{
+    Console.WriteLine($"Error: {e.Message}");
+}

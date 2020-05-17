@@ -1,28 +1,33 @@
 // by convention:
 /*
-    module Chess.ConsoleUI.Commands
+    module ChessApp.ConsoleUI.Commands
     {
+        ...<all content of the file>...
     }
 */
 
-value type Command<TTurn> : union
+value type Command : union
 {
+    // unique symbol type
+    Exit,
+
+    // discriminated (with discriminating symbol) union type
     GameCommand : union
     {
-        Exit,
-
         NewGame,
 
         SaveGame
         {
-            FileName : string
+            Name : string
         },
 
         LoadGame
         {
-            FileName : string;
+            Name : string;
         },
     }
 
-    Turn : TTurn
+    Turn : Turn
 }
+
+value type CommandError : Error;
