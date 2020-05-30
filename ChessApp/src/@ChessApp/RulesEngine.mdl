@@ -1,6 +1,6 @@
 // by convention:
 /*
-    module Chess.RulesChecker
+    module Chess.RulesEngine
     {
         ...<all the content of this file>...
     }
@@ -27,3 +27,14 @@ RuleViolation? Check(GameHistory gameHistory, Turn turn)
 
 // This function will not be visible from outside of that module
 private TurnColor TurnColor(int turnNumber) => turnNumber % 2 == 1 ? White : Black;
+
+
+BoardState Apply(BoardState state, Turn turn)
+{
+    ...
+}
+
+bool IsCheckmate(BoardState bs)
+{
+    ...
+}

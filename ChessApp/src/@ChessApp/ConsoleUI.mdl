@@ -25,7 +25,7 @@ requires
     IConsoleIO as Console,
     IStorage as Storage,
     IGameFlow as GameFlow,
-    IRulesChecker as RulesChecker,
+    IRulesEngine as RulesEngine,
 }
 
 children
@@ -33,7 +33,7 @@ children
     CommandParser with { CommandParser, TurnCmdHandler, GameCmdHandler, BoardPrinter },
     BoardPrinter with { Console },
     GameCmdHandler with { Storage, GameFlow },
-    TurnCmdHandler with { RulesChecker },
+    TurnCmdHandler with { RulesEngine },
     CommandCycle with { Console, GameCmdHandler, TurnCmdHandler, CommandParser }
 }
 

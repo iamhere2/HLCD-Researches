@@ -5,7 +5,7 @@ module ChessApp
 {
     // "import" is relation between modules
     // To _compile_ some module, you should have that modules, either already compiled or not.
-    import GameFlow, FileStorage, ConsoleUI, AiPlayer, RulesChecker,
+    import GameFlow, FileStorage, ConsoleUI, AiPlayer, RulesEngine,
            System.Console, System.ConsoleApplication;
 
     component type ChessApp
@@ -34,11 +34,11 @@ module ChessApp
 
             // Children components can be linked between each other
             ConsoleUI as ConsoleUI
-                with { ConsoleIO, Storage: FileStorage.IStorage, GameFlow, RulesChecker },
+                with { ConsoleIO, Storage: FileStorage.IStorage, GameFlow, RulesEngine },
 
-            RulesChecker,
+            RulesEngine,
 
-            AiPlayer with { RulesChecker },
+            AiPlayer with { RulesEngine },
 
             GameFlow with { PlayerA: ConsoleUI.IPLayer, PlayerB: AiPlayer.IPlayer }
 

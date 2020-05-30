@@ -1,0 +1,38 @@
+consumes
+{
+    PlayerA : IPlayer
+    PlayerB : IPlayer
+    RulesEngine // : RulesEngine
+}
+
+state
+{
+    // mutable state field
+    mutable GameHistory // : GameHistory
+}
+
+async Start()
+{
+    GameHistory = GameHistory.ClassicInitialGameHistory
+
+    var player = PlayerA;
+
+    while (!GameHistory.IsFinished)
+    {
+        var state = GameHistory.BoardStates.Last;
+        var nextTurn = await player.NextTurn(state);
+        var violation = RulesEngine.Check(state, turn);
+
+        if (violation is not null)
+            throw new InvalidTurnException(violation);
+
+        var nextState = state.Apply(turn);
+        GameHistory = GameHistory.With(turn, nextState);
+
+        player = player == playerA ? playerB : playerA;
+    }
+}
+
+GetHistory() => GameHistory
+
+

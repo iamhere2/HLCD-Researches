@@ -79,5 +79,23 @@ value type GameHistory
     States: BoardState[];
     Turns: Turn[];
 }
-where Turns.Length == States.Length - 1;
+where
+    // Invariants
+    Turns.Length == States.Length - 1
+with
+    // Associated queries
+    bool IsFinished()
+        => IsCheckmate(States.Last) || Turns.LastIfAny is AcceptDraw;
+
+bool IsCheckmate(BoardState bs)
+{
+    ...
+}
+
+const ClassicInitialGameHistory : GameHistory
+{
+    States: [ ClassicInitialState ]
+    Turns: []
+}
+
 
