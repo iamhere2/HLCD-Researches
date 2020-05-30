@@ -1,0 +1,36 @@
+requires
+{
+    RulesEngine
+}
+
+provides
+{
+    IPlayer
+}
+
+state
+{
+    TurnPromise : Promise<Turn>?;
+    BoardState : BoardState?;
+}
+
+Promise<Turn> IPlayer.NextTurn(BoardState state)
+{
+    TurnPromise = new Promise<Turn>();
+    BoardState = state;
+    return TurnPromise;
+}
+
+void MakeTurn(Turn turn)
+{
+    if (TurnPromise is null)
+        throw new UserError("Turn is not expected");
+
+    var ruleViolation = RulesEngine.Check(BoardState, turn);
+
+    if (ruleViolation is null)
+        TurnPromise.Resolve(turn);
+    else
+        throw new UserError(ruleViolation.Message);
+}
+

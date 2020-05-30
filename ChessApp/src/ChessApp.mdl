@@ -40,7 +40,7 @@ module ChessApp
 
             AiPlayer with { RulesEngine },
 
-            GameFlow with { PlayerA: ConsoleUI.IPLayer, PlayerB: AiPlayer.IPlayer }
+            GameFlow with { PlayerA: ConsoleUI.IPlayer, PlayerB: AiPlayer.IPlayer }
 
             // Some small children types can be declared just here, in parent component:
             interface type IPlayer

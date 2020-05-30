@@ -1,26 +1,41 @@
-consumes
+requires
 {
     PlayerA : IPlayer
     PlayerB : IPlayer
-    RulesEngine // : RulesEngine
+    RulesEngine // by convetion: " : RulesEngine"
 }
 
-state
+state // mutable fields
 {
-    // mutable state field
-    mutable GameHistory // : GameHistory
+    GameHistory : GameHistory?;
+    CancelToken : CancelToken?;
 }
 
-async Start()
+StartFrom(GameHistory gh, Color playerAColor)
 {
-    GameHistory = GameHistory.ClassicInitialGameHistory
+    GameHistory = gh;
 
-    var player = PlayerA;
+    if (CancelToken is not null)
+        CancelToken.Cancel();
 
-    while (!GameHistory.IsFinished)
+    CancelToken = new CancelToken();
+    new Task(() => TurnCycle(playerAColor, CancelToken)).RunAsync();
+}
+
+StartNew(Color playerAColor) => StartFrom(GameHistory.ClassicInitialGameHistory, playerAColor);
+
+private async TurnCycle(Color playerAColor, CancelToken cancelToken)
+{
+    var player = ... // TODO: PlayerA or PlayerB, depending on colors;
+
+    while (!GameHistory.IsFinished && !cancelToken.IsCancelRequested)
     {
         var state = GameHistory.BoardStates.Last;
         var nextTurn = await player.NextTurn(state);
+
+        if (cancelToken.IsCancelRequested)
+            break;
+
         var violation = RulesEngine.Check(state, turn);
 
         if (violation is not null)

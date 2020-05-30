@@ -24,10 +24,11 @@ value type Command : union
         LoadGame
         {
             Name : string;
+            PlayAs: Color;
         },
     }
 
     Turn : Turn
 }
 
-value type CommandError : Error;
+value type CommandError : UserError;

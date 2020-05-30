@@ -2,7 +2,7 @@
 /*
     private module ChessApp.ConsoleUI
     {
-        component ChessApp.ConsoleUI
+        component type ChessApp.ConsoleUI
         {
             ...<all the content of this file>...
         }

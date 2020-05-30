@@ -1,0 +1,19 @@
+requires
+{
+    FileIO : IFileIO
+}
+
+{
+    string[] GetNames()
+        => FileIO.GetDirectory(GetSaveDirName())
+            .GetFiles("*.chess")
+            .Select(f => f.Name)
+            .ToArray();
+
+    private GetSaveDirName()
+    {
+        ...
+    }
+
+    ...
+}

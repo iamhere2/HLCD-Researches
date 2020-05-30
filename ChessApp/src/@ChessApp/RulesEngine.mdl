@@ -25,8 +25,7 @@ RuleViolation? Check(GameHistory gameHistory, Turn turn)
     ... // other rules
 }
 
-// This function will not be visible from outside of that module
-private TurnColor TurnColor(int turnNumber) => turnNumber % 2 == 1 ? White : Black;
+TurnColor TurnColor(int turnNumber) => turnNumber % 2 == 1 ? White : Black;
 
 
 BoardState Apply(BoardState state, Turn turn)

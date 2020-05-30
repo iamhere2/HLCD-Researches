@@ -1,0 +1,34 @@
+requires
+{
+    Storage : IStorage
+    GameFlow : IGameFlow
+    Console : IConsole
+}
+
+void Execute(GameCommand gc)
+{
+    if (gc is StartNew)
+    {
+        GameFlow.StartNew()
+    }
+    else if (gc is Load lc)
+    {
+        GameFlow.StartFrom(Storage.Load(lc.Name))
+    }
+    else if (gc is List)
+    {
+        Storage.GetNames().ForEach(n => Console.WriteLine(n));
+    }
+    else if (gc is Save sc)
+    {
+        Storage.Save(sc.Name, GameFlow.GetHistory());
+    }
+    else if (gc is Delete dc)
+    {
+        Storage.Delete(dc.Name);
+    }
+    else
+    {
+        throw new ArgumentOutOfRangeException(gc);
+    }
+}

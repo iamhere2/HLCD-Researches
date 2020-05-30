@@ -8,7 +8,7 @@ requires
 }
 
 
-// implementation on IConsoleApplication
+// implementation of IConsoleApplication
 Run(string[] args) : ExitCode
 {
     PrintWelcome();
@@ -19,21 +19,20 @@ Run(string[] args) : ExitCode
 
         string cmdStr = Console.ReadLine();
 
-        (Command? cmd, CommandError? e) = TryParseCommand(cmdStr);
-
-        if (e.HasValue)
+        try
         {
-            PrintError(e);
-            PrintHelp();
-        }
-        else
-        {
+            var cmd = CommandParser.Parse(cmdStr);
             switch (cmd)
             {
                 TurnCommand as tc -> MakeTurn(tc.Turn);
                 GameCommand as gc -> GameCmdHandler.Execute(gc);
                 Exit -> return 0 as ExitCode;
             }
+        }
+        catch (UserError ue)
+        {
+            PrintError(e);
+            PrintHelp();
         }
     }
 }
@@ -58,7 +57,7 @@ MakeTurn(Turn turn)
     }
 }
 
-PrintError(Error e)
+PrintError(UserError e)
 {
     Console.WriteLine($"Error: {e.Message}");
 }

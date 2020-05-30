@@ -1,8 +1,8 @@
 // by convention:
 /*
-    module CommandParser
+    private module ChessApp.ConsoleUI.CommandParser
     {
-        component type CommandParser
+        private component type ChessApp.ConsoleUI.CommandParser
             provides
             {
                 ...<all public queries/commands>...
@@ -42,7 +42,8 @@ GetHelp()
            |
         """;
 
-Parse(string s) : (Command?, CommandError?)
+Command Parse(string s)
 {
     ...
+    throw new UserError("Unknown command");
 }

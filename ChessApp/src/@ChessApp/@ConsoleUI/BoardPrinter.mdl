@@ -19,9 +19,9 @@ requires
 
 Print(BoardState boardState)
 {
-    for (v in [Board.High.. Board.Low])
+    for (v in [Board.High..Board.Low])
     {
-        for (h in [Board.Left.. Board.Right])
+        for (h in [Board.Left..Board.Right])
         {
             let cell = Cell(h, v);
             PrintCell(Board.ColorOr(cell), boardState.GetFigureAt(cell));

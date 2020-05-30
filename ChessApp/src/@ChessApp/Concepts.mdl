@@ -64,7 +64,7 @@ value type BoardState
     Figures: map { Cell -> (Figure, Color)? }
 }
 
-const ClassicInitialState : BoardState
+const ClassicInitialState
 {
     Figures =
     {
@@ -81,18 +81,9 @@ value type GameHistory
 }
 where
     // Invariants
-    Turns.Length == States.Length - 1
-with
-    // Associated queries
-    bool IsFinished()
-        => IsCheckmate(States.Last) || Turns.LastIfAny is AcceptDraw;
+    Turns.Length == States.Length - 1;
 
-bool IsCheckmate(BoardState bs)
-{
-    ...
-}
-
-const ClassicInitialGameHistory : GameHistory
+const ClassicInitialGameHistory
 {
     States: [ ClassicInitialState ]
     Turns: []
