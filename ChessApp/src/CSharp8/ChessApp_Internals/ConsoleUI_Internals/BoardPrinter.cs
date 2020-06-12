@@ -100,8 +100,11 @@ namespace ChessApp.ConsoleUI_Internals
             => figure switch
             {
                 Figure.Knight => "Kn",
-                Figure.Tower => "Tw",
+                Figure.Rook => "Rk",
                 Figure.King => "Kg",
+                Figure.Queen => "Qn",
+                Figure.Bishop => "Bs",
+                Figure.Pawn => "pw",
                 _ => throw new ArgumentOutOfRangeException()
             };
     }

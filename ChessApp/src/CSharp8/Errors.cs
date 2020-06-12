@@ -16,7 +16,7 @@ namespace ChessApp
         }
     }
 
-    class RuleViolationError : UserError
+    class RuleViolationError : TurnError
     {
         public RuleViolationError(RuleViolation rv) : base(rv.Description)
         {
