@@ -1,6 +1,6 @@
 // by convention:
 /*
-    module ChessApp.Concepts
+    private module ChessApp.Concepts
     {
         ...<all the content of this file>...
     }
