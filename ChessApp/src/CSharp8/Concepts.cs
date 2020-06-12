@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessApp
 {
@@ -22,20 +23,25 @@ namespace ChessApp
 
     public class GameHistory
     {
-        public GameHistory(IReadOnlyCollection<BoardState> states)
+        public GameHistory(IReadOnlyCollection<BoardState> states, IReadOnlyCollection<Turn> turns)
         {
             States = states;
+            Turns = turns;
         }
 
         public static GameHistory ClassicInitialGameHistory { get; }
-            = new GameHistory(new[] { BoardState.ClassicInitialState });
+            = new GameHistory(new[] { BoardState.ClassicInitialState }, Array.Empty<Turn>());
 
         public bool IsFinished { get => false; }
 
         public IReadOnlyCollection<BoardState> States { get; }
 
+        public IReadOnlyCollection<Turn> Turns { get; }
+
         public GameHistory With(Turn turn, BoardState nextState)
-            => throw new NotImplementedException();
+            => new GameHistory(
+                States.Append(nextState).ToArray(),
+                Turns.Append(turn).ToArray());
     }
 
     public class BoardState
@@ -56,8 +62,12 @@ namespace ChessApp
 
         public BoardState With(Figure f, Color c, Cell cell)
         {
-            var figures = new Dictionary<Cell, (Figure, Color)>(Figures);
-            figures.Add(cell, (f, c));
+            var figures =
+                new Dictionary<Cell, (Figure, Color)>(Figures)
+                {
+                    { cell, (f, c) }
+                };
+
             return new BoardState(figures);
         }
 
@@ -79,7 +89,7 @@ namespace ChessApp
         public BoardState Apply(Turn turn) => throw new NotImplementedException();
     }
 
-    public class Board
+    public static class Board
     {
         public const int Low = 1;
         public const int High = 8;
@@ -90,7 +100,7 @@ namespace ChessApp
             => ((cell.H - Left + 1) + (cell.V - Low + 1)) % 2 == 0 ? Color.White : Color.Black;
     }
 
-    public readonly struct Cell
+    public readonly struct Cell : IEquatable<Cell>
     {
         public char H { get; }
         public int V { get; }
@@ -99,9 +109,53 @@ namespace ChessApp
         {
             H = h;
             V = v;
+            Validate();
         }
 
+        public static Cell Parse(string s)
+        {
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+
+            if (s.Length != 2)
+                throw new ArgumentOutOfRangeException(nameof(s));
+
+            char h = s[0];
+            int v = int.Parse(s[1].ToString());
+
+            if (!IsValid(h, v))
+                throw new ArgumentOutOfRangeException("Invalid cell value");
+
+            return At(h, v);
+        }
+
+        private void Validate()
+        {
+            if (!IsValid(H, V))
+                throw new InvalidOperationException("Invalid cell value");
+        }
+
+        public static bool IsValid(char h, int v) =>
+               h >= Board.Left && h >= Board.Right
+            && v >= Board.Low  && v <= Board.High;
+
         public static Cell At(char h, int v) => new Cell(h, v);
+
+        public override bool Equals(object? obj) => obj is Cell other && Equals(other);
+
+        public override int GetHashCode() => (H, V).GetHashCode();
+
+        public bool Equals(Cell other) => (H, V) == (other.H, other.V);
+
+        public static bool operator ==(Cell left, Cell right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Cell left, Cell right)
+        {
+            return !(left == right);
+        }
     }
 
     public class RuleViolation
