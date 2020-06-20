@@ -128,7 +128,7 @@ namespace ChessApp
         public const char Right = 'H';
 
         public static Color ColorOf(Cell cell)
-            => ((cell.H - Left + 1) + (cell.V - Low + 1)) % 2 == 0 ? Color.White : Color.Black;
+            => (cell.H - Left + cell.V - Low) % 2 == 0 ? Color.Black : Color.White;
     }
 
     public readonly struct Cell : IEquatable<Cell>
