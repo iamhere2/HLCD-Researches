@@ -71,7 +71,7 @@ namespace ChessApp.ConsoleUI_Internals
 
         private void MakeTurn(Turn turn)
         {
-            TurnError? e =  TurnCmdHandler.MakeTurn(turn);
+            TurnError? e = TurnCmdHandler.MakeTurn(turn);
             if (e != null)
             {
                 PrintError(e);
@@ -80,7 +80,9 @@ namespace ChessApp.ConsoleUI_Internals
 
         private void PrintError(UserError e)
         {
+            Console.SetForegroundColor(ConsoleColor.Red);
             Console.WriteLine($"Error: {e.Message}");
+            Console.SetForegroundColor(ConsoleColor.Gray);
         }
     }
 }

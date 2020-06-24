@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace ChessApp
 {
@@ -209,6 +208,18 @@ namespace ChessApp
         {
             return !(left == right);
         }
+    }
+
+    public class Move : Turn
+    {
+        public Move(Cell from, Cell to)
+        {
+            From = from;
+            To = to;
+        }
+
+        public Cell From { get; }
+        public Cell To { get; }
     }
 
     public class RuleViolation
