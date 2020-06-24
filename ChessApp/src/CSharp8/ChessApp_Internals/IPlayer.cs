@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ChessApp.Internals
+namespace ChessApp.ChessApp_Internals
 {
     public interface IPlayer
     {

@@ -1,23 +1,31 @@
 using System;
 using static MoreLinq.Extensions.ForEachExtension;
-using ChessApp.ChessApp_Internals;
 using Infrastructure;
-using ChessApp.ConsoleUI_Internals.Commands;
+using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
 
-namespace ChessApp.ConsoleUI_Internals
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+
 {
     public class GameCmdHandler
     {
+        #region Dependencies
+
         private GameFlow GameFlow { get; }
         private IStorage Storage { get; }
         private IConsoleIO Console { get; }
 
+        #endregion
+
+        #region Construction
+
         public GameCmdHandler(GameFlow gameFlow, IStorage storage, IConsoleIO consoleIO)
         {
-            GameFlow = gameFlow;
-            Storage = storage;
-            Console = consoleIO;
+            GameFlow = gameFlow ?? throw new ArgumentNullException(nameof(gameFlow));
+            Storage = storage ?? throw new ArgumentNullException(nameof(storage));
+            Console = consoleIO ?? throw new ArgumentNullException(nameof(consoleIO));
         }
+
+        #endregion
 
         internal void Execute(GameCommand gc)
         {

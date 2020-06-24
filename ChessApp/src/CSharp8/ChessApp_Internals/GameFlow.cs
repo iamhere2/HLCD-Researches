@@ -2,16 +2,20 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ChessApp.Internals;
 
 namespace ChessApp.ChessApp_Internals
 {
     public class GameFlow
     {
-        public IPlayer PlayerA { get; }
-        public IPlayer PlayerB { get; }
+        #region Dependencies
 
+        private IPlayer PlayerA { get; }
+        private IPlayer PlayerB { get; }
         private RulesEngine RulesEngine { get; }
+
+        #endregion
+
+        #region Construction
 
         public GameFlow(IPlayer playerA, IPlayer playerB, RulesEngine rulesEngine)
         {
@@ -19,6 +23,8 @@ namespace ChessApp.ChessApp_Internals
             PlayerB = playerB;
             RulesEngine = rulesEngine;
         }
+
+        #endregion
 
         #region Mutable state
 

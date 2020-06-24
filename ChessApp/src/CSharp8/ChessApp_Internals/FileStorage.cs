@@ -11,14 +11,27 @@ namespace ChessApp.ChessApp_Internals
     {
         private static string BuildFileName(string name) => $"{name}.chess";
 
+        #region Dependencies
+
         private IFileIO FileIO { get; }
+
+        #endregion
+
+        #region Internals
+
         private GameSerializer Serializer { get; }
 
-        public FileStorage(IFileIO fileIO, GameSerializer serializer)
+        #endregion
+
+        #region Construction
+
+        public FileStorage(IFileIO fileIO)
         {
             FileIO = fileIO ?? throw new ArgumentNullException(nameof(fileIO));
-            Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            Serializer = new GameSerializer();
         }
+
+        #endregion
 
         public void Delete(string name)
             => FileIO.Delete(BuildFileName(name));

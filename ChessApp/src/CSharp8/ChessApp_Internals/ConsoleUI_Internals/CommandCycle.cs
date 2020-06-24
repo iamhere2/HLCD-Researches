@@ -1,16 +1,22 @@
 using System;
-using ChessApp.ConsoleUI_Internals.Commands;
+using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
 using Infrastructure;
 
-namespace ChessApp.ConsoleUI_Internals
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
 {
     class CommandCycle : IConsoleApplication
     {
+        #region Dependencies
+
         private IConsoleIO Console { get; }
         private GameCmdHandler GameCmdHandler { get; }
         private TurnCmdHandler TurnCmdHandler { get; }
         private BoardPrinter BoardPrinter { get; }
         private CommandParser CommandParser { get; }
+
+        #endregion
+
+        #region Construction
 
         public CommandCycle(
             IConsoleIO consoleIO,
@@ -25,6 +31,8 @@ namespace ChessApp.ConsoleUI_Internals
             BoardPrinter = boardPrinter;
             CommandParser = commandParser;
         }
+
+        #endregion
 
         int IConsoleApplication.Run(string[] args)
         {

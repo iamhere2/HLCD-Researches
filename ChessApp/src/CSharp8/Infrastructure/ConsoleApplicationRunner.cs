@@ -13,7 +13,10 @@ namespace Infrastructure
 
                 services.Scan(cfg =>
                     cfg.FromEntryAssembly()
-                        .AddClasses(publicOnly: false)
+                        .AddClasses(
+                            cls => cls.Where(t =>
+                                !(t.Namespace ?? string.Empty).Contains("_Internals")),
+                            publicOnly: false)
                         .AsImplementedInterfaces()
                         .AsSelf()
                         .WithSingletonLifetime());

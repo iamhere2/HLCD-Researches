@@ -1,21 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChessApp.ChessApp_Internals;
 using Infrastructure;
 
-namespace ChessApp.ConsoleUI_Internals
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
 {
     public class BoardPrinter
     {
+        #region Dependencies
+
         private IConsoleIO Console { get; }
         private GameFlow GameFlow { get; }
+
+        #endregion
+
+        #region Construction
 
         public BoardPrinter(IConsoleIO consoleIO, GameFlow gameFlow)
         {
             Console = consoleIO;
             GameFlow = gameFlow;
         }
+
+        #endregion
 
         public void PrintCurrentGameState()
         {

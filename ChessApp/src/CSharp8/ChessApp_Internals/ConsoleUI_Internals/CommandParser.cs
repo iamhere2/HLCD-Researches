@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
-using ChessApp.ConsoleUI_Internals.Commands;
+using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace ChessApp.ConsoleUI_Internals
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
 {
     class CommandParser
     {

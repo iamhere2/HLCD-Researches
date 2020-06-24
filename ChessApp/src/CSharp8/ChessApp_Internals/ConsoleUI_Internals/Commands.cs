@@ -1,4 +1,4 @@
-namespace ChessApp.ConsoleUI_Internals.Commands
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands
 {
     abstract class Command
     {

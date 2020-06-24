@@ -1,18 +1,24 @@
 using System;
 using System.Threading.Tasks;
-using ChessApp.ChessApp_Internals;
-using ChessApp.Internals;
 
-namespace ChessApp.ConsoleUI_Internals
+namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
 {
     class TurnCmdHandler : IPlayer
     {
+        #region Dependencies
+
         private RulesEngine RulesEngine { get; }
+
+        #endregion
+
+        #region Construction
 
         public TurnCmdHandler(RulesEngine rulesEngine)
         {
-            RulesEngine = rulesEngine;
+            RulesEngine = rulesEngine ?? throw new ArgumentNullException(nameof(rulesEngine));
         }
+
+        #endregion
 
         #region Mutable state
 
