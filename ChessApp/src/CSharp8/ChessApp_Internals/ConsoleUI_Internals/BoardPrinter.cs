@@ -19,7 +19,7 @@ namespace ChessApp.ConsoleUI_Internals
 
         public void PrintCurrentGameState()
         {
-            var history = GameFlow.GetHistory();
+            var history = GameFlow.History;
             if (history == null)
                 PrintEmpty();
             else
@@ -38,7 +38,7 @@ namespace ChessApp.ConsoleUI_Internals
                 foreach (var h in Range(Board.Left, Board.Right))
                 {
                     var cell = Cell.At((char)h, v);
-                    PrintCell(Board.ColorOf(cell), boardState.GetFigureAt(cell));
+                    PrintCell(Board.ColorOf(cell), boardState[cell]);
                 }
 
                 SetDefaultColors();

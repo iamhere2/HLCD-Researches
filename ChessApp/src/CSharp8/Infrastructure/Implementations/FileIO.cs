@@ -9,5 +9,6 @@ namespace ChessApp.Infrastructure.Implementations
         public string GetCurrentDirectory() => Directory.GetCurrentDirectory();
         public string ReadFile(string path) => File.ReadAllText(path);
         public void WriteFile(string path, string content) => File.WriteAllText(path, content);
+        public void Delete(string path) => File.Delete(path);
     }
 }

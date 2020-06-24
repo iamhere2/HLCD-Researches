@@ -3,7 +3,10 @@ namespace ChessApp.ConsoleUI_Internals
     abstract class Command
     {
         public static Exit Exit = new Exit();
+        public static ListGames List = new ListGames();
         public static NewGame NewGame(Color uiPlayerColor) => new NewGame(uiPlayerColor);
+        public static SaveGame Save(string name) => new SaveGame(name);
+        public static LoadGame Load(string name) => new LoadGame(name);
     }
 
     class TurnCommand : Command

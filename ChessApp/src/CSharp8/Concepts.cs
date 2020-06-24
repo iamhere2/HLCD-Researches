@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace ChessApp
 {
@@ -12,6 +14,17 @@ namespace ChessApp
     {
         Black,
         White
+    }
+
+    public static class ColoeExtensions
+    {
+        public static Color Invert(this Color color)
+            => color switch
+            {
+                Color.Black => Color.White,
+                Color.White => Color.Black,
+                _ => throw new ArgumentOutOfRangeException(nameof(color))
+            };
     }
 
     public enum Figure
@@ -49,17 +62,21 @@ namespace ChessApp
 
     public class BoardState
     {
+        private static readonly ReadOnlyDictionary<Cell, (Figure, Color)> None =
+            new ReadOnlyDictionary<Cell, (Figure, Color)>(
+                new Dictionary<Cell, (Figure, Color)>());
+
         private BoardState()
         {
-            Figures = new Dictionary<Cell, (Figure, Color)>();
+            Figures = None;
         }
 
-        private BoardState(Dictionary<Cell, (Figure, Color)> figures)
+        private BoardState(IDictionary<Cell, (Figure, Color)> figures)
         {
-            Figures = figures;
+            Figures = new ReadOnlyDictionary<Cell, (Figure, Color)>(figures);
         }
 
-        private readonly Dictionary<Cell, (Figure, Color)> Figures;
+        public IReadOnlyDictionary<Cell, (Figure, Color)> Figures { get; }
 
         public static BoardState Empty { get; } = new BoardState();
 
@@ -109,12 +126,15 @@ namespace ChessApp
                 .With(Figure.Pawn,   Color.Black, Cell.At('G', 7))
                 .With(Figure.Pawn,   Color.Black, Cell.At('H', 7));
 
-        public (Figure f, Color c)? GetFigureAt(Cell cell)
+        public (Figure f, Color c)? this[Cell cell]
         {
-            if (Figures.TryGetValue(cell, out var fc))
-                return fc;
-            else
-                return null;
+            get
+            {
+                if (Figures.TryGetValue(cell, out var fc))
+                    return fc;
+                else
+                    return null;
+            }
         }
 
         public BoardState Apply(Turn turn) => throw new NotImplementedException();

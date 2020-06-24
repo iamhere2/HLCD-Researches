@@ -31,11 +31,16 @@ namespace ChessApp.ConsoleUI_Internals
             }
             else if (gc is ListGames)
             {
+                Console.WriteLine("Saved games:");
                 Storage.GetNames().ForEach(n => Console.WriteLine(n));
             }
             else if (gc is SaveGame sc)
             {
-                Storage.Save(sc.Name, GameFlow.GetHistory());
+                var history = GameFlow.History;
+                if (history == null)
+                    Console.WriteLine("Nothing to save yet");
+                else
+                    Storage.Save(sc.Name, history, GameFlow.PlayerAColor!.Value);
             }
             else if (gc is DeleteGame dc)
             {

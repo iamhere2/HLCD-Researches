@@ -1,2 +1,4 @@
 # Visio temp files
 *.~vsdx
+obj
+bin

@@ -10,6 +10,7 @@ namespace ChessApp.ChessApp_Internals
     {
         public IPlayer PlayerA { get; }
         public IPlayer PlayerB { get; }
+
         private RulesEngine RulesEngine { get; }
 
         public GameFlow(IPlayer playerA, IPlayer playerB, RulesEngine rulesEngine)
@@ -21,13 +22,14 @@ namespace ChessApp.ChessApp_Internals
 
         #region Mutable state
 
-        private GameHistory? History { get; set; }
+        public GameHistory? History { get; private set; }
+
+        public Color? PlayerAColor { get; private set; }
+        public Color? PlayerBColor { get; private set; }
 
         private CancellationTokenSource? CancellationTokenSource { get; set; }
 
         #endregion
-
-        public GameHistory? GetHistory() => History;
 
         public void NewGame(Color playerAColor)
             => StartFrom(GameHistory.ClassicInitialGameHistory, playerAColor);
@@ -35,6 +37,8 @@ namespace ChessApp.ChessApp_Internals
         public void StartFrom(GameHistory history, Color playerAColor)
         {
             History = history;
+            PlayerAColor = playerAColor;
+            PlayerBColor = playerAColor.Invert();
 
             if (CancellationTokenSource != null)
             {

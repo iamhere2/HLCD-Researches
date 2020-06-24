@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace ChessApp.ConsoleUI_Internals
 {
@@ -28,12 +29,30 @@ Turns:
 ";
 
         public Command Parse(string cmdStr)
-            => cmdStr switch
+        {
+            cmdStr = cmdStr.Trim();
+            var first = cmdStr;
+            var second = "";
+
+            if (cmdStr.Contains(' '))
             {
-                "new black" => Command.NewGame(Color.Black),
-                "new white" => Command.NewGame(Color.White),
-                "exit" => Command.Exit,
+                var words = cmdStr.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (words.Length > 2)
+                    throw new UserError($"Unknown command: \"{cmdStr}\"");
+
+                first = words.First();
+                second = words.Skip(1).First();
+            }
+
+            return (first, second) switch
+            {
+                ("new", var colorStr) => Command.NewGame(Enum.Parse<Color>(colorStr)),
+                ("exit", "") => Command.Exit,
+                ("save", var name) => Command.Save(name),
+                ("load", var name) => Command.Load(name),
+                ("list", "") => Command.List,
                 _ => throw new UserError($"Unknown command: \"{cmdStr}\"")
             };
+        }
     }
 }
