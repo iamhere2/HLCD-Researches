@@ -80,7 +80,7 @@ namespace ChessApp.ChessApp_Internals
                 if (violation != null)
                     throw new RuleViolationError(violation);
 
-                var nextState = state.Apply(turn);
+                var nextState = RulesEngine.Apply(state, turn);
 
                 History = History.With(turn, nextState);
 

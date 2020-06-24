@@ -90,6 +90,21 @@ namespace ChessApp
             return new BoardState(figures);
         }
 
+        public BoardState Without(Cell cell)
+        {
+            if (Figures.ContainsKey(cell))
+            {
+                var figures = new Dictionary<Cell, (Figure, Color)>(
+                    Figures.Where(kv => kv.Key != cell));
+
+                return new BoardState(figures);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
         public static BoardState ClassicInitialState { get; }
             = Empty
                 .With(Figure.Rook,   Color.White, Cell.At('A', 1))
@@ -135,8 +150,6 @@ namespace ChessApp
                     return null;
             }
         }
-
-        public BoardState Apply(Turn turn) => throw new NotImplementedException();
     }
 
     public static class Board

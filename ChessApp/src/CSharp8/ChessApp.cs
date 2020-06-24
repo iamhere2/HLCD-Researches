@@ -30,8 +30,8 @@ namespace ChessApp
             Console = console ?? throw new ArgumentNullException(nameof(console));
             FileIO = fileIO ?? throw new ArgumentNullException(nameof(fileIO));
 
-            AiPlayer = new AiPlayer();
             RulesEngine = new RulesEngine();
+            AiPlayer = new AiPlayer(RulesEngine);
             FileStorage = new FileStorage(FileIO);
 
             var lazyConsolePlayer = new LateBindingPlayerAdapter();
