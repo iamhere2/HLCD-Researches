@@ -2,6 +2,7 @@ using System;
 using static MoreLinq.Extensions.ForEachExtension;
 using ChessApp.ChessApp_Internals;
 using Infrastructure;
+using ChessApp.ConsoleUI_Internals.Commands;
 
 namespace ChessApp.ConsoleUI_Internals
 {

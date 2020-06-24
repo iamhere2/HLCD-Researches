@@ -1,4 +1,5 @@
 using System;
+using ChessApp.ConsoleUI_Internals.Commands;
 using Infrastructure;
 
 namespace ChessApp.ConsoleUI_Internals
