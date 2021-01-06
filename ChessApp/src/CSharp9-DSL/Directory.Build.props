@@ -1,10 +1,11 @@
 <Project>
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
-        <LangVersion>8.0</LangVersion>
     </PropertyGroup>
+
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <WarningsAsErrors />
@@ -18,4 +19,8 @@
         <DebugType>Full</DebugType>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Include="..\CompilerBugWorkaround.cs" Link="CompilerBugWorkaround.cs" />
+    </ItemGroup>
+  
 </Project>
