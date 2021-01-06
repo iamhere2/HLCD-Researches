@@ -23,7 +23,7 @@ namespace HLCD.Infrastructure
                         .AddClasses(
                             cls => cls.Where(t =>
                                 !(t.Namespace ?? string.Empty).Contains("_Internals")),
-                            publicOnly: false)
+                            publicOnly: true)
                         .AsImplementedInterfaces()
                         .AsSelf()
                         .WithSingletonLifetime());

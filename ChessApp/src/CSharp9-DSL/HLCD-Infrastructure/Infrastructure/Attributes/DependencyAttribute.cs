@@ -6,7 +6,7 @@ namespace HLCD.Infrastructure
     /// Marks property as a holder for a dependency component reference
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class DependencyAttribute : Attribute
+    public sealed class DependencyAttribute : Attribute
     {
     }
 }

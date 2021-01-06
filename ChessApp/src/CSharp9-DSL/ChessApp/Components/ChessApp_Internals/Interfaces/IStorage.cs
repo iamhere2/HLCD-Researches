@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.Infrastructure.Attributes;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
+    [Interface("CA")]
     public interface IStorage
     {
         (GameHistory, Color) Load(string name);

@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.ChessAppExampleWithDSL.Errors;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 {
     [Component("CA-CUI-TCH")]
     class TurnCmdHandler : IPlayer
@@ -33,7 +35,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
         internal TurnError? MakeTurn(Turn turn)
         {
             if (TurnPromise is null)
-                throw new UserError("Turn is not expected");
+                throw new UserErrorException("Turn is not expected");
 
             var ruleViolation = RulesEngine.Check(BoardState!, turn);
 

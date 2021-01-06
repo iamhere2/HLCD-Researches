@@ -1,8 +1,9 @@
+using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.Infrastructure.Attributes;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals.Commands
 {
-    [Value]
+    [Value("CA-CUI")]
     abstract record Command
     {
         public static Exit Exit = new Exit();

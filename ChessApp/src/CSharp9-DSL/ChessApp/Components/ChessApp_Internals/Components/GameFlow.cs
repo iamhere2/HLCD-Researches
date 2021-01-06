@@ -2,17 +2,24 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.ChessAppExampleWithDSL.Errors;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
     [Component("CA-GF")]
-    public class GameFlow
+    public sealed class GameFlow
     {
         #region Dependencies
 
+        [Dependency]
         private IPlayer PlayerA { get; }
+
+        [Dependency]
         private IPlayer PlayerB { get; }
+
+        [Dependency]
         private RulesEngine RulesEngine { get; }
 
         #endregion

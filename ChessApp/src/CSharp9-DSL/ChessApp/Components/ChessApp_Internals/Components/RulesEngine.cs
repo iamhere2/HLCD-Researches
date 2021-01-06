@@ -1,20 +1,44 @@
 using System;
 using System.Collections.Generic;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.ChessAppExampleWithDSL.Errors;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
     [Component("CA-RE")]
-    public class RulesEngine
+    public sealed class RulesEngine
     {
         public RuleViolation? Check(BoardState state, Turn turn)
-            => null;
+        {
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (turn is null)
+            {
+                throw new ArgumentNullException(nameof(turn));
+            }
+
+            return null;
+        }
 
         public BoardState Apply(BoardState state, Turn turn)
         {
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (turn is null)
+            {
+                throw new ArgumentNullException(nameof(turn));
+            }
+
             if (turn is Move move)
             {
-                var (f, c) = state[move.From] ?? throw new UserError($"There are no figure at {move.From}");
+                var (f, c) = state[move.From] ?? throw new UserErrorException($"There are no figure at {move.From}");
 
                 if (move.From == move.To)
                     throw new RuleViolationError(new RuleViolation("Figure can't move to the same cell"));
@@ -34,6 +58,11 @@ namespace ChessApp.ChessApp_Internals
 
         public IEnumerable<Turn> GetPossibleTurns(BoardState state, Color playerColor)
         {
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             foreach (var (cell, (_, color)) in state.Figures)
             {
                 if (color == playerColor)

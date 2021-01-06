@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using HLCD.Infrastructure.Attributes;
 
-namespace ChessApp
+namespace HLCD.ChessAppExampleWithDSL.Data
 {
-    [Value]
+    [Value("CA")]
     public abstract record Turn
     {
     }
@@ -38,8 +38,8 @@ namespace ChessApp
         Pawn
     }
 
-    [Value]
-    public class GameHistory
+    [Value("CA")]
+    public sealed class GameHistory
     {
         public GameHistory(IReadOnlyCollection<BoardState> states, IReadOnlyCollection<Turn> turns)
         {
@@ -62,8 +62,8 @@ namespace ChessApp
                 Turns.Append(turn).ToArray());
     }
 
-    [Value]
-    public class BoardState
+    [Value("CA")]
+    public sealed class BoardState
     {
         private static readonly ReadOnlyDictionary<Cell, (Figure, Color)> None =
             new ReadOnlyDictionary<Cell, (Figure, Color)>(
@@ -174,9 +174,11 @@ namespace ChessApp
 
         public Cell(char h, int v)
         {
+            if (!IsValid(h, v))
+                throw new ArgumentException($"Invalid cell value: ({h}, {v})");
+
             H = h;
             V = v;
-            Validate();
         }
 
         public static Cell Parse(string s)
@@ -188,21 +190,15 @@ namespace ChessApp
                 throw new ArgumentOutOfRangeException(nameof(s));
 
             char h = s[0];
-            int v = int.Parse(s[1].ToString());
+            int v = int.Parse(s[1].ToString(), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
 
             if (!IsValid(h, v))
-                throw new ArgumentOutOfRangeException(nameof(s), "Invalid cell value");
+                throw new ArgumentOutOfRangeException(nameof(s), s, "Invalid cell value");
 
             return At(h, v);
         }
 
         public override string ToString() => $"{H}{V}";
-
-        private void Validate()
-        {
-            if (!IsValid(H, V))
-                throw new InvalidOperationException($"Invalid cell value: ({H}, {V})");
-        }
 
         public static bool IsValid(char h, int v) =>
                h >= Board.Left && h <= Board.Right
@@ -216,20 +212,14 @@ namespace ChessApp
 
         public bool Equals(Cell other) => (H, V) == (other.H, other.V);
 
-        public static bool operator ==(Cell left, Cell right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(Cell left, Cell right) => left.Equals(right);
 
-        public static bool operator !=(Cell left, Cell right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Cell left, Cell right) => !(left == right);
     }
 
-    [Value]
+    [Value("CA")]
     public record Move(Cell From, Cell To) : Turn;
 
-    [Value]
+    [Value("CA")]
     public record RuleViolation(string Description);
 }

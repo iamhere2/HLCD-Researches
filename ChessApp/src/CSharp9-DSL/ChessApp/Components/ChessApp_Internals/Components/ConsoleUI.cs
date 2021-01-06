@@ -1,9 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using ChessApp.ChessApp_Internals.ConsoleUI_Internals;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals;
+using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.ConsoleUI_Internals.Components;
+using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
     [Component("CA-CUI")]
     class ConsoleUI : IConsoleApplication, IPlayer

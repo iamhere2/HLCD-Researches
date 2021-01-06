@@ -7,7 +7,7 @@ namespace HLCD.Infrastructure
     /// an instance, which should be used to delegate interface implementation
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    public class DelegatingImplementationAttribute : Attribute
+    public sealed class DelegatingImplementationAttribute : Attribute
     {
         public DelegatingImplementationAttribute(Type interfaceType)
         {

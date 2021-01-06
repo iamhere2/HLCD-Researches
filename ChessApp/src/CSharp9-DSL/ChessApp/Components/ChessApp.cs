@@ -1,11 +1,12 @@
 using System;
-using ChessApp.ChessApp_Internals;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals;
+using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components;
 using HLCD.Infrastructure;
 
-namespace ChessApp
+namespace HLCD.ChessAppExampleWithDSL
 {
     [Component("CA")]
-    class ChessApp : IConsoleApplication
+    public sealed class ChessApp : IConsoleApplication
     {
         #region Dependencies
 

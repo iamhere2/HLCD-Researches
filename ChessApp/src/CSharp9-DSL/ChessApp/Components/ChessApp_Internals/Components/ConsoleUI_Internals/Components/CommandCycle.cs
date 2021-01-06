@@ -1,18 +1,30 @@
 using System;
-using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals.Commands;
+using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.ConsoleUI_Internals.Components;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.ChessAppExampleWithDSL.Errors;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 {
     [Component("CA-CUI-CC")]
     class CommandCycle : IConsoleApplication
     {
         #region Dependencies
 
+        [Dependency]
         private IConsoleIO Console { get; }
+
+        [Dependency]
         private GameCmdHandler GameCmdHandler { get; }
+
+        [Dependency]
         private TurnCmdHandler TurnCmdHandler { get; }
+
+        [Dependency]
         private BoardPrinter BoardPrinter { get; }
+
+        [Dependency]
         private CommandParser CommandParser { get; }
 
         #endregion
@@ -59,7 +71,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
                     else
                         throw new NotImplementedException($"Not implemented command: {cmd}");
                 }
-                catch (UserError ue)
+                catch (UserErrorException ue)
                 {
                     PrintError(ue);
                     PrintHelp();
@@ -87,7 +99,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
             }
         }
 
-        private void PrintError(UserError e)
+        private void PrintError(UserErrorException e)
         {
             Console.SetForegroundColor(ConsoleColor.Red);
             Console.WriteLine($"Error: {e.Message}");

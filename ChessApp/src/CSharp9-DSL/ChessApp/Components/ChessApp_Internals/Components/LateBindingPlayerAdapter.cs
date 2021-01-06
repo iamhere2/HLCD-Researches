@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using HLCD.ChessAppExampleWithDSL.Data;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
-    internal class LateBindingPlayerAdapter : IPlayer
+    class LateBindingPlayerAdapter : IPlayer
     {
         public bool IsBound => _implementation != null;
 

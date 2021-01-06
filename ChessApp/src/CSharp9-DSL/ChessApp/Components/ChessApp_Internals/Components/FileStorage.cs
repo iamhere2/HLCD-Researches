@@ -2,24 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ChessApp.ChessApp_Internals.FileStorage_Internals;
+using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.FileStorage_Internals.Components;
+using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
     [Component("CA-FS")]
-    internal class FileStorage : IStorage
+    class FileStorage : IStorage
     {
         private static string BuildFileName(string name) => $"{name}.chess";
 
         #region Dependencies
 
+        [Dependency]
         private IFileIO FileIO { get; }
 
         #endregion
 
         #region Internals
 
+        [Child]
         private GameSerializer Serializer { get; }
 
         #endregion

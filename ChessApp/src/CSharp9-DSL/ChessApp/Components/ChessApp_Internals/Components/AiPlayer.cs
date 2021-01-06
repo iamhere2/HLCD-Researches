@@ -1,15 +1,18 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals;
+using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals
+namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components
 {
     [Component("CA-AP")]
-    internal class AiPlayer : IPlayer
+    class AiPlayer : IPlayer
     {
         #region Dependencies
 
+        [Dependency]
         private RulesEngine RulesEngine { get; }
 
         #endregion

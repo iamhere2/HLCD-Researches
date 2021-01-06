@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
-using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals.Commands;
+using HLCD.ChessAppExampleWithDSL.Data;
+using HLCD.ChessAppExampleWithDSL.Errors;
 using HLCD.Infrastructure;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 {
     [Component("CA-CUI-CP")]
     class CommandParser
@@ -55,7 +57,7 @@ Turns:
             var cell =
                 from h in Token(c => c >= Board.Left && c <= Board.Right)
                 from v in Token(c => c >= '1' && c <= '8')
-                select Cell.At(h, int.Parse($"{v}"));
+                select Cell.At(h, int.Parse($"{v}", System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture));
 
             var exit = Try(String("exit")).ThenReturn(Command.Exit).Cast<Command>();
             var list = Try(String("list")).ThenReturn(Command.List).Cast<Command>();
@@ -88,7 +90,7 @@ Turns:
             var result = Parser.Parse(cmdStr);
             return result.Success
                 ? result.Value
-                : throw new UserError($"Bad command: {cmdStr}, {result.Error!}");
+                : throw new UserErrorException($"Bad command: {cmdStr}, {result.Error!}");
         }
     }
 }

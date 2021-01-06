@@ -1,7 +1,6 @@
 using System.IO;
-using HLCD.Infrastructure;
 
-namespace ChessApp.Infrastructure.Implementations
+namespace HLCD.Infrastructure.Implementations
 {
     class FileIO : IFileIO
     {

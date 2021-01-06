@@ -1,6 +1,6 @@
 using HLCD.Infrastructure;
 
-namespace ChessApp
+namespace HLCD.ChessAppExampleWithDSL
 {
     static class Program
     {

@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals;
+using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.Infrastructure;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.ConsoleUI_Internals.Components
 {
     [Component("CA-CUI-BP")]
-    public class BoardPrinter
+    public sealed class BoardPrinter
     {
         #region Dependencies
 
+        [Dependency]
         private IConsoleIO Console { get; }
+
+        [Dependency]
         private GameFlow GameFlow { get; }
 
         #endregion
@@ -93,7 +98,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
             {
                 Color.Black => ConsoleColor.DarkRed,
                 Color.White => ConsoleColor.DarkYellow,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(color), color, "Unknown color value")
             };
 
         private ConsoleColor TranslateForegroundColor(Color color)
@@ -101,7 +106,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
             {
                 Color.Black => ConsoleColor.Black,
                 Color.White => ConsoleColor.White,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(color), color, "Unknown color value")
             };
 
         private string TranslateFigure(Figure figure)
@@ -113,7 +118,7 @@ namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
                 Figure.Queen => "Qn",
                 Figure.Bishop => "Bs",
                 Figure.Pawn => "pw",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(figure), figure, "Unknown figure")
             };
     }
 }

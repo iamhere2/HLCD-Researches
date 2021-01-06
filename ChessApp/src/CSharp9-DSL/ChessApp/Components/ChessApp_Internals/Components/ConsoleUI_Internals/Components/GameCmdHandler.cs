@@ -1,12 +1,12 @@
 using System;
 using static MoreLinq.Extensions.ForEachExtension;
 using HLCD.Infrastructure;
-using ChessApp.ChessApp_Internals.ConsoleUI_Internals.Commands;
+using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals.Commands;
 
-namespace ChessApp.ChessApp_Internals.ConsoleUI_Internals
+namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 {
     [Component("CA-CUI-GCH")]
-    public class GameCmdHandler
+    public sealed class GameCmdHandler
     {
         #region Dependencies
 

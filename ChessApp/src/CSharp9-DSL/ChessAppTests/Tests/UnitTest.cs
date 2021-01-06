@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
-using ChessApp;
-using ChessApp.ChessApp_Internals.FileStorage_Internals;
+using HLCD.ChessAppExampleWithDSL;
+using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.FileStorage_Internals.Components;
+using HLCD.ChessAppExampleWithDSL.Data;
 using Xunit;
 
 namespace ChessAppTests
 {
-    public class UnitTests
+    public sealed class UnitTests
     {
         [Fact]
         public void GameCanBeSerializedAndDeserialized()
@@ -16,8 +17,8 @@ namespace ChessAppTests
 
             string s = gs.Serialize(h, Color.White);
 
-            Assert.Contains("King", s);
-            Assert.Contains("White", s);
+            Assert.Contains("King", s, StringComparison.InvariantCulture);
+            Assert.Contains("White", s, StringComparison.InvariantCulture);
 
             var (dh, _) = gs.Deserialize(s);
 
