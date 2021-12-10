@@ -27,11 +27,7 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components
         #endregion
 
         public Task<Turn> NextTurn(BoardState state)
-        {
-            var result = new TaskCompletionSource<Turn>();
-            result.SetResult(
-                RulesEngine.GetPossibleTurns(state, Color.Black).First());
-            return result.Task;
-        }
+            // Just get the first possible turn yet
+            => Task.FromResult(RulesEngine.GetPossibleTurns(state, Color.Black).First());
     }
 }
