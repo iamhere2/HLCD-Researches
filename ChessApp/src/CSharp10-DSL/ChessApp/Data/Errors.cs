@@ -1,7 +1,3 @@
-using System;
-using HLCD.ChessAppExampleWithDSL.Data;
-using HLCD.Infrastructure.Attributes;
-
 namespace HLCD.ChessAppExampleWithDSL.Errors
 {
     [Value("CA")]

@@ -1,9 +1,5 @@
-using System;
-using System.Linq;
 using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals.Commands;
-using HLCD.ChessAppExampleWithDSL.Data;
 using HLCD.ChessAppExampleWithDSL.Errors;
-using HLCD.Infrastructure;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;

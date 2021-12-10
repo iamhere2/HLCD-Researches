@@ -1,9 +1,4 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using HLCD.ChessAppExampleWithDSL.ChessApp_Internals;
-using HLCD.ChessAppExampleWithDSL.Data;
-using HLCD.Infrastructure;
 
 namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components
 {

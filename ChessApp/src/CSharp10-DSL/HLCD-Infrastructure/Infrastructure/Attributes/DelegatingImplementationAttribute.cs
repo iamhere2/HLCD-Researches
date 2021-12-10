@@ -7,11 +7,11 @@ namespace HLCD.Infrastructure
     /// an instance, which should be used to delegate interface implementation
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    public sealed class DelegatingImplementationAttribute : Attribute
+    public sealed class DelegatingImplementationAttribute<TInterfaceType> : Attribute
     {
-        public DelegatingImplementationAttribute(Type interfaceType)
+        public DelegatingImplementationAttribute()
         {
-            InterfaceType = interfaceType ?? throw new ArgumentNullException(nameof(interfaceType));
+            InterfaceType = typeof(TInterfaceType);
         }
 
         public Type InterfaceType { get; }

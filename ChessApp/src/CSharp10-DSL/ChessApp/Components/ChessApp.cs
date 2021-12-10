@@ -1,7 +1,5 @@
-using System;
 using HLCD.ChessAppExampleWithDSL.ChessApp_Internals;
 using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components;
-using HLCD.Infrastructure;
 
 namespace HLCD.ChessAppExampleWithDSL
 {
@@ -21,7 +19,7 @@ namespace HLCD.ChessAppExampleWithDSL
         #region Internals
 
         [Child]
-        [DelegatingImplementation(typeof(IConsoleApplication))]
+        [DelegatingImplementation<IConsoleApplication>]
         private ConsoleUI ConsoleUI { get; }
 
         [Child]

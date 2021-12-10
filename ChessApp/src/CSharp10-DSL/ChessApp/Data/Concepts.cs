@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using HLCD.Infrastructure.Attributes;
-
 namespace HLCD.ChessAppExampleWithDSL.Data
 {
     [Value("CA")]
@@ -111,38 +104,38 @@ namespace HLCD.ChessAppExampleWithDSL.Data
 
         public static BoardState ClassicInitialState { get; }
             = Empty
-                .With(Figure.Rook,   Color.White, Cell.At('A', 1))
+                .With(Figure.Rook, Color.White, Cell.At('A', 1))
                 .With(Figure.Knight, Color.White, Cell.At('B', 1))
                 .With(Figure.Bishop, Color.White, Cell.At('C', 1))
-                .With(Figure.Queen,  Color.White, Cell.At('D', 1))
-                .With(Figure.King,   Color.White, Cell.At('E', 1))
+                .With(Figure.Queen, Color.White, Cell.At('D', 1))
+                .With(Figure.King, Color.White, Cell.At('E', 1))
                 .With(Figure.Bishop, Color.White, Cell.At('F', 1))
                 .With(Figure.Knight, Color.White, Cell.At('G', 1))
-                .With(Figure.Rook,   Color.White, Cell.At('H', 1))
-                .With(Figure.Pawn,   Color.White, Cell.At('A', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('B', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('C', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('D', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('E', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('F', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('G', 2))
-                .With(Figure.Pawn,   Color.White, Cell.At('H', 2))
-                .With(Figure.Rook,   Color.Black, Cell.At('A', 8))
+                .With(Figure.Rook, Color.White, Cell.At('H', 1))
+                .With(Figure.Pawn, Color.White, Cell.At('A', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('B', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('C', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('D', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('E', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('F', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('G', 2))
+                .With(Figure.Pawn, Color.White, Cell.At('H', 2))
+                .With(Figure.Rook, Color.Black, Cell.At('A', 8))
                 .With(Figure.Knight, Color.Black, Cell.At('B', 8))
                 .With(Figure.Bishop, Color.Black, Cell.At('C', 8))
-                .With(Figure.Queen,  Color.Black, Cell.At('D', 8))
-                .With(Figure.King,   Color.Black, Cell.At('E', 8))
+                .With(Figure.Queen, Color.Black, Cell.At('D', 8))
+                .With(Figure.King, Color.Black, Cell.At('E', 8))
                 .With(Figure.Bishop, Color.Black, Cell.At('F', 8))
                 .With(Figure.Knight, Color.Black, Cell.At('G', 8))
-                .With(Figure.Rook,   Color.Black, Cell.At('H', 8))
-                .With(Figure.Pawn,   Color.Black, Cell.At('A', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('B', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('C', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('D', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('E', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('F', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('G', 7))
-                .With(Figure.Pawn,   Color.Black, Cell.At('H', 7));
+                .With(Figure.Rook, Color.Black, Cell.At('H', 8))
+                .With(Figure.Pawn, Color.Black, Cell.At('A', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('B', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('C', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('D', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('E', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('F', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('G', 7))
+                .With(Figure.Pawn, Color.Black, Cell.At('H', 7));
 
         public (Figure f, Color c)? this[Cell cell]
         {
@@ -204,7 +197,7 @@ namespace HLCD.ChessAppExampleWithDSL.Data
 
         public static bool IsValid(char h, int v) =>
                h >= Board.Left && h <= Board.Right
-            && v >= Board.Low  && v <= Board.High;
+            && v >= Board.Low && v <= Board.High;
 
         public static Cell At(char h, int v) => new(h, v);
     }

@@ -1,9 +1,5 @@
-using System;
-using System.Threading.Tasks;
 using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals;
 using HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.ConsoleUI_Internals.Components;
-using HLCD.ChessAppExampleWithDSL.Data;
-using HLCD.Infrastructure;
 
 namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 {
@@ -13,11 +9,11 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
         #region Internals
 
         [Child]
-        [DelegatingImplementation(typeof(IConsoleApplication))]
+        [DelegatingImplementation<IConsoleApplication>]
         private CommandCycle CommandCycle { get; }
 
         [Child]
-        [DelegatingImplementation(typeof(IPlayer))]
+        [DelegatingImplementation<IPlayer>]
         private TurnCmdHandler TurnCmdHandler { get; }
 
         [Child]
