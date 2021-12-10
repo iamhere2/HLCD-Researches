@@ -15,6 +15,8 @@
   a decent series of UML component diagrams (probably, with PlantUML).
 * (?) Code generation and "component initialization infrastructure" could be used
   to replace initialization boilerplate code with automatic children creation and interface delegating.
+  ** At component level dependencies and children could be configured with lifetime CLR-attributes
+     like [Singleton/Global], [Instance], or [Call (with complex proxy)]
 * (?) "Component initialization infrastructure could use optional "test context"
   to replace children components with test stubs/mocks for unit tests.
 
