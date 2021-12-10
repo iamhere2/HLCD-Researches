@@ -18,9 +18,9 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 
         public GameCmdHandler(GameFlow gameFlow, IStorage storage, IConsoleIO consoleIO)
         {
-            GameFlow = gameFlow ?? throw new ArgumentNullException(nameof(gameFlow));
-            Storage = storage ?? throw new ArgumentNullException(nameof(storage));
-            Console = consoleIO ?? throw new ArgumentNullException(nameof(consoleIO));
+            GameFlow = CheckArg.NotNull(gameFlow);
+            Storage = CheckArg.NotNull(storage);
+            Console = CheckArg.NotNull(consoleIO);
         }
 
         #endregion

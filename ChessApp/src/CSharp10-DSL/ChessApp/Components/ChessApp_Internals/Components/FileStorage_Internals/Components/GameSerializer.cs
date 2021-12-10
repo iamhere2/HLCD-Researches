@@ -1,5 +1,7 @@
 using ChessApp.Components.ChessApp_Internals.Components.FileStorage_Internals.Components;
 using HLCD.ChessAppExampleWithDSL.ChessApp_Internals.FileStorage_Internals.Data;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.FileStorage_Internals.Components
 {
@@ -20,7 +22,6 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
                 }
             };
 
-
         public (GameHistory, Color) Deserialize(string s)
         {
             var model = JsonConvert.DeserializeObject<StorageModel>(s, JsonOptions)
@@ -36,17 +37,13 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
         {
             public override Cell ReadJson(JsonReader reader, Type objectType, Cell existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                if (reader is null)
-                    throw new ArgumentNullException(nameof(reader));
-
+                CheckArg.NotNull(reader);
                 return Cell.Parse(reader.ReadAsString() ?? throw new SerializationException("cell string expected"));
             }
 
             public override void WriteJson(JsonWriter writer, Cell value, JsonSerializer serializer)
             {
-                if (writer is null)
-                    throw new ArgumentNullException(nameof(writer));
-
+                CheckArg.NotNull(writer);
                 writer.WriteValue(value.ToString());
             }
         }
@@ -55,11 +52,8 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
         {
             public override Turn ReadJson(JsonReader reader, Type objectType, Turn? existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                if (reader is null)
-                    throw new ArgumentNullException(nameof(reader));
-
-                if (serializer is null)
-                    throw new ArgumentNullException(nameof(serializer));
+                CheckArg.NotNull(reader);
+                CheckArg.NotNull(serializer);
 
                 reader.EnsureStartObject();
                 reader.EnsureRead();
@@ -76,14 +70,9 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
 
             public override void WriteJson(JsonWriter writer, Turn? value, JsonSerializer serializer)
             {
-                if (writer is null)
-                    throw new ArgumentNullException(nameof(writer));
-
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
-
-                if (serializer is null)
-                    throw new ArgumentNullException(nameof(serializer));
+                CheckArg.NotNull(writer);
+                CheckArg.NotNull(value);
+                CheckArg.NotNull(serializer);
 
                 if (value is Move move)
                 {
@@ -105,11 +94,8 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
         {
             public override BoardState ReadJson(JsonReader reader, Type objectType, BoardState? existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                if (reader is null)
-                    throw new ArgumentNullException(nameof(reader));
-
-                if (serializer is null)
-                    throw new ArgumentNullException(nameof(serializer));
+                CheckArg.NotNull(reader);
+                CheckArg.NotNull(serializer);
 
                 var bs = BoardState.Empty;
 
@@ -139,14 +125,9 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.F
 
             public override void WriteJson(JsonWriter writer, BoardState? value, JsonSerializer serializer)
             {
-                if (writer is null)
-                    throw new ArgumentNullException(nameof(writer));
-
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
-
-                if (serializer is null)
-                    throw new ArgumentNullException(nameof(serializer));
+                CheckArg.NotNull(writer);
+                CheckArg.NotNull(value);
+                CheckArg.NotNull(serializer);
 
                 writer.WriteStartObject();
                 foreach (var (cell, (figure, color)) in value.Figures)

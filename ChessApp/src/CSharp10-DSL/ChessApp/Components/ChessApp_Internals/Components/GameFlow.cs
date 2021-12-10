@@ -23,9 +23,9 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public GameFlow(IPlayer playerA, IPlayer playerB, RulesEngine rulesEngine)
         {
-            PlayerA = playerA;
-            PlayerB = playerB;
-            RulesEngine = rulesEngine;
+            PlayerA = CheckArg.NotNull(playerA);
+            PlayerB = CheckArg.NotNull(playerB);
+            RulesEngine = CheckArg.NotNull(rulesEngine);
         }
 
         #endregion
@@ -88,7 +88,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
                 History = History.With(turn, nextState);
 
-                player = player == PlayerA ? PlayerB : PlayerA;
+                player = (player == PlayerA) ? PlayerB : PlayerA;
             }
         }
     }

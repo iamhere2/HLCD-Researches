@@ -7,11 +7,8 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
     {
         public RuleViolation? Check(BoardState state, Turn turn)
         {
-            if (state is null)
-                throw new ArgumentNullException(nameof(state));
-
-            if (turn is null)
-                throw new ArgumentNullException(nameof(turn));
+            CheckArg.NotNull(state);
+            CheckArg.NotNull(turn);
 
             // TODO: just "everything is correct" yet
             return null;
@@ -19,11 +16,8 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public BoardState Apply(BoardState state, Turn turn)
         {
-            if (state is null)
-                throw new ArgumentNullException(nameof(state));
-
-            if (turn is null)
-                throw new ArgumentNullException(nameof(turn));
+            CheckArg.NotNull(state);
+            CheckArg.NotNull(turn);
 
             if (turn is not Move move)
                 throw new NotSupportedException();
@@ -43,8 +37,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public IEnumerable<Turn> GetPossibleTurns(BoardState state, Color playerColor)
         {
-            if (state is null)
-                throw new ArgumentNullException(nameof(state));
+            CheckArg.NotNull(state);
 
             foreach (var (cell, (_, color)) in state.Figures)
             {

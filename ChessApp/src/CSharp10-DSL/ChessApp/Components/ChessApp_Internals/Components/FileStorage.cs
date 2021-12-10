@@ -26,7 +26,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public FileStorage(IFileIO fileIO)
         {
-            FileIO = fileIO ?? throw new ArgumentNullException(nameof(fileIO));
+            FileIO = CheckArg.NotNull(fileIO);
             Serializer = new GameSerializer();
         }
 

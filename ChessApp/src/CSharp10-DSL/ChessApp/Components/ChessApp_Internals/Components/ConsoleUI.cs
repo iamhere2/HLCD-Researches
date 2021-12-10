@@ -31,17 +31,10 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public ConsoleUI(GameFlow gameFlow, IConsoleIO console, IStorage storage, RulesEngine rulesEngine)
         {
-            if (gameFlow is null)
-                throw new ArgumentNullException(nameof(gameFlow));
-
-            if (console is null)
-                throw new ArgumentNullException(nameof(console));
-
-            if (storage is null)
-                throw new ArgumentNullException(nameof(storage));
-
-            if (rulesEngine is null)
-                throw new ArgumentNullException(nameof(rulesEngine));
+            CheckArg.NotNull(gameFlow);
+            CheckArg.NotNull(console);
+            CheckArg.NotNull(storage);
+            CheckArg.NotNull(rulesEngine);
 
             GameCmdHandler = new GameCmdHandler(gameFlow, storage, console);
             TurnCmdHandler = new TurnCmdHandler(rulesEngine);

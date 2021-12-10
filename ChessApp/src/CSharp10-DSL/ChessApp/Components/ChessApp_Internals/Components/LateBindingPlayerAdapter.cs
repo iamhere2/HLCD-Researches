@@ -10,8 +10,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals
 
         public void Bind(IPlayer implementation)
         {
-            if (implementation is null)
-                throw new ArgumentNullException(nameof(implementation));
+            CheckArg.NotNull(implementation);
 
             if (IsBound)
                 throw new InvalidOperationException("Adapter is already bound");

@@ -15,7 +15,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
 
         public TurnCmdHandler(RulesEngine rulesEngine)
         {
-            RulesEngine = rulesEngine ?? throw new ArgumentNullException(nameof(rulesEngine));
+            RulesEngine = CheckArg.NotNull(rulesEngine);
         }
 
         #endregion

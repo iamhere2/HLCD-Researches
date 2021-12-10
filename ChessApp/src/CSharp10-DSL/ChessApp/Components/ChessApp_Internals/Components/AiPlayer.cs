@@ -16,7 +16,7 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components
 
         public AiPlayer(RulesEngine rulesEngine)
         {
-            RulesEngine = rulesEngine ?? throw new ArgumentNullException(nameof(rulesEngine));
+            RulesEngine = CheckArg.NotNull(rulesEngine);
         }
 
         #endregion

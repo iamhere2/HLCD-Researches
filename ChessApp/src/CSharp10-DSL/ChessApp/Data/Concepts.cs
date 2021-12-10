@@ -178,8 +178,7 @@ namespace HLCD.ChessAppExampleWithDSL.Data
         // TODO: SRE violation and logic duplication with CommandParser! CellParser should be extracted as well as Move/Turn Parser
         public static Cell Parse(string s)
         {
-            if (s is null)
-                throw new ArgumentNullException(nameof(s));
+            CheckArg.NotNull(s);
 
             if (s.Length != 2)
                 throw new ArgumentOutOfRangeException(nameof(s));
