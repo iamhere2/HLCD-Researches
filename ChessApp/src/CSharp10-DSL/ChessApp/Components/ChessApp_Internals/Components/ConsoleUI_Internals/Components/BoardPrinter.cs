@@ -108,11 +108,11 @@ namespace HLCD.ChessAppExampleWithDSL.Components.ChessApp_Internals.Components.C
             => figure switch
             {
                 Figure.Knight => "Kn",
-                Figure.Rook => "Rk",
-                Figure.King => "Kg",
-                Figure.Queen => "Qn",
+                Figure.Rook   => "Rk",
+                Figure.King   => "Kg",
+                Figure.Queen  => "Qn",
                 Figure.Bishop => "Bs",
-                Figure.Pawn => "pw",
+                Figure.Pawn   => "pw",
                 _ => throw new ArgumentOutOfRangeException(nameof(figure), figure, "Unknown figure")
             };
     }

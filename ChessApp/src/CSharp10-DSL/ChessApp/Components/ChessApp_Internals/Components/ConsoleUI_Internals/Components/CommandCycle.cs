@@ -91,9 +91,7 @@ namespace HLCD.ChessAppExampleWithDSL.ChessApp_Internals.ConsoleUI_Internals
         {
             TurnError? e = TurnCmdHandler.MakeTurn(turn);
             if (e is not null)
-            {
                 PrintError(e);
-            }
         }
 
         private void PrintError(UserErrorException e)
