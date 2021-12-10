@@ -1,0 +1,31 @@
+<Project>
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningsAsErrors />
+        <NoWarn></NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningsAsErrors />
+        <NoWarn></NoWarn>
+        <DebugType>Full</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="..\CompilerBugWorkaround.cs" Link="CompilerBugWorkaround.cs" />
+      <Compile Include="..\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+      <Compile Include="..\AssemblyInfo.cs" Link="AssemblyInfo.cs" />
+    </ItemGroup>
+  
+</Project>

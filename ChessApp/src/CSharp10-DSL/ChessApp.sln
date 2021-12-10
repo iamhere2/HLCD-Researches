@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessApp", "ChessApp\ChessApp.csproj", "{5C2A0622-56AD-4038-AE34-B4D677F79DDE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1108FDA7-2B03-4673-AD78-147DEA97FB84}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessAppTests", "ChessAppTests\ChessAppTests.csproj", "{F244188F-E270-4260-876C-92341D1002EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HLCD-Infrastructure", "HLCD-Infrastructure\HLCD-Infrastructure.csproj", "{1BBDB0E8-5D20-4B00-A0DC-5764734BD7F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C2A0622-56AD-4038-AE34-B4D677F79DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C2A0622-56AD-4038-AE34-B4D677F79DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C2A0622-56AD-4038-AE34-B4D677F79DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C2A0622-56AD-4038-AE34-B4D677F79DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F244188F-E270-4260-876C-92341D1002EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F244188F-E270-4260-876C-92341D1002EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F244188F-E270-4260-876C-92341D1002EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F244188F-E270-4260-876C-92341D1002EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBDB0E8-5D20-4B00-A0DC-5764734BD7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBDB0E8-5D20-4B00-A0DC-5764734BD7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBDB0E8-5D20-4B00-A0DC-5764734BD7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBDB0E8-5D20-4B00-A0DC-5764734BD7F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A97F3FC-4938-4E6E-99C1-B41000ECFD64}
+	EndGlobalSection
+EndGlobal
