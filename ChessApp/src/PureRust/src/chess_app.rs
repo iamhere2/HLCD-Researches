@@ -31,11 +31,11 @@ impl<'a> ChessApp<'a> {
     }
 
     // Delegated dependencies
-    pub(super) fn set_console_io(&mut self, console_io: Box<&'a dyn ConsoleIOInterface>) {
+    pub(super) fn set_console_io(&mut self, console_io: &'a Box<&'a dyn ConsoleIOInterface>) {
         self.console_ui.set_console_io(console_io);
     }
 
-    pub(super) fn set_file_io(&mut self, file_io: Box<&'a dyn FileIOInterface>) {
+    pub(super) fn set_file_io(&mut self, file_io: &'a Box<&'a dyn FileIOInterface>) {
         self.file_storage.set_file_io(file_io);
     }
 

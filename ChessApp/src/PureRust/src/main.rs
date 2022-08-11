@@ -13,10 +13,10 @@ fn main() {
 
     // Assign infrastructure dependencies
     let console_io = get_console_io();
-    chess_app.set_console_io(console_io);
+    chess_app.set_console_io(&console_io);
 
     let file_io = get_file_io();
-    chess_app.set_file_io(file_io);
+    chess_app.set_file_io(&file_io);
 
     // Run application
     let exit_code = chess_app.get_console_app().run();

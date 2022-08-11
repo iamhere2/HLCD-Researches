@@ -3,7 +3,7 @@ use crate::hlcd_infra::file_io::FileIOInterface;
 pub(super) struct FileStorage<'a> {
     
     // Owned dependencies
-    file_io: Option<Box<&'a dyn FileIOInterface>>
+    file_io: Option<&'a Box<&'a dyn FileIOInterface>>
 }
 
 impl<'a> FileStorage<'a> {
@@ -13,7 +13,7 @@ impl<'a> FileStorage<'a> {
     }
 
     // Owned dependencies
-    pub(super) fn set_file_io(&mut self, file_io: Box<&'a dyn FileIOInterface>) {
+    pub(super) fn set_file_io(&mut self, file_io: &'a Box<&'a dyn FileIOInterface>) {
         self.file_io = Some(file_io);
     }
 

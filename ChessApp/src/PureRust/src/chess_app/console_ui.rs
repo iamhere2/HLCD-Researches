@@ -7,7 +7,7 @@ use crate::hlcd_infra::console_io::ConsoleIOInterface;
 pub(super) struct ConsoleUI<'a> {
 
     // Owned dependencies
-    console_io: Option<Box<&'a dyn ConsoleIOInterface>>
+    console_io: Option<&'a Box<&'a dyn ConsoleIOInterface>>
 }
 
 impl<'a> ConsoleUI<'a> {
@@ -16,7 +16,7 @@ impl<'a> ConsoleUI<'a> {
     }
 
     // Owned dependencies
-    pub(super) fn set_console_io(&mut self, console_io: Box<&'a dyn ConsoleIOInterface>) {
+    pub(super) fn set_console_io(&mut self, console_io: &'a Box<&'a dyn ConsoleIOInterface>) {
         self.console_io = Some(console_io);
     }
 
