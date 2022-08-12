@@ -1,18 +1,25 @@
 use std::io::Write;
 
-use crate::hlcd_infra::console_app::ConsoleAppInterface;
-use crate::hlcd_infra::console_io::ConsoleIOInterface;
+// For provided interfaces
+use crate::hlcd_infra::console_app_interface::*;
+
+// For consumed interfaces
+use crate::hlcd_infra::console_io_interface::*;
+use super::storage_interface::*;
 
 // Component
+// Provides: ConsoleApp
+// Consumes: ConsoleUI, Storage
 pub(super) struct ConsoleUI<'a> {
 
     // Owned dependencies
-    console_io: Option<&'a Box<&'a dyn ConsoleIOInterface>>
+    console_io: Option<&'a Box<&'a dyn ConsoleIOInterface>>,
+    storage: Option<&'a Box<&'a dyn StorageInterface>>
 }
 
 impl<'a> ConsoleUI<'a> {
     pub(super) fn new() -> ConsoleUI<'a> {
-        ConsoleUI { console_io: None }
+        ConsoleUI { console_io: None, storage: None }
     }
 
     // Owned dependencies
@@ -23,6 +30,15 @@ impl<'a> ConsoleUI<'a> {
     fn get_console_io(&self) -> &Box<&dyn ConsoleIOInterface> {
         self.console_io.as_ref().unwrap()
     }
+
+    pub(super) fn set_storage(&mut self, storage: &'a Box<&'a dyn StorageInterface>) {
+        self.storage = Some(storage);
+    }
+
+    fn get_storage(&self) -> &Box<&dyn StorageInterface> {
+        self.storage.as_ref().unwrap()
+    }
+
 
     // Provided interfaces
     pub(super) fn get_console_app(&self) -> Box<&dyn ConsoleAppInterface> {

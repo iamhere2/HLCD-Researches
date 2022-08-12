@@ -1,9 +1,13 @@
-use crate::hlcd_infra::file_io::FileIOInterface;
+use crate::hlcd_infra::file_io_interface::*;
+use super::storage_interface::*;
 
+// Stateless component
+// Provides: StorageInterface
+// Consumes: FileIOInterface
 pub(super) struct FileStorage<'a> {
     
     // Owned dependencies
-    file_io: Option<&'a Box<&'a dyn FileIOInterface>>
+    file_io: Option<&'a Box<&'a dyn FileIOInterface>>,
 }
 
 impl<'a> FileStorage<'a> {
@@ -19,5 +23,27 @@ impl<'a> FileStorage<'a> {
 
     fn get_file_io(&self) -> &Box<&dyn FileIOInterface> {
         self.file_io.as_ref().unwrap()
+    }
+
+    // Provided own interfaces
+    pub(super) fn get_storage<'b>(&'b self) -> Box<&'b dyn StorageInterface>
+        where 'b: 'a {
+        Box::new(self as &'b dyn StorageInterface)
+    }
+}
+
+impl<'a> StorageInterface for FileStorage<'a> {
+
+    fn list_saved_games(&self) -> Result<Vec<String>, std::io::Error> {
+        _ = self.get_file_io().list_files("*.game");
+        todo!()
+    }
+
+    fn save_game(&self, gh: super::value_types::GameHistory, name: &str) -> Result<(), std::io::Error> {
+        todo!()
+    }
+
+    fn load_game(&self, name: &str) -> Result<super::value_types::GameHistory, std::io::Error> {
+        todo!()
     }
 }
