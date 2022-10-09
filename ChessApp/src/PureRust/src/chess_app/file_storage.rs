@@ -1,41 +1,45 @@
+use std::{cell::{RefCell, Ref, RefMut}, rc::Rc};
+
 use crate::hlcd_infra::file_io_interface::*;
 use super::storage_interface::*;
 
 // Stateless component
 // Provides: StorageInterface
 // Consumes: FileIOInterface
-pub(super) struct FileStorage<'a> {
+pub(super) struct FileStorage {
     
     // Owned dependencies
-    file_io: Option<&'a Box<&'a dyn FileIOInterface>>,
+    file_io: Rc<RefCell<dyn FileIOInterface>>,
 }
 
-impl<'a> FileStorage<'a> {
+impl FileStorage {
 
-    pub(super) fn new() -> FileStorage<'a> {
-        FileStorage { file_io: None }
+    // Constructor with dependencies
+    pub(super) fn new(
+        file_io: Rc<RefCell<dyn FileIOInterface>>
+        ) -> FileStorage {
+        FileStorage { file_io: file_io.clone() }
     }
 
-    // Owned dependencies
-    pub(super) fn set_file_io(&mut self, file_io: &'a Box<&'a dyn FileIOInterface>) {
-        self.file_io = Some(file_io);
+    // Owned dependencies access for internal usage
+    fn file_io(&self) -> Ref<dyn FileIOInterface> {
+        self.file_io.borrow()
     }
 
-    fn get_file_io(&self) -> &Box<&dyn FileIOInterface> {
-        self.file_io.as_ref().unwrap()
-    }
-
-    // Provided own interfaces
-    pub(super) fn get_storage<'b>(&'b self) -> Box<&'b dyn StorageInterface>
-        where 'b: 'a {
-        Box::new(self as &'b dyn StorageInterface)
+    fn file_io_mut(&self) -> RefMut<dyn FileIOInterface> {
+        self.file_io.borrow_mut()
     }
 }
 
-impl<'a> StorageInterface for FileStorage<'a> {
+// Provided own interfaces
+impl StorageProvider for FileStorage {
+    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn StorageInterface>> { it }
+}
+
+impl StorageInterface for FileStorage {
 
     fn list_saved_games(&self) -> Result<Vec<String>, std::io::Error> {
-        _ = self.get_file_io().list_files("*.game");
+        _ = self.file_io().list_files("*.game");
         todo!()
     }
 

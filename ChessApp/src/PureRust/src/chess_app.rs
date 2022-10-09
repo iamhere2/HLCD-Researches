@@ -3,6 +3,11 @@ mod storage_interface;
 mod file_storage;
 mod console_ui;
 
+use std::cell::Ref;
+use std::cell::RefCell;
+use std::cell::RefMut;
+use std::rc::Rc;
+
 use crate::hlcd_infra::console_app_interface::*;
 use crate::hlcd_infra::console_io_interface::*;
 use crate::hlcd_infra::file_io_interface::*;
@@ -10,12 +15,13 @@ use crate::hlcd_infra::file_io_interface::*;
 use console_ui::ConsoleUI;
 use file_storage::FileStorage;
 
-use self::storage_interface::StorageInterface;
+use self::storage_interface::StorageProvider;
 
-// Stateless root component
-// Provides: ConsoleApp
-// Consumes: ConsoleUI, FileIO
-pub struct ChessApp<'a> {
+// Root component
+// Provides: ConsoleApp (delegated)
+// Consumes: ConsoleIO, FileIO
+// Children: ConsoleUI, FileStorage
+pub struct ChessApp {
     // Owned state
     // -
 
@@ -23,52 +29,48 @@ pub struct ChessApp<'a> {
     // -
 
     // Children components
-    console_ui: Box<ConsoleUI<'a>>,
-    file_storage: Box<FileStorage<'a>>,
-
-    // Interfaces, provided by children
-    // file_storage_as_storage: Box<&'a dyn StorageInterface>
+    console_ui: Rc<RefCell<ConsoleUI>>,
+    file_storage: Rc<RefCell<FileStorage>>
 }
 
-impl<'a> ChessApp<'a> {
+impl ChessApp {
 
-    pub(super) fn new() -> ChessApp<'a> {
-        // Create children components:
-        //   - mutable to set dependencies
-        //   - boxed, to save in fields 
-        let mut console_ui = Box::new(ConsoleUI::new());
-        let mut file_storage = Box::new(FileStorage::new());
-
-        // Interfaces, provided by children
-        // let file_storage_as_storage = file_storage.get_storage();
+    // Constructor with dependencies
+    pub(super) fn new(
+        console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
+        file_io: Rc<RefCell<dyn FileIOInterface>>
+    ) -> ChessApp {
+        // Create children components
+        let file_storage = Rc::new(RefCell::new(FileStorage::new(Rc::clone(&file_io))));
+        let storage_interface = StorageProvider::get(Rc::clone(&file_storage));
+        let console_ui = Rc::new(RefCell::new(ConsoleUI::new(Rc::clone(&console_io), Rc::clone(&storage_interface))));
 
         // Instantiate this component and assign children
-        let chess_app = ChessApp { console_ui, file_storage /*, file_storage_as_storage */ };
-        
-        // Link children components to each other
-        ////////// ?????? console_ui.set_storage(&chess_app.file_storage_as_storage);
-        // -
+        let chess_app = ChessApp { console_ui, file_storage };
         
         chess_app
     }
 
-    // Dependencies, delegated to children
-    pub(super) fn set_console_io(&mut self, console_io: &'a Box<&'a dyn ConsoleIOInterface>) {
-        self.console_ui.set_console_io(console_io);
+    // Component accessors for internal usage
+    fn console_ui(&self) -> Ref<ConsoleUI> {
+        self.console_ui.borrow()
     }
 
-    pub(super) fn set_file_io(&mut self, file_io: &'a Box<&'a dyn FileIOInterface>) {
-        self.file_storage.set_file_io(file_io);
+    fn console_ui_mut(&self) -> RefMut<ConsoleUI> {
+        self.console_ui.borrow_mut()
     }
-
-    // Provided interfaces, delegated to children
-    pub(super) fn get_console_app(&self) -> Box<&dyn ConsoleAppInterface> {
-        self.console_ui.get_console_app()
-    }
-
-    // Owned provided interfaces
-    // -
-
+    
     // Owned dependencies
     // -
+}
+
+// Owned provided interfaces
+// -
+
+// Provided interfaces, delegated to children
+impl ConsoleAppProvider for ChessApp {
+    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn ConsoleAppInterface>> {
+        let x = Rc::clone(&it.borrow().console_ui);
+        ConsoleAppProvider::get(x)
+    }
 }

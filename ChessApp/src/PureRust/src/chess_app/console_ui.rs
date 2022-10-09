@@ -1,3 +1,5 @@
+use std::rc::Rc;
+use std::cell::{ Ref, RefCell, RefMut };
 use std::io::Write;
 
 // For provided interfaces
@@ -10,45 +12,48 @@ use super::storage_interface::*;
 // Component
 // Provides: ConsoleApp
 // Consumes: ConsoleUI, Storage
-pub(super) struct ConsoleUI<'a> {
+pub(super) struct ConsoleUI {
 
     // Owned dependencies
-    console_io: Option<&'a Box<&'a dyn ConsoleIOInterface>>,
-    storage: Option<&'a Box<&'a dyn StorageInterface>>
+    console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
+    storage: Rc<RefCell<dyn StorageInterface>>
 }
 
-impl<'a> ConsoleUI<'a> {
-    pub(super) fn new() -> ConsoleUI<'a> {
-        ConsoleUI { console_io: None, storage: None }
+impl ConsoleUI {
+    // Constructor with dependencies
+    pub(super) fn new(
+        console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
+        storage: Rc<RefCell<dyn StorageInterface>>) 
+    -> ConsoleUI {
+        ConsoleUI { console_io: console_io.clone(), storage: storage.clone() }
     }
 
-    // Owned dependencies
-    pub(super) fn set_console_io(&mut self, console_io: &'a Box<&'a dyn ConsoleIOInterface>) {
-        self.console_io = Some(console_io);
+    // Owned dependencies access, for internal use
+    fn console_io(&self) -> Ref<dyn ConsoleIOInterface> {
+        self.console_io.borrow()
     }
 
-    fn get_console_io(&self) -> &Box<&dyn ConsoleIOInterface> {
-        self.console_io.as_ref().unwrap()
+    fn console_io_mut(&self) -> RefMut<dyn ConsoleIOInterface> {
+        self.console_io.borrow_mut()
     }
 
-    pub(super) fn set_storage(&mut self, storage: &'a Box<&'a dyn StorageInterface>) {
-        self.storage = Some(storage);
+    fn storage(&self) -> Ref<dyn StorageInterface> {
+        self.storage.borrow()
     }
 
-    fn get_storage(&self) -> &Box<&dyn StorageInterface> {
-        self.storage.as_ref().unwrap()
-    }
-
-
-    // Provided interfaces
-    pub(super) fn get_console_app(&self) -> Box<&dyn ConsoleAppInterface> {
-        Box::new(self as &dyn ConsoleAppInterface)
+    fn storage_mut(&self) -> RefMut<dyn StorageInterface> {
+        self.storage.borrow_mut()
     }
 }
 
-impl<'a> ConsoleAppInterface for ConsoleUI<'a> {
+// Provided interface - implemented by itself
+impl ConsoleAppProvider for ConsoleUI {
+    fn get(it: Rc<RefCell<ConsoleUI>>) -> Rc<RefCell<dyn ConsoleAppInterface>> { it }
+}
+
+impl ConsoleAppInterface for ConsoleUI {
     fn run(&self) -> i32 {
-        _ = self.get_console_io().get_stdout().write_fmt(format_args!("Hello, World!"));
+        _ = self.console_io().get_stdout().write_fmt(format_args!("Hello, World!"));
         0
     }
 }

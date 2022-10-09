@@ -1,25 +1,20 @@
 mod hlcd_infra;
 mod chess_app;
 
-use std::process;
+use std::{process, rc::Rc, cell::RefCell};
 
 use chess_app::ChessApp;
-use hlcd_infra::{get_console_io, get_file_io};
+use hlcd_infra::{get_console_io, get_file_io, console_app_interface::ConsoleAppProvider};
 
 fn main() {
 
     // Create main app component
-    let mut chess_app = ChessApp::new();
-
-    // Assign infrastructure dependencies
     let console_io = get_console_io();
-    chess_app.set_console_io(&console_io);
-
     let file_io = get_file_io();
-    chess_app.set_file_io(&file_io);
+    let chess_app = Rc::new(RefCell::new(ChessApp::new(Rc::clone(&console_io), Rc::clone(&file_io))));
 
     // Run application
-    let exit_code = chess_app.get_console_app().run();
+    let exit_code = ConsoleAppProvider::get(chess_app).borrow().run();
 
     process::exit(exit_code);
 }
