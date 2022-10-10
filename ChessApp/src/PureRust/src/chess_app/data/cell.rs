@@ -1,43 +1,20 @@
-use std::{fmt::Display};
+use std::fmt::Display;
+use super::board;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
-pub enum Color {
-    Black,
-    White
-}
-
-impl Color {
-    fn invert(&self) -> Color {
-        if self == &Color::Black { Color:: White } else { Color::Black }
-    }
-}
-
-pub enum Figure {
-    Knight,
-    King,
-    Rook,
-    Bishop,
-    Queen,
-    Pawn
-}
-
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+#[readonly::make]
 pub struct Cell {
-    v: char,
-    h: u8
+    pub v: char,
+    pub h: u8
 }
 
 impl Cell {
-    pub const V_LEFT: char = 'A';
-    pub const V_RIGHT: char = 'H';
-    pub const H_BOTTOM: u8 = 1;
-    pub const H_TOP: u8 = 1;
 
     pub fn is_valid(v: char, h: u8) -> bool {
-        v >= Cell::V_LEFT && v <= Cell::V_RIGHT && h >= Cell::H_BOTTOM && h <= Cell::H_TOP
+        v >= board::V_LEFT && v <= board::V_RIGHT && h >= board::H_BOTTOM && h <= board::H_TOP
     }
 
-    pub fn new(v: char, h: u8) -> Cell {
+    pub fn at(v: char, h: u8) -> Cell {
         if !Cell::is_valid(v, h) { panic!("Invalid cell {v}{h}") };
         Cell {v, h}
     }
@@ -49,7 +26,7 @@ impl From<&str> for Cell {
         if cs.len() != 2 { panic!("Invalid cell {s}") };
         let v = cs[0];
         let h = cs[1];
-        Cell::new(v, h.to_digit(10).unwrap() as u8)
+        Cell::at(v, h.to_digit(10).unwrap() as u8)
     }
 }
 
@@ -59,14 +36,12 @@ impl Display for Cell {
     }
 }
 
-pub struct GameHistory { }
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_parce_cell() {
+    fn test_parse_cell() {
         let s = "A1";
         let c = Cell::from(s);
         assert_eq!(c.v, 'A');

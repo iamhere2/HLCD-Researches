@@ -1,5 +1,5 @@
 use std::{io::Error, rc::Rc, cell::RefCell};
-use super::data::concepts::GameHistory;
+use super::data::game_history::GameHistory;
 
 pub(super) trait StorageInterface {
     fn list_saved_games(&self) -> Result<Vec<String>, Error>;
