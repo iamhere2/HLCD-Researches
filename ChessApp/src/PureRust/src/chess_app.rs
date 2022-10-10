@@ -70,7 +70,6 @@ impl ChessApp {
 // Provided interfaces, delegated to children
 impl ConsoleAppProvider for ChessApp {
     fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn ConsoleAppInterface>> {
-        let x = Rc::clone(&it.borrow().console_ui);
-        ConsoleAppProvider::get(x)
+        ConsoleAppProvider::get(Rc::clone(&it.borrow().console_ui))
     }
 }
