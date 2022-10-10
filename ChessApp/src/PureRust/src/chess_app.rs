@@ -1,4 +1,7 @@
-mod value_types;
+#![allow(unused)]
+
+// Children modules
+mod data;
 mod storage_interface;
 mod file_storage;
 mod console_ui;
@@ -40,7 +43,7 @@ impl ChessApp {
         console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
         file_io: Rc<RefCell<dyn FileIOInterface>>
     ) -> ChessApp {
-        // Create children components
+        // Create & connect children components
         let file_storage = Rc::new(RefCell::new(FileStorage::new(Rc::clone(&file_io))));
         let storage_interface = StorageProvider::get(Rc::clone(&file_storage));
         let console_ui = Rc::new(RefCell::new(ConsoleUI::new(Rc::clone(&console_io), Rc::clone(&storage_interface))));

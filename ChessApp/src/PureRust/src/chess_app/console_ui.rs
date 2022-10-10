@@ -1,3 +1,10 @@
+// Children modules
+mod board_printer;
+mod command_cycle;
+mod command_parser;
+mod game_cmd_handler;
+mod turn_cmd_handler;
+
 use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::io::Write;

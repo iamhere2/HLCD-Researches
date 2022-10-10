@@ -43,11 +43,11 @@ impl StorageInterface for FileStorage {
         todo!()
     }
 
-    fn save_game(&self, gh: super::value_types::GameHistory, name: &str) -> Result<(), std::io::Error> {
+    fn save_game(&self, gh: super::data::concepts::GameHistory, name: &str) -> Result<(), std::io::Error> {
         todo!()
     }
 
-    fn load_game(&self, name: &str) -> Result<super::value_types::GameHistory, std::io::Error> {
+    fn load_game(&self, name: &str) -> Result<super::data::concepts::GameHistory, std::io::Error> {
         todo!()
     }
 }
