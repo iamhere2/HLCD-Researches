@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use super::board;
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 #[readonly::make]
 pub struct Cell {
     pub v: char,
@@ -20,6 +20,12 @@ impl Cell {
     }
 }
 
+impl std::fmt::Debug for Cell {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", self.v, self.h)
+    }
+}
+
 impl From<&str> for Cell {
     fn from(s: &str) -> Self {
         let cs: Vec<_> = s.chars().collect();
@@ -32,7 +38,7 @@ impl From<&str> for Cell {
 
 impl Display for Cell {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_fmt(format_args!("{}{}", self.v, self.h))
+        write!(f, "{}{}", self.v, self.h)
     }
 }
 

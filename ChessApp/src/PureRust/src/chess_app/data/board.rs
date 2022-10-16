@@ -21,17 +21,17 @@ pub struct BoardState {
 }
 
 impl BoardState {
-    fn get(&self, c: Cell) -> Option<(Figure, Color)> {
+    pub fn get(&self, c: Cell) -> Option<(Figure, Color)> {
         self.figures.get(&c).map(|&x| x)
     }
 
-    fn with(&self, f: Figure, col: Color, c: Cell) -> Self {
+    pub fn with(&self, f: Figure, col: Color, c: Cell) -> Self {
         let mut figures = self.figures.clone();
         figures.insert(c, (f, col));
         BoardState { figures }
     }
 
-    fn without(&self, c: Cell) -> Self {
+    pub fn without(&self, c: Cell) -> Self {
         let mut figures = self.figures.clone();
         figures.remove(&c);
         BoardState { figures }

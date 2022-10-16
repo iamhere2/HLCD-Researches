@@ -18,6 +18,7 @@ use crate::hlcd_infra::console_app_interface::*;
 use crate::hlcd_infra::console_io_interface::*;
 use board_printer::BoardPrinter;
 use board_printer_interface::BoardPrinterInterface;
+use enum_iterator::IntoEnumIterator;
 
 use super::data::board;
 use super::storage_interface::*;
@@ -46,6 +47,32 @@ impl ConsoleUI {
         let board_printer = Rc::new(RefCell::new(BoardPrinter::new(&console_io))); 
         ConsoleUI { console_io, storage, board_printer }
     }
+        
+    fn print_hello(&self) {
+        let mut con = RefCell::borrow_mut(&self.console_io);
+        con.set_background(ConsoleColor::Black);
+        con.set_foreground(ConsoleColor::Yellow);
+        
+        con.write("Hello, World! This is ChessApp, HLCD implementation with pure Rust!\n\n");
+    }
+
+    fn print_rainbow(&self) {
+        let mut con = RefCell::borrow_mut(&self.console_io);
+
+        for c in ConsoleColor::into_enum_iter() {
+            con.set_background(c);
+            con.write("  ");
+        }
+
+        con.set_background(ConsoleColor::Black);
+        con.write("\n");
+    }
+
+    fn print_board(&self) {
+        let b = board::classic_initial();
+        let printer = self.board_printer.borrow();
+        printer.print(b);
+    }
 }
 
 // Provided interface - implemented by itself
@@ -54,18 +81,10 @@ impl ConsoleAppProvider for ConsoleUI {
 }
 
 impl ConsoleAppInterface for ConsoleUI {
-    fn run(&mut self) -> i32 {
-        let b = board::classic_initial();
-        {
-        let con = self.console_io.borrow();
-        //con.set_background(ConsoleColor::Black);
-        //con.set_foreground(ConsoleColor::Yellow);
-        
-
-        con.write("Hello, World! This is ChessApp, HLCD implementation with pure Rust!\n\n");
-        } 
-        let printer = self.board_printer.borrow();
-        printer.print(b);
+    fn run(&self) -> i32 {
+        self.print_rainbow();
+        self.print_hello();
+        self.print_board();
         0
     }
 }

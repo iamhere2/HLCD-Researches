@@ -1,6 +1,7 @@
 use std::{rc::Rc, cell::RefCell};
+use enum_iterator::IntoEnumIterator;
 
-#[derive(Clone, Copy)]
+#[derive(Debug, IntoEnumIterator, PartialEq, Clone, Copy)]
 pub enum ConsoleColor {
     Black        = 0x0,
     Blue         = 0x1,
