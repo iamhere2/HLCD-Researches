@@ -42,9 +42,12 @@ mod tests {
 
     #[test]
     fn test_parse_cell() {
-        let s = "A1";
-        let c = Cell::from(s);
+        let c = Cell::from("A1");
         assert_eq!(c.v, 'A');
         assert_eq!(c.h, 1);
+
+        let c = Cell::from("E2");
+        assert_eq!(c.v, 'E');
+        assert_eq!(c.h, 2);
     }
 }
