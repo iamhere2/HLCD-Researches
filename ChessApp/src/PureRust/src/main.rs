@@ -8,13 +8,14 @@ use hlcd_infra::{get_console_io, get_file_io, console_app_interface::ConsoleAppP
 
 fn main() {
 
-    // Create main app component
+    // Main app component dependencies
     let console_io = get_console_io();
     let file_io = get_file_io();
+
+    // Create main app component
     let chess_app = Rc::new(RefCell::new(ChessApp::new(Rc::clone(&console_io), Rc::clone(&file_io))));
 
     // Run application
     let exit_code = ConsoleAppProvider::get(chess_app).borrow_mut().run();
-
     process::exit(exit_code);
 }

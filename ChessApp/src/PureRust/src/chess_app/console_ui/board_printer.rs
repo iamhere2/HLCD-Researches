@@ -18,6 +18,7 @@ impl BoardPrinter {
     }
 }
 
+#[rustfmt::skip]
 fn figure_to_str(f: Figure) -> String {
     match f {
         Figure::Knight => "Kn".to_string(),

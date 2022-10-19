@@ -1,8 +1,10 @@
 // Children modules
+mod data;
 mod board_printer;
 mod board_printer_interface;
 mod command_cycle;
 mod command_parser;
+mod command_parser_interfaces;
 mod game_cmd_handler;
 mod turn_cmd_handler;
 
