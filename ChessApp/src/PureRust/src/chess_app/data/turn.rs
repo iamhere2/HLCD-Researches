@@ -1,14 +1,10 @@
-use super::Cell;
+use super::{Cell, Figure};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Turn {
-    Move(MoveTurn)
-    // , other like Castling
-}
-
-#[readonly::make]
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub struct MoveTurn {
-    from: Cell,
-    to: Cell 
+    Move(Cell, Cell),
+    PawnTransform(Cell, Figure),
+    Draw,
+    Reject,
+    Castle(Cell)
 }

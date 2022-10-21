@@ -6,11 +6,11 @@ use nom::{
     branch::alt, 
     bytes::complete::{tag, tag_no_case}, 
     combinator::{map, recognize}, 
-    sequence::separated_pair, 
-    character::complete::{char, alpha1, multispace1, space1}, 
+    sequence::{separated_pair, tuple}, 
+    character::complete::{char, alpha1, multispace1, space1, one_of, space0}, 
     multi::many1};
 
-use crate::chess_app::data::{Figure, Color};
+use crate::chess_app::data::{Figure, Color, Cell, Turn};
 
 use super::{command_parser_interfaces::{
         CommandParserProvider, CommandParserInterface, Error
@@ -37,9 +37,16 @@ impl CommandParser {
         (input)
     }
 
+    fn cell(input: &str) -> IResult<&str, Cell> {
+        map(tuple((one_of("abcdefghABCDEFGH"), one_of("12345678"))),
+            |(v, h)| Cell::at(v.to_ascii_uppercase(), h.to_digit(10).unwrap() as u8))
+        (input)
+    }
+
     fn parse<'a>(&self, input: &'a str) -> IResult<&'a str, Command> {
         let ident = Self::ident;
         let color = Self::color;
+        let cell = Self::cell;
 
         let exit = map(tag_no_case("exit"), |_| Command::Exit);
         let list = map(tag_no_case("list"), |_| Command::ListGames);
@@ -52,7 +59,10 @@ impl CommandParser {
         let new = map(separated_pair(tag_no_case("new"), space1, color), 
             |(_, color)| Command::NewGame(color));
 
-        alt((exit, list, load, save, del, new))
+        let move_turn = map(tuple((cell, space0, char('-'), space0, cell)),
+            |(from, _, _, _, to)| Command::MakeTurn(Turn::Move(from, to))); 
+
+        alt((exit, list, load, save, del, new, move_turn))
         (input)
     }
 }
@@ -101,6 +111,8 @@ impl CommandParserInterface for CommandParser {
 
 #[cfg(test)]
 mod tests {
+    use crate::chess_app::data::Turn;
+
     use super::*;
 
     fn parse(s: &str) -> Result<Command, Error> {
@@ -115,6 +127,7 @@ mod tests {
         assert!(matches!(parse("NotACommand"), Err(Error(_))));
         assert_eq!(parse("load AAA"), Ok(Command::LoadGame("AAA".to_string())));
         assert_eq!(parse("new Black"), Ok(Command::NewGame(Color::Black)));
-
+        assert_eq!(parse("E2 - E4"), Ok(Command::MakeTurn(Turn::Move(Cell::at('E', 2), Cell::at('E', 4)))));
+        assert_eq!(parse("g3-h7"), Ok(Command::MakeTurn(Turn::Move(Cell::at('G', 3), Cell::at('H', 7)))));
     }
 }
