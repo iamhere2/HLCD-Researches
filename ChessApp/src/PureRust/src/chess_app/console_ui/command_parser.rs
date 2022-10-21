@@ -7,13 +7,15 @@ use nom::{
     bytes::complete::{tag, tag_no_case}, 
     combinator::{map, recognize}, 
     sequence::separated_pair, 
-    character::complete::{char, alpha1}, 
+    character::complete::{char, alpha1, multispace1, space1}, 
     multi::many1};
 
-use crate::chess_app::data::Figure;
+use crate::chess_app::data::{Figure, Color};
 
 use super::{command_parser_interfaces::{
-    CommandParserProvider, CommandParserInterface, Error}, data::command::Command
+        CommandParserProvider, CommandParserInterface, Error
+    }, 
+    data::command::Command
 };
 
 pub(super) struct CommandParser {
@@ -27,25 +29,30 @@ impl CommandParser {
     fn ident(input: &str) -> IResult<&str, &str> {
         recognize(many1(alpha1))(input)
     }
-    
+
+    fn color(input: &str) -> IResult<&str, Color> {
+        let white = map(tag_no_case("white"), |_| Color::White);
+        let black = map(tag_no_case("black"), |_| Color::Black);
+        alt((black, white))
+        (input)
+    }
 
     fn parse<'a>(&self, input: &'a str) -> IResult<&'a str, Command> {
+        let ident = Self::ident;
+        let color = Self::color;
+
         let exit = map(tag_no_case("exit"), |_| Command::Exit);
         let list = map(tag_no_case("list"), |_| Command::ListGames);
-        let load = map(separated_pair(tag_no_case("load"), char(' '), Self::ident), 
+        let load = map(separated_pair(tag_no_case("load"), space1, ident), 
             |(_, name)| Command::LoadGame(name.to_string()));
-        let save = map(separated_pair(tag_no_case("save"), char(' '), Self::ident), 
+        let save = map(separated_pair(tag_no_case("save"), space1, ident), 
             |(_, name)| Command::SaveGame(name.to_string()));
-        let del = map(separated_pair(tag_no_case("del"), char(' '), Self::ident), 
+        let del = map(separated_pair(tag_no_case("del"), space1, ident), 
             |(_, name)| Command::DeleteGame(name.to_string()));
+        let new = map(separated_pair(tag_no_case("new"), space1, color), 
+            |(_, color)| Command::NewGame(color));
 
-        alt((
-            exit,
-            list,
-            load,
-            save,
-            del
-        ))
+        alt((exit, list, load, save, del, new))
         (input)
     }
 }
@@ -107,6 +114,7 @@ mod tests {
         assert_eq!(parse("List"), Ok(Command::ListGames));
         assert!(matches!(parse("NotACommand"), Err(Error(_))));
         assert_eq!(parse("load AAA"), Ok(Command::LoadGame("AAA".to_string())));
+        assert_eq!(parse("new Black"), Ok(Command::NewGame(Color::Black)));
 
     }
 }
