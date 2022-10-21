@@ -116,7 +116,7 @@ mod tests {
     use super::*;
 
     fn parse(s: &str) -> Result<Command, Error> {
-        (Box::new(CommandParser::new()) as Box<dyn CommandParserInterface>).parse(s)
+        CommandParserInterface::parse(&CommandParser::new(), s)
     }
 
     #[test]
