@@ -1,3 +1,5 @@
+#![feature(io_error_more)]
+
 mod hlcd_infra;
 mod chess_app;
 
