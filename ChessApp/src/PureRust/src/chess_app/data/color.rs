@@ -1,6 +1,8 @@
 use std::ops::Not;
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+use strum::{EnumString, Display};
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy, EnumString, Display)]
 pub enum Color {
     Black,
     White

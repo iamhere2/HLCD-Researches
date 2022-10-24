@@ -1,5 +1,5 @@
 mod serialization;
-use serialization::*;
+use serialization::{serialize, deserialize, Error as SerdeError};
 
 use std::{cell::{RefCell, Ref, RefMut}, rc::Rc};
 
@@ -51,6 +51,12 @@ impl From<std::io::Error> for Error {
     }
 }
 
+impl From<SerdeError> for Error {
+    fn from(e: SerdeError) -> Self {
+        Error(format!("{}", e.0))
+    }
+}
+
 impl StorageInterface for FileStorage {
 
     fn list_saved_games(&self) -> Result<Vec<String>, Error> {
@@ -61,12 +67,14 @@ impl StorageInterface for FileStorage {
     fn save_game(&self, gh: GameHistory, color: Color, name: &str) -> Result<(), Error> {
         Ok(self.file_io().write_file(
             build_file_name(name).as_str(), 
-            serialize(gh, color).as_str())?
+            serialize(gh, color)?.as_str())?
         )
     }
 
-    fn load_game(&self, name: &str) -> Result<GameHistory, Error> {
-        todo!()
+    fn load_game(&self, name: &str) -> Result<(GameHistory, Color), Error> {
+        let content = self.file_io().read_file(
+            build_file_name(name).as_str())?;
+        Ok(deserialize(content.as_str())?)
     }
 }
 
