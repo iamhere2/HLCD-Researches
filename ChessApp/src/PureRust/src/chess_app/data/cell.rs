@@ -1,4 +1,5 @@
 use std::fmt::Display;
+
 use super::board;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
@@ -26,13 +27,18 @@ impl std::fmt::Debug for Cell {
     }
 }
 
-impl From<&str> for Cell {
-    fn from(s: &str) -> Self {
+#[derive(Debug)]
+pub struct ParseError(String);
+
+impl TryFrom<&str> for Cell {
+    type Error = ParseError;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         let cs: Vec<_> = s.chars().collect();
-        if cs.len() != 2 { panic!("Invalid cell {s}") };
+        if cs.len() != 2 { return Err(ParseError(format!("Invalid cell {s}"))); };
         let v = cs[0];
         let h = cs[1];
-        Cell::at(v, h.to_digit(10).unwrap() as u8)
+        Ok(Cell::at(v, h.to_digit(10).unwrap() as u8))
     }
 }
 
@@ -48,11 +54,11 @@ mod tests {
 
     #[test]
     fn test_parse_cell() {
-        let c = Cell::from("A1");
+        let c = Cell::try_from("A1").unwrap();
         assert_eq!(c.v, 'A');
         assert_eq!(c.h, 1);
 
-        let c = Cell::from("E2");
+        let c = Cell::try_from("E2").unwrap();
         assert_eq!(c.v, 'E');
         assert_eq!(c.h, 2);
     }

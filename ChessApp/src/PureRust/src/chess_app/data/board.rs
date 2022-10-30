@@ -36,6 +36,10 @@ impl BoardState {
         figures.remove(&c);
         BoardState { figures }
     }
+
+    pub fn figures(&self) -> &HashMap<Cell, (Figure, Color)> {
+        &self.figures
+    }
 }
 
 pub fn empty() -> BoardState {
