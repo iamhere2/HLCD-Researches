@@ -1,5 +1,9 @@
-use std::ops::Not;
+pub mod nom_parsing;
 
+#[cfg(test)]
+mod tests;
+
+use std::ops::Not;
 use strum::{EnumString, Display};
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Copy, EnumString, Display)]
@@ -16,15 +20,5 @@ impl Not for Color {
             Color::Black => Color::White,
             Color::White => Color::Black
         }
-    }
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_invert() {
-        assert_eq!(!Color::Black, Color::White);
-        assert_eq!(!Color::White, Color::Black);
     }
 }

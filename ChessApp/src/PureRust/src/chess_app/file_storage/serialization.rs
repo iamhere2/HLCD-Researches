@@ -16,18 +16,6 @@ impl From<serde_json::Error> for Error {
     }
 } 
 
-impl From<data::cell::ParseError> for Error {
-    fn from(e: data::cell::ParseError) -> Self {
-        Error(format!("Cell parse error. {:?}", e))
-    }
-} 
-
-impl From<data::turn::ParseError> for Error {
-    fn from(e: data::turn::ParseError) -> Self {
-        Error(format!("Turn parse error. {:?}", e))
-    }
-} 
-
 pub(super) fn serialize(game_history: GameHistory, player_color: Color) -> Result<String, Error> {
     let player_color = player_color.to_string();
     let game_history = storage_model::GameHistory::from(game_history);

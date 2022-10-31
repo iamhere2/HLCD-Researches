@@ -13,7 +13,7 @@ use nom::{
     character::complete::{char, alpha1, multispace1, space1, one_of, space0}, 
     multi::many1};
 
-use crate::chess_app::data::{Figure, Color, Cell, Turn};
+use crate::{chess_app::data::{Figure, Color, Cell, Turn}, nom_extensions::parseable::Parseable};
 
 use super::{command_parser_interfaces::{
         CommandParserProvider, CommandParserInterface, Error
@@ -33,23 +33,10 @@ impl CommandParser {
         recognize(many1(alpha1))(input)
     }
 
-    fn color(input: &str) -> IResult<&str, Color> {
-        let white = map(tag_no_case("white"), |_| Color::White);
-        let black = map(tag_no_case("black"), |_| Color::Black);
-        alt((black, white))
-        (input)
-    }
-
-    fn cell(input: &str) -> IResult<&str, Cell> {
-        map(tuple((one_of("abcdefghABCDEFGH"), one_of("12345678"))),
-            |(v, h)| Cell::at(v.to_ascii_uppercase(), h.to_digit(10).unwrap() as u8))
-        (input)
-    }
-
     fn parse<'a>(&self, input: &'a str) -> IResult<&'a str, Command> {
         let ident = Self::ident;
-        let color = Self::color;
-        let cell = Self::cell;
+        let color = Color::nom_parse;
+        let cell = Cell::nom_parse;
 
         let exit = map(tag_no_case("exit"), |_| Command::Exit);
         let list = map(tag_no_case("list"), |_| Command::ListGames);

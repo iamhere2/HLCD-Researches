@@ -1,6 +1,7 @@
 #![feature(io_error_more)]
 
 mod hlcd_infra;
+mod nom_extensions;
 mod chess_app;
 
 use std::{process, rc::Rc, cell::RefCell};
