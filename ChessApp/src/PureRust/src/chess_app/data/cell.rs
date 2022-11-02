@@ -38,10 +38,10 @@ impl Display for Cell {
 
 
 use crate::nom_extensions::parseable::{Parseable, ParseError};
-impl<'a> TryFrom<&'a str> for Cell {
+impl TryFrom<&str> for Cell {
     type Error = ParseError;
     
-    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         use nom_parsing;
         Parseable::parse(s)
     }
