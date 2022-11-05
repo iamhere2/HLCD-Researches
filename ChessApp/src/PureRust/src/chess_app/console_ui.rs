@@ -1,10 +1,8 @@
 // Children modules
 mod data;
 mod board_printer;
-mod board_printer_interface;
 mod command_cycle;
 mod command_parser;
-mod command_parser_interfaces;
 mod game_cmd_handler;
 mod turn_cmd_handler;
 
@@ -18,8 +16,8 @@ use crate::hlcd_infra::console_app_interface::*;
 
 // For consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
-use board_printer::BoardPrinter;
-use board_printer_interface::BoardPrinterInterface;
+use board_printer::component::BoardPrinter;
+use board_printer::interface::BoardPrinterInterface;
 use enum_iterator::IntoEnumIterator;
 
 use super::data::board;
