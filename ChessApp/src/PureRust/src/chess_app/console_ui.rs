@@ -11,29 +11,48 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::io::Write;
 
-// For provided interfaces
+// Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
 
-// For consumed interfaces
+// Data structures
+use super::data::board;
+
+// Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
 use board_printer::component::BoardPrinter;
 use board_printer::interface::BoardPrinterInterface;
 use enum_iterator::IntoEnumIterator;
-
-use super::data::board;
 use super::storage_interface::*;
+
+use self::board_printer::interface::BoardPrinterProvider;
+// Children components and interfaces
+use self::command_cycle::component::*;
+use self::command_parser::{component::*, interface::*};
+use self::game_cmd_handler::{component::*, interface::*};
+use self::turn_cmd_handler::{component::*, interface::*};
 
 // Component
 // Provides: ConsoleApp
 // Consumes: ConsoleUI, Storage
 pub(super) struct ConsoleUI {
 
-    // Owned dependencies
+    // Dependencies
     console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
     storage: Rc<RefCell<dyn StorageInterface>>,
 
     // Children components 
-    board_printer: Rc<RefCell<dyn BoardPrinterInterface>>
+    board_printer: Rc<RefCell<BoardPrinter>>,
+    command_cycle: Rc<RefCell<CommandCycle>>,
+    command_parser: Rc<RefCell<CommandParser>>,
+    turn_cmd_handler: Rc<RefCell<TurnCmdHandler>>,
+    game_cmd_handler: Rc<RefCell<GameCmdHandler>>,
+
+    // Children components' interfaces
+    board_printer_interface: Rc<RefCell<dyn BoardPrinterInterface>>,
+    command_parser_interface: Rc<RefCell<dyn CommandParserInterface>>,
+    command_cycle_console_app_interface: Rc<RefCell<dyn ConsoleAppInterface>>,
+    turn_cmd_handler_interface: Rc<RefCell<dyn TurnCmdHandlerInterface>>,
+    game_cmd_handler_interface: Rc<RefCell<dyn GameCmdHandlerInterface>>,
 }
 
 impl ConsoleUI {
@@ -44,47 +63,57 @@ impl ConsoleUI {
     -> ConsoleUI {
         let console_io = Rc::clone(&console_io); 
         let storage = Rc::clone(&storage);
-        let board_printer = Rc::new(RefCell::new(BoardPrinter::new(&console_io))); 
-        ConsoleUI { console_io, storage, board_printer }
-    }
-        
-    fn print_hello(&self) {
-        let mut con = RefCell::borrow_mut(&self.console_io);
-        con.set_background(ConsoleColor::Black);
-        con.set_foreground(ConsoleColor::Yellow);
-        
-        con.write("Hello, World! This is ChessApp, HLCD implementation with pure Rust!\n\n");
-    }
 
-    fn print_rainbow(&self) {
-        let mut con = RefCell::borrow_mut(&self.console_io);
+        let board_printer = Rc::new(RefCell::new(BoardPrinter::new(
+            &console_io
+        )));
+        let board_printer_interface = BoardPrinterProvider::get(Rc::clone(&board_printer));
 
-        for c in ConsoleColor::into_enum_iter() {
-            con.set_background(c);
-            con.write("  ");
+        let command_parser = Rc::new(RefCell::new(CommandParser::new()));
+        let command_parser_interface = CommandParserProvider::get(Rc::clone(&command_parser));
+
+        let turn_cmd_handler = Rc::new(RefCell::new(TurnCmdHandler::new())); 
+        let turn_cmd_handler_interface = TurnCmdHandlerProvider::get(Rc::clone(&turn_cmd_handler));
+
+        let game_cmd_handler = Rc::new(RefCell::new(GameCmdHandler::new())); 
+        let game_cmd_handler_interface = GameCmdHandlerProvider::get(Rc::clone(&game_cmd_handler));
+
+        let command_cycle = Rc::new(RefCell::new(CommandCycle::new(
+            &console_io,
+            &command_parser_interface,
+            &turn_cmd_handler_interface,
+            &game_cmd_handler_interface,
+            &board_printer_interface
+        ))); 
+
+        let command_cycle_console_app_interface = ConsoleAppProvider::get(Rc::clone(&command_cycle));
+
+        ConsoleUI { 
+            console_io, 
+            storage, 
+            board_printer, 
+            command_cycle, 
+            command_parser,
+            turn_cmd_handler,
+            game_cmd_handler,
+            board_printer_interface,
+            command_parser_interface,
+            game_cmd_handler_interface,
+            turn_cmd_handler_interface,
+            command_cycle_console_app_interface
         }
-
-        con.set_background(ConsoleColor::Black);
-        con.write("\n");
-    }
-
-    fn print_board(&self) {
-        let b = board::classic_initial();
-        let printer = self.board_printer.borrow();
-        printer.print(b);
     }
 }
 
-// Provided interface - implemented by itself
+// Provided interface - implemented partly by itself, partly - delegated
 impl ConsoleAppProvider for ConsoleUI {
-    fn get(it: Rc<RefCell<ConsoleUI>>) -> Rc<RefCell<dyn ConsoleAppInterface>> { it }
+    fn get(it: Rc<RefCell<ConsoleUI>>) -> Rc<RefCell<dyn ConsoleAppInterface>> { 
+        ConsoleAppProvider::get(Rc::clone(&it.borrow().command_cycle)) 
+    }
 }
 
 impl ConsoleAppInterface for ConsoleUI {
     fn run(&self) -> i32 {
-        self.print_rainbow();
-        self.print_hello();
-        self.print_board();
-        0
+        self.command_cycle_console_app_interface.borrow().run()
     }
 }

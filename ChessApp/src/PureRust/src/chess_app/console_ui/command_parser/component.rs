@@ -18,7 +18,7 @@ use super::{interface::{
     super::data::command::Command
 };
 
-pub(super) struct CommandParser {
+pub struct CommandParser {
 }
 
 impl CommandParser {
@@ -36,6 +36,7 @@ impl CommandParser {
         let cell = Cell::nom_parse;
 
         let exit = map(tag_no_case("exit"), |_| Command::Exit);
+        let help = map(tag_no_case("help"), |_| Command::Help);
         let list = map(tag_no_case("list"), |_| Command::ListGames);
 
         let load = map(separated_pair(tag_no_case("load"), space1, ident), 
@@ -53,7 +54,7 @@ impl CommandParser {
         let turn = map(Turn::nom_parse,
             |turn| Command::MakeTurn(turn)); 
 
-        alt((exit, list, load, save, del, new, turn))
+        alt((exit, help, list, load, save, del, new, turn))
         (input)
     }
 }

@@ -1,4 +1,4 @@
-use std::io::stdin;
+use std::io::{stdin, stdout, Write};
 
 use colored::{Colorize, Color};
 use super::console_io_interface::*;
@@ -53,10 +53,11 @@ impl ConsoleIOInterface for Console {
     fn write(&self, s: &str) {
         let bg = Color::from(self.background_color);
         let fg = Color::from(self.foreground_color);
-        print!("{}", s.on_color(bg).color(fg))
+        print!("{}", s.on_color(bg).color(fg));
     }
 
     fn read_line(&self) -> String {
+        stdout().flush().unwrap();
         let mut s = String::new();
         stdin().read_line(&mut s).unwrap();
         s

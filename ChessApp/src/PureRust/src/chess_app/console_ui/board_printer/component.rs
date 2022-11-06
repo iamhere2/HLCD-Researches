@@ -3,7 +3,7 @@ use std::{rc::Rc, cell::{RefCell, Ref}, io::{Stdout, Write}};
 use crate::{hlcd_infra::console_io_interface::{ConsoleIOInterface, ConsoleColor}, chess_app::data::{Color, board, Figure}};
 use crate::chess_app::data::{BoardState, Cell};
 
-use super::interface::BoardPrinterInterface;
+use super::interface::{BoardPrinterInterface, BoardPrinterProvider};
 
 // Component
 // Provides: BoardPrinter
@@ -15,6 +15,12 @@ pub struct BoardPrinter {
 impl BoardPrinter {
     pub fn new(console_io: &Rc<RefCell<dyn ConsoleIOInterface>>) -> BoardPrinter {
         BoardPrinter { console_io: Rc::clone(console_io) }
+    }
+}
+
+impl BoardPrinterProvider for BoardPrinter {
+    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn BoardPrinterInterface>> {
+        it
     }
 }
 

@@ -4,6 +4,7 @@ use crate::chess_app::data::{Color, Turn};
 pub enum Command {
     MakeTurn(Turn),
     Exit,
+    Help,
     NewGame(Color),
     ListGames,
     LoadGame(String),
