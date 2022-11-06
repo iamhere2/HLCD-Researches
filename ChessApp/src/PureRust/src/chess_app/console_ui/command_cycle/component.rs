@@ -108,23 +108,21 @@ impl ConsoleAppInterface for CommandCycle {
                     return 0
                 },
                 Ok(Command::Help) => {
-                    self.print(ConsoleColor::White, format!("{}\n", parser.borrow().get_help()).as_str())
+                    self.print(ConsoleColor::White, format!("{}\n", parser.get_help()))
                 },
                 Ok(Command::MakeTurn(t)) => {
                         let turn_cmd_handler = RefCell::borrow(&self.turn_cmd_handler);
-                        match turn_cmd_handler.make_turn(t) {
-                            Ok(_) => {},
-                            Err(e) => self.print_error("Wrong turn", e),
+                        if let Err(e) = turn_cmd_handler.make_turn(t) {
+                            self.print_error(format!("Invalid turn {t}"), e)
                         }
                     },
                 Ok(cmd) => {
                     let game_cmd_handler = RefCell::borrow(&self.game_cmd_handler);
-                    match game_cmd_handler.execute(cmd) {
-                        Ok(_) => {},
-                        Err(e) => self.print_error("Error while executing command", e)
+                    if let Err(e) = game_cmd_handler.execute(cmd.clone()) {
+                        self.print_error(format!("Error while executing command {}", &cmd), e)
                     }
                 },
-                Err(e) => self.print_error("Invalid command/turn. Enter 'help' for help", e)
+                Err(e) => self.print_error("Unknown command/turn. Enter 'help' for help", e)
             }
         }
     }

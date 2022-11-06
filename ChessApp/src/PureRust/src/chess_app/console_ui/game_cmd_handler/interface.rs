@@ -3,7 +3,7 @@ use std::{rc::Rc, cell::RefCell, fmt::Display, error::Error};
 use crate::chess_app::console_ui::data::command::Command;
 
 #[derive(Clone, Debug)]
-pub struct CmdError(String);
+pub struct CmdError(pub String);
 
 impl Error for CmdError {
 }

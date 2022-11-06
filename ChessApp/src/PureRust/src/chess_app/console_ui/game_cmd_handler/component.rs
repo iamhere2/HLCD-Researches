@@ -18,7 +18,7 @@ impl GameCmdHandlerProvider for GameCmdHandler {
 
 impl GameCmdHandlerInterface for GameCmdHandler {
     fn execute(&self, cmd: crate::chess_app::console_ui::data::command::Command) -> Result<(), CmdError> {
-        println!("GameCmdHandler: Not implemented!");
-        Ok(())
+        Err(CmdError("GameCmdHandler: Not implemented!".to_string()))
+        //Ok(())
     }
 }
