@@ -16,6 +16,7 @@ use crate::hlcd_infra::console_app_interface::*;
 
 // Data structures
 use super::data::board;
+use super::game_flow::interface::GameFlowInterface;
 
 // Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
@@ -58,8 +59,9 @@ pub(super) struct ConsoleUI {
 impl ConsoleUI {
     // Constructor with dependencies
     pub(super) fn new(
-        console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-        storage: Rc<RefCell<dyn StorageInterface>>) 
+        console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
+        storage: &Rc<RefCell<dyn StorageInterface>>,
+        game_flow: &Rc<RefCell<dyn GameFlowInterface>>) 
     -> ConsoleUI {
         let console_io = Rc::clone(&console_io); 
         let storage = Rc::clone(&storage);
@@ -75,7 +77,7 @@ impl ConsoleUI {
         let turn_cmd_handler = Rc::new(RefCell::new(TurnCmdHandler::new())); 
         let turn_cmd_handler_interface = TurnCmdHandlerProvider::get(Rc::clone(&turn_cmd_handler));
 
-        let game_cmd_handler = Rc::new(RefCell::new(GameCmdHandler::new())); 
+        let game_cmd_handler = Rc::new(RefCell::new(GameCmdHandler::new(&console_io, &game_flow, &storage))); 
         let game_cmd_handler_interface = GameCmdHandlerProvider::get(Rc::clone(&game_cmd_handler));
 
         let command_cycle = Rc::new(RefCell::new(CommandCycle::new(
