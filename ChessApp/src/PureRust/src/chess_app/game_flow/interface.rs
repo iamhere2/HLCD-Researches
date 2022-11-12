@@ -1,4 +1,4 @@
-use std::{rc::Rc, cell::RefCell};
+use std::{rc::Rc, cell::RefCell, sync::{Arc, Mutex}};
 
 use crate::chess_app::data::{GameHistory, Color};
 
@@ -11,6 +11,6 @@ pub trait GameFlowInterface {
     fn start_from(&mut self, game_history: GameHistory, player_a_color: Color);
 } 
 
-pub trait GameFlowProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn GameFlowInterface>>;
+pub trait GameFlowAsyncProvider {
+    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn GameFlowInterface>>;
 } 

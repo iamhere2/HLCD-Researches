@@ -10,6 +10,7 @@ use std::borrow::BorrowMut;
 use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::io::Write;
+use std::sync::{Arc, Mutex};
 
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
@@ -61,7 +62,7 @@ impl ConsoleUI {
     pub(super) fn new(
         console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
         storage: &Rc<RefCell<dyn StorageInterface>>,
-        game_flow: &Rc<RefCell<dyn GameFlowInterface>>) 
+        game_flow: &Arc<Mutex<dyn GameFlowInterface>>) 
     -> ConsoleUI {
         let console_io = Rc::clone(&console_io); 
         let storage = Rc::clone(&storage);

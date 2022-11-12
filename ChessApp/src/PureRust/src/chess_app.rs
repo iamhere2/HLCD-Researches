@@ -27,7 +27,7 @@ use file_storage::FileStorage;
 
 use self::ai_player::AiPlayer;
 use self::game_flow::component::GameFlow;
-use self::game_flow::interface::GameFlowProvider;
+use self::game_flow::interface::GameFlowAsyncProvider;
 use self::interactive_player_adapter::InteractivePlayerAdapter;
 use self::player_interface::AsyncPlayerProvider;
 use self::rules_engine::component::RulesEngine;
@@ -71,17 +71,17 @@ impl ChessApp {
         let rules_engine_interface = RulesEngineAsyncProvider::get(Arc::clone(&rules_engine));
 
 
-        let game_flow = Rc::new(RefCell::new(GameFlow::new(
+        let game_flow = GameFlow::new(
             &ai_player_interface,
             &interactive_player_adapter_interface,
             &rules_engine_interface
-        )));
-        let game_flow_interface = GameFlowProvider::get(Rc::clone(&game_flow));
+        );
+        let game_flow_interface = GameFlowAsyncProvider::get(Arc::clone(&game_flow));
         
         let console_ui = Rc::new(RefCell::new(ConsoleUI::new(
             &Rc::clone(&console_io), 
             &Rc::clone(&storage_interface),
-            &Rc::clone(&game_flow_interface)
+            &Arc::clone(&game_flow_interface)
         )));
 
         // Instantiate this component and assign children

@@ -1,11 +1,11 @@
-use std::{rc::Rc, cell::RefCell, sync::{Arc, Mutex, MutexGuard}};
+use std::{rc::Rc, cell::RefCell, sync::{Arc, Mutex, MutexGuard}, ops::DerefMut};
 
 use cancellation::{CancellationTokenSource, CancellationToken};
 use lazy_static::__Deref;
 
 use crate::chess_app::{data::{GameHistory, Color}, player_interface::{AsyncPlayerInterface}, rules_engine::interface::RulesEngineInterface};
 
-use super::interface::{GameFlowProvider, GameFlowInterface};
+use super::interface::{GameFlowAsyncProvider, GameFlowInterface};
 
 pub struct GameFlow {
     player_a: Arc<Mutex<dyn AsyncPlayerInterface + Send + Sync>>,
@@ -13,7 +13,8 @@ pub struct GameFlow {
     rules_engine: Arc<Mutex<dyn RulesEngineInterface + Send + Sync>>,
     game_history: Option<GameHistory>,
     player_a_color: Option<Color>,
-    cancellation_token_source: Option<CancellationTokenSource>
+    cancellation_token_source: Option<CancellationTokenSource>,
+    this: Option<Arc<Mutex<Self>>>
 }
 
 impl GameFlow {
@@ -21,21 +22,29 @@ impl GameFlow {
         player_a: &Arc<Mutex<dyn AsyncPlayerInterface + Send + Sync>>,
         player_b: &Arc<Mutex<dyn AsyncPlayerInterface + Send + Sync>>,
         rules_engine: &Arc<Mutex<dyn RulesEngineInterface + Send + Sync>>
-    ) -> Self {
-        GameFlow {
-            player_a: Arc::clone(player_a),
-            player_b: Arc::clone(player_b),
-            rules_engine: Arc::clone(rules_engine),
-            game_history: None,
-            player_a_color: None,
-            cancellation_token_source: None
-        }
+    ) -> Arc<Mutex<Self>> {
+        let this = Arc::new(Mutex::new(
+            GameFlow {
+                player_a: Arc::clone(player_a),
+                player_b: Arc::clone(player_b),
+                rules_engine: Arc::clone(rules_engine),
+                game_history: None,
+                player_a_color: None,
+                cancellation_token_source: None,
+                this: None
+        }));
+        let mut x = this.lock().unwrap();
+        let mut x = x.deref_mut();
+        x.this = Some(Arc::clone(&this));
+        Arc::clone(&this)
     }
 
-    fn turn_cycle(this: Arc<Mutex<Self>>, player_a_color: Color, cancellation_token: &Arc<CancellationToken>) {
+    fn turn_cycle(this: &Arc<Mutex<Self>>, player_a_color: Color, cancellation_token: &Arc<CancellationToken>) {
         let mut turn_color = player_a_color;
 
-        let this = this.lock().unwrap().deref();
+        let mut this = this.lock().unwrap();
+        let mut this = this.deref_mut();
+
         while !this.game_history.as_ref().unwrap().is_finished() && !cancellation_token.is_canceled() {
             let history = this.game_history.as_ref().unwrap();
             let state = history.states().last().unwrap();
@@ -62,8 +71,8 @@ impl GameFlow {
     }
 }
 
-impl GameFlowProvider for GameFlow {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn GameFlowInterface>> {
+impl GameFlowAsyncProvider for GameFlow {
+    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn GameFlowInterface>> {
         it
     }
 }
@@ -99,8 +108,10 @@ impl GameFlowInterface for GameFlow {
         let cts = CancellationTokenSource::new();
         self.cancellation_token_source = Some(cts);
 
-        let ct = self.cancellation_token_source.unwrap().token();
+        let ct = self.cancellation_token_source.as_ref().unwrap().token();
+        let ct = Arc::clone(ct);
+        let this = Arc::clone(self.this.as_ref().unwrap());
 
-        std::thread::spawn(move || Self::turn_cycle(self, player_a_color, ct));
+        std::thread::spawn(move || Self::turn_cycle(&this, player_a_color, &ct));
     }
 }
