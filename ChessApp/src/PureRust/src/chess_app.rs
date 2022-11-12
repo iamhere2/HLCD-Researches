@@ -8,6 +8,8 @@ mod rules_engine;
 mod file_storage;
 mod console_ui;
 mod game_flow;
+mod ai_player;
+mod interactive_player_adapter;
 
 use std::cell::Ref;
 use std::cell::RefCell;

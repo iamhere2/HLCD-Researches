@@ -1,8 +1,6 @@
 use std::{rc::Rc, cell::RefCell};
 
-use crate::chess_app::data::{BoardState, Turn};
-
-pub struct RuleViolation(pub String);
+use crate::chess_app::data::{BoardState, Turn, RuleViolation};
 
 pub trait RulesEngineInterface {
     fn check(&self, bs: BoardState, turn: Turn) -> Result<(), RuleViolation>;
