@@ -32,25 +32,30 @@ impl GameFlow {
         }
     }
 
-    fn turn_cycle(&mut self, player_a_color: Color, cancellation_token: &Arc<CancellationToken>) {
+    fn turn_cycle(this: Arc<Mutex<Self>>, player_a_color: Color, cancellation_token: &Arc<CancellationToken>) {
         let mut turn_color = player_a_color;
 
-        while !self.game_history.unwrap().is_finished() && !cancellation_token.is_canceled() {
-            let history = self.game_history.unwrap();
+        let this = this.lock().unwrap().deref();
+        while !this.game_history.as_ref().unwrap().is_finished() && !cancellation_token.is_canceled() {
+            let history = this.game_history.as_ref().unwrap();
             let state = history.states().last().unwrap();
-            let player = (if turn_color == player_a_color { self.player_a } else { self.player_b }).lock().unwrap().deref();
+            let player = if turn_color == player_a_color { &this.player_a } else { &this.player_b };
+            let player = player.lock().unwrap();
+            let player = player.deref();
 
             let turn = player.next_turn_sync(&state);
 
             if cancellation_token.is_canceled() { break };
 
-            let rules_engine = self.rules_engine.lock().unwrap().deref();
+            let rules_engine = this.rules_engine.lock().unwrap();
+            let rules_engine = rules_engine.deref();
+
             let violation = rules_engine.check(state.clone(), turn);
             if let Err(violation) = violation {
-                player.rule_violation_sender().send(violation);
+                player.rule_violation_notification_sync(violation);
             } else {
                 let next_state = rules_engine.apply(state.clone(), turn).unwrap();
-                self.game_history = Some(history.with(turn, next_state, false));
+                this.game_history = Some(history.with(turn, next_state, false));
                 turn_color = !turn_color;
             }
         }
@@ -83,7 +88,7 @@ impl GameFlowInterface for GameFlow {
     fn start_from(&mut self, game_history: GameHistory, player_a_color: Color) {
         if game_history.is_finished() { panic!("Can't continue finished game") };
 
-        if let Some(cts) = self.cancellation_token_source {
+        if let Some(cts) = &self.cancellation_token_source {
             cts.cancel();
             self.cancellation_token_source = None
         }
@@ -94,8 +99,8 @@ impl GameFlowInterface for GameFlow {
         let cts = CancellationTokenSource::new();
         self.cancellation_token_source = Some(cts);
 
-        let ct = cts.token();
+        let ct = self.cancellation_token_source.unwrap().token();
 
-        std::thread::spawn(move || self.turn_cycle(player_a_color, ct));
+        std::thread::spawn(move || Self::turn_cycle(self, player_a_color, ct));
     }
 }

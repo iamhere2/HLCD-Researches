@@ -1,13 +1,13 @@
-use std::sync::Mutex;
+use std::sync::{Mutex, Arc};
 use std::{rc::Rc, cell::RefCell};
 use std::sync::mpsc::{Receiver, Sender};
 
 use super::data::{BoardState, Turn, RuleViolation};
 
 pub trait AsyncPlayerInterface {
-    fn next_turn_request_sender(&self) -> Mutex<Sender<BoardState>>;
-    fn next_turn_receiver(&self) -> Mutex<Receiver<Turn>>;
-    fn rule_violation_sender(&self) -> Mutex<Sender<RuleViolation>>;
+    fn next_turn_request_sender(&self) -> Arc<Mutex<Sender<BoardState>>>;
+    fn next_turn_receiver(&self) -> Arc<Mutex<Receiver<Turn>>>;
+    fn rule_violation_sender(&self) -> Arc<Mutex<Sender<RuleViolation>>>;
 
     // Sync wrappers
     fn next_turn_sync(&self, bs: &BoardState) -> Turn {
@@ -20,5 +20,5 @@ pub trait AsyncPlayerInterface {
 }
 
 pub(super) trait AsyncPlayerProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn AsyncPlayerInterface>>; 
+    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn AsyncPlayerInterface + Send + Sync>>; 
 }

@@ -1,28 +1,28 @@
-use std::{cell::RefCell, rc::Rc, sync::{mpsc::{Sender, Receiver, channel}, Mutex}};
+use std::{cell::RefCell, rc::Rc, sync::{mpsc::{Sender, Receiver, channel}, Mutex, Arc}};
 
 use super::{player_interface::{AsyncPlayerProvider, AsyncPlayerInterface}, data::{BoardState, Turn, RuleViolation}};
 
-struct InteractivePlayerAdapter {
-    request_sender: Mutex<Sender<BoardState>>,
-    request_receiver: Mutex<Receiver<BoardState>>,
-    turn_sender: Mutex<Sender<Turn>>,
-    turn_receiver: Mutex<Receiver<Turn>>,
-    rv_sender: Mutex<Sender<RuleViolation>>,
-    rv_receiver: Mutex<Receiver<RuleViolation>>
+pub(super) struct InteractivePlayerAdapter {
+    request_sender: Arc<Mutex<Sender<BoardState>>>,
+    request_receiver: Arc<Mutex<Receiver<BoardState>>>,
+    turn_sender: Arc<Mutex<Sender<Turn>>>,
+    turn_receiver: Arc<Mutex<Receiver<Turn>>>,
+    rv_sender: Arc<Mutex<Sender<RuleViolation>>>,
+    rv_receiver: Arc<Mutex<Receiver<RuleViolation>>>
 }
 
 impl InteractivePlayerAdapter {
-    fn new() -> InteractivePlayerAdapter {
+    pub(super) fn new() -> InteractivePlayerAdapter {
         let (request_sender, request_receiver) = channel::<BoardState>();
         let (turn_sender, turn_receiver) = channel::<Turn>();
         let (rv_sender, rv_receiver) = channel::<RuleViolation>();
         InteractivePlayerAdapter { 
-            request_sender: Mutex::new(request_sender), 
-            request_receiver: Mutex::new(request_receiver), 
-            turn_sender: Mutex::new(turn_sender), 
-            turn_receiver: Mutex::new(turn_receiver),
-            rv_sender: Mutex::new(rv_sender),
-            rv_receiver: Mutex::new(rv_receiver)
+            request_sender: Arc::new(Mutex::new(request_sender)), 
+            request_receiver: Arc::new(Mutex::new(request_receiver)), 
+            turn_sender: Arc::new(Mutex::new(turn_sender)), 
+            turn_receiver: Arc::new(Mutex::new(turn_receiver)),
+            rv_sender: Arc::new(Mutex::new(rv_sender)),
+            rv_receiver: Arc::new(Mutex::new(rv_receiver))
         }
     }
 
@@ -41,21 +41,21 @@ impl InteractivePlayerAdapter {
 }
 
 impl AsyncPlayerProvider for InteractivePlayerAdapter {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn AsyncPlayerInterface>> {
+    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn AsyncPlayerInterface + Send + Sync>> {
         it
     }
 }
 
 impl AsyncPlayerInterface for InteractivePlayerAdapter {
-    fn next_turn_request_sender(&self) -> Mutex<Sender<BoardState>> {
-        self.request_sender
+    fn next_turn_request_sender(&self) -> Arc<Mutex<Sender<BoardState>>> {
+        Arc::clone(&self.request_sender)
     }
 
-    fn next_turn_receiver(&self) -> Mutex<Receiver<Turn>> {
-        self.turn_receiver
+    fn next_turn_receiver(&self) -> Arc<Mutex<Receiver<Turn>>> {
+        Arc::clone(&self.turn_receiver)
     }
 
-    fn rule_violation_sender(&self) -> Mutex<Sender<RuleViolation>> {
-        self.rv_sender
+    fn rule_violation_sender(&self) -> Arc<Mutex<Sender<RuleViolation>>> {
+        Arc::clone(&self.rv_sender)
     }
 }

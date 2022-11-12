@@ -47,7 +47,6 @@ pub(super) struct ConsoleUI {
     command_parser: Rc<RefCell<CommandParser>>,
     turn_cmd_handler: Rc<RefCell<TurnCmdHandler>>,
     game_cmd_handler: Rc<RefCell<GameCmdHandler>>,
-    interactive_player_adapter: 
 
     // Children components' interfaces
     board_printer_interface: Rc<RefCell<dyn BoardPrinterInterface>>,
