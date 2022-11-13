@@ -2,10 +2,14 @@
 use std::borrow::Borrow;
 use std::cell::{RefCell, Ref, RefMut};
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 use enum_iterator::IntoEnumIterator;
+use lazy_static::__Deref;
 
 use crate::chess_app::console_ui::data::command::Command;
+use crate::chess_app::data::Color;
+use crate::chess_app::interactive_player_adapter::interface::InteractivePlayerAdapterInterface;
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::{ConsoleAppProvider, ConsoleAppInterface};
 
@@ -27,7 +31,8 @@ pub struct CommandCycle {
     command_parser: Rc<RefCell<dyn CommandParserInterface>>,
     turn_cmd_handler: Rc<RefCell<dyn TurnCmdHandlerInterface>>,
     game_cmd_handler: Rc<RefCell<dyn GameCmdHandlerInterface>>,
-    board_printer: Rc<RefCell<dyn BoardPrinterInterface>>
+    board_printer: Rc<RefCell<dyn BoardPrinterInterface>>,
+    interactive_player_adapter: Arc<Mutex<dyn InteractivePlayerAdapterInterface + Send + Sync>>
 }
 
 impl ConsoleAppProvider for CommandCycle {
@@ -40,14 +45,16 @@ impl CommandCycle {
         command_parser: &Rc<RefCell<dyn CommandParserInterface>>,
         turn_cmd_handler: &Rc<RefCell<dyn TurnCmdHandlerInterface>>,
         game_cmd_handler: &Rc<RefCell<dyn GameCmdHandlerInterface>>,
-        board_printer: &Rc<RefCell<dyn BoardPrinterInterface>>
+        board_printer: &Rc<RefCell<dyn BoardPrinterInterface>>,
+        interactive_player_adapter: &Arc<Mutex<dyn InteractivePlayerAdapterInterface + Send + Sync>>
     ) -> Self {
         Self { 
             console_io: Rc::clone(console_io),
             command_parser: Rc::clone(command_parser),
             turn_cmd_handler: Rc::clone(turn_cmd_handler),
             game_cmd_handler: Rc::clone(game_cmd_handler),
-            board_printer: Rc::clone(board_printer)
+            board_printer: Rc::clone(board_printer),
+            interactive_player_adapter: Arc::clone(&interactive_player_adapter)
         }
     }
 
@@ -92,6 +99,21 @@ impl ConsoleAppInterface for CommandCycle {
         self.print(ConsoleColor::White, "\n");
 
         loop {
+            dbg!("Looking for board/request...");
+            {
+                let player_adapter = self.interactive_player_adapter.lock().unwrap();
+                let player_adapter = player_adapter.deref();
+                let board = player_adapter.board_state();
+
+                if let Some(board) = board {
+                    dbg!("board found");
+                    let printer = RefCell::borrow(&self.board_printer);
+                    printer.print(board);
+                } else {
+                    dbg!("board not found");
+                }
+            }
+
             self.print(ConsoleColor::Yellow, "> ");
             
             let cmd_str = {
@@ -112,7 +134,7 @@ impl ConsoleAppInterface for CommandCycle {
                 },
                 Ok(Command::MakeTurn(t)) => {
                         let turn_cmd_handler = RefCell::borrow(&self.turn_cmd_handler);
-                        if let Err(e) = turn_cmd_handler.make_turn(t) {
+                        if let Err(e) = turn_cmd_handler.make_turn(dbg!(t)) {
                             self.print_error(format!("Invalid turn {t}"), e)
                         }
                     },

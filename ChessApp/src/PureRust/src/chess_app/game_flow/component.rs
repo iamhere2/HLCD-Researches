@@ -46,15 +46,24 @@ impl GameFlow {
         let mut this = this.deref_mut();
 
         while !this.game_history.as_ref().unwrap().is_finished() && !cancellation_token.is_canceled() {
+            dbg!(turn_color);
+            dbg!(player_a_color);
             let history = this.game_history.as_ref().unwrap();
             let state = history.states().last().unwrap();
             let player = if turn_color == player_a_color { &this.player_a } else { &this.player_b };
             let player = player.lock().unwrap();
             let player = player.deref();
 
-            let turn = player.next_turn_sync(&state);
-
             if cancellation_token.is_canceled() { break };
+
+            dbg!("making turn request");
+            let turn = player.next_turn_sync(&state);
+            if let Err(timeout) = turn {
+                dbg!("timeout!");
+                continue;
+            }
+
+            let turn = turn.unwrap();
 
             let rules_engine = this.rules_engine.lock().unwrap();
             let rules_engine = rules_engine.deref();
@@ -98,10 +107,12 @@ impl GameFlowInterface for GameFlow {
         if game_history.is_finished() { panic!("Can't continue finished game") };
 
         if let Some(cts) = &self.cancellation_token_source {
+            dbg!("Cancelling old game...");
             cts.cancel();
             self.cancellation_token_source = None
         }
 
+        dbg!("New game creating...");
         self.game_history = Some(game_history);
         self.player_a_color = Some(player_a_color);
 

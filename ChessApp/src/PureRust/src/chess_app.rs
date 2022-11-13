@@ -8,7 +8,7 @@ mod rules_engine;
 mod file_storage;
 mod console_ui;
 mod game_flow;
-mod ai_player;
+mod async_ai_player;
 mod interactive_player_adapter;
 
 use std::cell::Ref;
@@ -25,10 +25,11 @@ use crate::hlcd_infra::file_io_interface::*;
 use console_ui::ConsoleUI;
 use file_storage::FileStorage;
 
-use self::ai_player::AiPlayer;
+use self::async_ai_player::AsyncAiPlayer;
 use self::game_flow::component::GameFlow;
 use self::game_flow::interface::GameFlowAsyncProvider;
-use self::interactive_player_adapter::InteractivePlayerAdapter;
+use self::interactive_player_adapter::{component::*, interface::*};
+use self::interactive_player_adapter::interface::InteractivePlayerAdapterAsyncProvider;
 use self::player_interface::AsyncPlayerProvider;
 use self::rules_engine::component::RulesEngine;
 use self::rules_engine::interface::RulesEngineAsyncProvider;
@@ -37,7 +38,7 @@ use self::storage_interface::StorageProvider;
 // Root component
 // Provides: ConsoleApp (delegated)
 // Consumes: ConsoleIO, FileIO
-// Children: ConsoleUI, FileStorage
+// Children: ConsoleUI, FileStorage, AiPlayer, GameFlow, InteractivePlayerAdapter, RulesEngine
 pub struct ChessApp {
     // Owned state
     // -
@@ -61,19 +62,19 @@ impl ChessApp {
         let file_storage = Rc::new(RefCell::new(FileStorage::new(Rc::clone(&file_io))));
         let storage_interface = StorageProvider::get(Rc::clone(&file_storage));
 
-        let ai_player = Arc::new(Mutex::new(AiPlayer::new()));
+        let ai_player = Arc::new(Mutex::new(AsyncAiPlayer::new()));
         let ai_player_interface = AsyncPlayerProvider::get(Arc::clone(&ai_player));
 
         let interactive_player_adapter = Arc::new(Mutex::new(InteractivePlayerAdapter::new()));
-        let interactive_player_adapter_interface = AsyncPlayerProvider::get(Arc::clone(&interactive_player_adapter));
+        let interactive_player_adapter_interface = InteractivePlayerAdapterAsyncProvider::get(Arc::clone(&interactive_player_adapter));
+        let interactive_player_adapter_player_interface = AsyncPlayerProvider::get(Arc::clone(&interactive_player_adapter));
 
         let rules_engine = Arc::new(Mutex::new(RulesEngine::new()));
         let rules_engine_interface = RulesEngineAsyncProvider::get(Arc::clone(&rules_engine));
 
-
         let game_flow = GameFlow::new(
+            &interactive_player_adapter_player_interface,
             &ai_player_interface,
-            &interactive_player_adapter_interface,
             &rules_engine_interface
         );
         let game_flow_interface = GameFlowAsyncProvider::get(Arc::clone(&game_flow));
@@ -81,7 +82,8 @@ impl ChessApp {
         let console_ui = Rc::new(RefCell::new(ConsoleUI::new(
             &Rc::clone(&console_io), 
             &Rc::clone(&storage_interface),
-            &Arc::clone(&game_flow_interface)
+            &Arc::clone(&game_flow_interface),
+            &Arc::clone(&interactive_player_adapter_interface)
         )));
 
         // Instantiate this component and assign children

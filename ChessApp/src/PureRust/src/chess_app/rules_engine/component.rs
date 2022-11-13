@@ -16,11 +16,12 @@ impl RulesEngine {
 
 impl RulesEngineInterface for RulesEngine {
     fn check(&self, bs: BoardState, turn: Turn) -> Result<(), RuleViolation> {
-        todo!()
+        Ok(())
     }
 
     fn apply(&self, bs: BoardState, turn: Turn) -> Result<BoardState, RuleViolation> {
-        todo!()
+        dbg!("Applying turn...");
+        Ok(bs)
     }
 }
 
