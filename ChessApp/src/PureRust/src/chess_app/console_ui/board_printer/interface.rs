@@ -4,7 +4,7 @@ use crate::chess_app::data::board::BoardState;
 use super::super::data::*;
 
 pub trait BoardPrinterInterface {
-    fn print(&self, board: BoardState);
+    fn print(&self, board: &BoardState);
 }
 
 pub trait BoardPrinterProvider {

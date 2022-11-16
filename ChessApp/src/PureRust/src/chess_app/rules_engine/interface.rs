@@ -1,4 +1,4 @@
-use std::{rc::Rc, cell::RefCell, sync::{Mutex, Arc}};
+use std::{rc::Rc, cell::RefCell};
 
 use crate::chess_app::data::{BoardState, Turn, RuleViolation};
 
@@ -9,8 +9,4 @@ pub trait RulesEngineInterface {
 
 pub trait RulesEngineProvider {
     fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn RulesEngineInterface>>; 
-}
-
-pub trait RulesEngineAsyncProvider {
-    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn RulesEngineInterface + Send + Sync>>; 
 }

@@ -57,7 +57,7 @@ fn reset_colors(con: &mut dyn ConsoleIOInterface) {
 
 impl BoardPrinterInterface for BoardPrinter {
 
-    fn print(&self, board: BoardState) {
+    fn print(&self, board: &BoardState) {
 
         let mut con = RefCell::borrow_mut(&self.console_io);
 

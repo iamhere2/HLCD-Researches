@@ -2,14 +2,13 @@
 use std::borrow::Borrow;
 use std::cell::{RefCell, Ref, RefMut};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
 
 use enum_iterator::IntoEnumIterator;
-use lazy_static::__Deref;
 
 use crate::chess_app::console_ui::data::command::Command;
 use crate::chess_app::data::Color;
-use crate::chess_app::interactive_player_adapter::interface::InteractivePlayerAdapterInterface;
+
+use crate::chess_app::game_flow::interface::GameFlowInterface;
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::{ConsoleAppProvider, ConsoleAppInterface};
 
@@ -32,7 +31,7 @@ pub struct CommandCycle {
     turn_cmd_handler: Rc<RefCell<dyn TurnCmdHandlerInterface>>,
     game_cmd_handler: Rc<RefCell<dyn GameCmdHandlerInterface>>,
     board_printer: Rc<RefCell<dyn BoardPrinterInterface>>,
-    interactive_player_adapter: Arc<Mutex<dyn InteractivePlayerAdapterInterface + Send + Sync>>
+    game_flow: Rc<RefCell<dyn GameFlowInterface>>
 }
 
 impl ConsoleAppProvider for CommandCycle {
@@ -46,7 +45,7 @@ impl CommandCycle {
         turn_cmd_handler: &Rc<RefCell<dyn TurnCmdHandlerInterface>>,
         game_cmd_handler: &Rc<RefCell<dyn GameCmdHandlerInterface>>,
         board_printer: &Rc<RefCell<dyn BoardPrinterInterface>>,
-        interactive_player_adapter: &Arc<Mutex<dyn InteractivePlayerAdapterInterface + Send + Sync>>
+        game_flow: &Rc<RefCell<dyn GameFlowInterface>>
     ) -> Self {
         Self { 
             console_io: Rc::clone(console_io),
@@ -54,7 +53,7 @@ impl CommandCycle {
             turn_cmd_handler: Rc::clone(turn_cmd_handler),
             game_cmd_handler: Rc::clone(game_cmd_handler),
             board_printer: Rc::clone(board_printer),
-            interactive_player_adapter: Arc::clone(&interactive_player_adapter)
+            game_flow: Rc::clone(&game_flow)
         }
     }
 
@@ -101,9 +100,8 @@ impl ConsoleAppInterface for CommandCycle {
         loop {
             dbg!("Looking for board/request...");
             {
-                let player_adapter = self.interactive_player_adapter.lock().unwrap();
-                let player_adapter = player_adapter.deref();
-                let board = player_adapter.board_state();
+                let game_flow = RefCell::borrow(&self.game_flow);
+                let board = game_flow.game_history().map(|h| h.states().last().unwrap());
 
                 if let Some(board) = board {
                     dbg!("board found");

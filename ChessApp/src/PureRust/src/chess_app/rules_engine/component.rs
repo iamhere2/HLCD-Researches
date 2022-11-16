@@ -1,8 +1,7 @@
-use std::{cell::RefCell, rc::Rc, sync::{Arc, Mutex}};
+use std::{cell::RefCell, rc::Rc};
 
 use crate::chess_app::data::{Turn, RuleViolation, BoardState};
-
-use super::interface::{RulesEngineInterface, RulesEngineProvider, RulesEngineAsyncProvider};
+use super::interface::*;
 
 pub struct RulesEngine {
 
@@ -27,12 +26,6 @@ impl RulesEngineInterface for RulesEngine {
 
 impl RulesEngineProvider for RulesEngine {
     fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn RulesEngineInterface>> {
-        it
-    }
-}
-
-impl RulesEngineAsyncProvider for RulesEngine {
-    fn get(it: Arc<Mutex<Self>>) -> Arc<Mutex<dyn RulesEngineInterface + Send + Sync>> {
         it
     }
 }

@@ -1,6 +1,6 @@
-use std::{rc::Rc, cell::RefCell, sync::{Arc, Mutex}};
+use std::{rc::Rc, cell::RefCell};
 
-use crate::{hlcd_infra::console_io_interface::ConsoleIOInterface, chess_app::{storage_interface::StorageInterface, game_flow::interface::GameFlowInterface, console_ui::data::command::Command}};
+use crate::{hlcd_infra::console_io_interface::*, chess_app::{storage_interface::*, game_flow::interface::*, console_ui::data::command::Command}};
 
 use super::interface::*;
 
@@ -9,19 +9,19 @@ use super::interface::*;
 pub struct GameCmdHandler {
     // Dependencies
     console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-    game_flow: Arc<Mutex<dyn GameFlowInterface>>,
+    game_flow: Rc<RefCell<dyn GameFlowInterface>>,
     storage: Rc<RefCell<dyn StorageInterface>>
 } 
 
 impl GameCmdHandler {
     pub fn new(
         console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
-        game_flow: &Arc<Mutex<dyn GameFlowInterface>>,
+        game_flow: &Rc<RefCell<dyn GameFlowInterface>>,
         storage: &Rc<RefCell<dyn StorageInterface>>,
     ) -> GameCmdHandler {
         GameCmdHandler {  
             console_io: Rc::clone(console_io),
-            game_flow: Arc::clone(game_flow),
+            game_flow: Rc::clone(game_flow),
             storage: Rc::clone(storage)
         }
     }
@@ -42,7 +42,7 @@ impl GameCmdHandlerInterface for GameCmdHandler {
             Command::NewGame(c) => {
                 dbg!("New game");
                 dbg!(c);
-                self.game_flow.lock().unwrap().new_game(c);
+                RefCell::borrow_mut(&self.game_flow).new_game(c);
             },
             Command::ListGames => todo!(),
             Command::LoadGame(_) => todo!(),

@@ -10,7 +10,6 @@ use std::borrow::BorrowMut;
 use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::io::Write;
-use std::sync::{Arc, Mutex};
 use enum_iterator::IntoEnumIterator;
 
 // Provided interfaces
@@ -19,11 +18,11 @@ use crate::hlcd_infra::console_app_interface::*;
 // Data structures
 use super::data::board;
 use super::game_flow::interface::*;
+use super::rules_engine::interface::RulesEngineInterface;
 
 // Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
-use super::storage_interface::*;
-use super::interactive_player_adapter::interface::*;
+use super::{storage_interface::*};
 
 // Children components and interfaces
 use self::command_cycle::component::*;
@@ -40,7 +39,10 @@ pub(super) struct ConsoleUI {
     // Dependencies
     console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
     storage: Rc<RefCell<dyn StorageInterface>>,
-    interactive_player_adapter: Arc<Mutex<dyn InteractivePlayerAdapterInterface>>,
+    rules_engine: Rc<RefCell<dyn RulesEngineInterface>>,
+    game_flow: Rc<RefCell<dyn GameFlowInterface>>,
+    flow_play: Rc<RefCell<dyn FlowPlayInterface>>,
+
 
     // Children components 
     board_printer: Rc<RefCell<BoardPrinter>>,
@@ -62,12 +64,16 @@ impl ConsoleUI {
     pub(super) fn new(
         console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
         storage: &Rc<RefCell<dyn StorageInterface>>,
-        game_flow: &Arc<Mutex<dyn GameFlowInterface>>,
-        interactive_player_adapter: &Arc<Mutex<dyn InteractivePlayerAdapterInterface + Sync + Send>>
+        game_flow: &Rc<RefCell<dyn GameFlowInterface>>,
+        flow_play: &Rc<RefCell<dyn FlowPlayInterface>>,
+        rules_engine: &Rc<RefCell<dyn RulesEngineInterface>>
     ) 
     -> ConsoleUI {
         let console_io = Rc::clone(&console_io); 
         let storage = Rc::clone(&storage);
+        let rules_engine = Rc::clone(&rules_engine);
+        let game_flow = Rc::clone(&game_flow);
+        let flow_play = Rc::clone(&flow_play);
 
         let board_printer = Rc::new(RefCell::new(BoardPrinter::new(
             &console_io
@@ -77,9 +83,7 @@ impl ConsoleUI {
         let command_parser = Rc::new(RefCell::new(CommandParser::new()));
         let command_parser_interface = CommandParserProvider::get(Rc::clone(&command_parser));
 
-        let interactive_player_adapter = Arc::clone(interactive_player_adapter);
-
-        let turn_cmd_handler = Rc::new(RefCell::new(TurnCmdHandler::new(&interactive_player_adapter))); 
+        let turn_cmd_handler = Rc::new(RefCell::new(TurnCmdHandler::new(&rules_engine, &flow_play))); 
         let turn_cmd_handler_interface = TurnCmdHandlerProvider::get(Rc::clone(&turn_cmd_handler));
 
         let game_cmd_handler = Rc::new(RefCell::new(GameCmdHandler::new(&console_io, &game_flow, &storage))); 
@@ -91,7 +95,7 @@ impl ConsoleUI {
             &turn_cmd_handler_interface,
             &game_cmd_handler_interface,
             &board_printer_interface,
-            &interactive_player_adapter
+            &game_flow
         ))); 
 
         let command_cycle_console_app_interface = ConsoleAppProvider::get(Rc::clone(&command_cycle));
@@ -109,7 +113,9 @@ impl ConsoleUI {
             game_cmd_handler_interface,
             turn_cmd_handler_interface,
             command_cycle_console_app_interface,
-            interactive_player_adapter
+            game_flow,
+            flow_play,
+            rules_engine
         }
     }
 }
