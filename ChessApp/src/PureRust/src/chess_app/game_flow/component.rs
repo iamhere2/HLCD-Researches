@@ -73,9 +73,11 @@ impl FlowPlayInterface for GameFlow {
         let state = history.states().last().unwrap();
         let player = self.next_player_color.unwrap();
 
-        rules_engine.check(state, player, t)?;
         let new_state = rules_engine.apply(&state, player, t)?;
+
         self.next_player_color = Some(!player);
+        self.game_history = Some(history.with(t, new_state.clone(), false));
+
         Ok(new_state)
     }
 }
