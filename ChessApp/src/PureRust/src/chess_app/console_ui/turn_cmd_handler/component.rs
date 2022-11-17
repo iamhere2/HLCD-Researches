@@ -31,7 +31,8 @@ impl TurnCmdHandlerProvider for TurnCmdHandler {
 impl TurnCmdHandlerInterface for TurnCmdHandler {
     fn make_turn(&self, turn: Turn) -> Result<(), TurnError> {
         dbg!("Making turn...");
-        self.flow_play_interface.borrow().make_turn(turn);
-        Ok(())
+        self.flow_play_interface.borrow_mut().make_turn(turn)
+            .map(|_| ())
+            .map_err(|rv| TurnError::RuleViolation(rv))
     }
 }

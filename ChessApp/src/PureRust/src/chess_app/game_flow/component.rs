@@ -1,6 +1,6 @@
 use std::{rc::Rc, cell::RefCell, ops::DerefMut};
 
-use crate::chess_app::{data::{GameHistory, Color, Turn, BoardState}, player_interface::*, rules_engine::interface::*};
+use crate::chess_app::{data::{GameHistory, Color, Turn, BoardState, RuleViolation}, player_interface::*, rules_engine::{interface::*, self}};
 
 use super::interface::*;
 
@@ -9,6 +9,7 @@ pub struct GameFlow {
     rules_engine: Rc<RefCell<dyn RulesEngineInterface>>,
     game_history: Option<GameHistory>,
     player_a_color: Option<Color>,
+    next_player_color: Option<Color>
 }
 
 impl GameFlow {
@@ -20,7 +21,8 @@ impl GameFlow {
             player_b: Rc::clone(player_b),
             rules_engine: Rc::clone(rules_engine),
             game_history: None,
-            player_a_color: None
+            player_a_color: None,
+            next_player_color: None
         }
     }
 }
@@ -60,11 +62,20 @@ impl GameFlowInterface for GameFlow {
         dbg!("New game creating...");
         self.game_history = Some(game_history);
         self.player_a_color = Some(player_a_color);
+        self.next_player_color = Some(player_a_color);
     }
 }
 
 impl FlowPlayInterface for GameFlow {
-    fn make_turn(&self, t: Turn) -> BoardState {
-        todo!()
+    fn make_turn(&mut self, t: Turn) -> Result<BoardState, RuleViolation> {
+        let rules_engine = RefCell::borrow(&self.rules_engine);
+        let history = self.game_history.as_ref().expect("Game not started");
+        let state = history.states().last().unwrap();
+        let player = self.next_player_color.unwrap();
+
+        rules_engine.check(state, player, t)?;
+        let new_state = rules_engine.apply(&state, player, t)?;
+        self.next_player_color = Some(!player);
+        Ok(new_state)
     }
 }

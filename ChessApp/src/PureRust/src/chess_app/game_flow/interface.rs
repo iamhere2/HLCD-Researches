@@ -1,6 +1,6 @@
 use std::{rc::Rc, cell::RefCell};
 
-use crate::chess_app::data::{GameHistory, Color, BoardState, Turn};
+use crate::chess_app::data::{GameHistory, Color, BoardState, Turn, RuleViolation};
 
 pub trait GameFlowInterface {
     fn game_history(&self) -> Option<&GameHistory>;
@@ -16,7 +16,7 @@ pub trait GameFlowProvider {
 } 
 
 pub trait FlowPlayInterface {
-    fn make_turn(&self, t: Turn) -> BoardState;
+    fn make_turn(&mut self, t: Turn) -> Result<BoardState, RuleViolation>;
 } 
 
 pub trait FlowPlayProvider {

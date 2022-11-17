@@ -19,5 +19,8 @@
         "terminal.ansiRed":"#FB543F",
         "terminal.ansiWhite":"#A89984",
         "terminal.ansiYellow":"#AAAA40"
-    }
+    },
+    "lldb.dbgconfig": {
+    },
+    "lldb.showDisassembly": "never"
 }

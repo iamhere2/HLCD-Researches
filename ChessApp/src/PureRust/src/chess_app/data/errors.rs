@@ -1,15 +1,16 @@
 use super::{Turn, BoardState, Color};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[readonly::make]
 pub struct RuleViolation {
-    board_state: BoardState,
-    player_color: Color,
-    turn: Turn,
-    rule_violation: String
+    pub board_state: BoardState,
+    pub player_color: Color,
+    pub turn: Turn,
+    pub rule_violation: String
 }
 
 impl RuleViolation {
-    fn new(board_state: BoardState, player_color: Color, turn: Turn, rule_violation: String) -> RuleViolation {
+    pub fn new(board_state: BoardState, player_color: Color, turn: Turn, rule_violation: String) -> RuleViolation {
         RuleViolation { board_state, player_color, turn, rule_violation }
     }
 }

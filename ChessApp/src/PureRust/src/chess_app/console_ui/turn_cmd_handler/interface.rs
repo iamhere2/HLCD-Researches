@@ -2,10 +2,13 @@ use std::{rc::Rc, cell::RefCell, error::Error, fmt::Display};
 
 use strum::Display;
 
-use crate::chess_app::data::Turn;
+use crate::chess_app::data::{Turn, RuleViolation};
 
 #[derive(Clone, Debug)]
-pub struct TurnError(String);
+pub enum TurnError {
+    RuleViolation(RuleViolation),
+    Other(String)
+}
 
 impl Error for TurnError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
@@ -15,7 +18,11 @@ impl Error for TurnError {
 
 impl Display for TurnError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+        let s = match self {
+            TurnError::RuleViolation(rv) => rv.rule_violation.to_string(),
+            TurnError::Other(s) => s.to_string(),
+        };
+        write!(f, "{s}")
     }
 }
 
