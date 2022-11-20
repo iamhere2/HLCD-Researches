@@ -1,0 +1,13 @@
+[package]
+name = "hlcd_infra"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+colored = "2.0.0"
+wildmatch = "2.1.1"
+enum-iterator = "0.8.1"
