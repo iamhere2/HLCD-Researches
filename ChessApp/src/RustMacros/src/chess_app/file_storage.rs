@@ -6,20 +6,22 @@ use std::{cell::{RefCell, Ref, RefMut}, rc::Rc};
 use crate::hlcd_infra::file_io_interface::*;
 use super::{storage_interface::*, data::{GameHistory, Color}};
 
+pub(super) type FileStorageRef = Rc<RefCell<FileStorage>>;
+
 // Stateless component
 // Provides: StorageInterface
 // Consumes: FileIOInterface
 pub(super) struct FileStorage {
     
     // Owned dependencies
-    file_io: Rc<RefCell<dyn FileIOInterface>>,
+    file_io: FileIORef,
 }
 
 impl FileStorage {
 
     // Constructor with dependencies
     pub(super) fn new(
-        file_io: Rc<RefCell<dyn FileIOInterface>>
+        file_io: FileIORef
     ) -> FileStorage {
         FileStorage { file_io: file_io.clone() }
     }
@@ -36,7 +38,7 @@ impl FileStorage {
 
 // Provided own interfaces
 impl StorageProvider for FileStorage {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn StorageInterface>> { it }
+    fn get(it: Rc<RefCell<Self>>) -> StorageRef { it }
 }
 
 const EXT: &str = "chess";

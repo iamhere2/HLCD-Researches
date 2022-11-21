@@ -14,10 +14,10 @@ use console_io::*;
 use console_io_interface::*;
 use file_io_interface::*;
 
-pub fn get_file_io() -> Rc<RefCell<dyn FileIOInterface>> {
+pub fn get_file_io() -> FileIORef {
     Rc::new(RefCell::new(FileIO::new()))
 }
 
-pub fn get_console_io() -> Rc<RefCell<dyn ConsoleIOInterface>> {
+pub fn get_console_io() -> ConsoleIORef {
     Rc::new(RefCell::new(Console::new()))
 }

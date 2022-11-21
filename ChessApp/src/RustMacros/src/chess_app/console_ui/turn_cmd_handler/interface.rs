@@ -1,7 +1,5 @@
-use std::{rc::Rc, cell::RefCell, error::Error, fmt::Display};
-
+use std::{error::Error, fmt::Display};
 use strum::Display;
-
 use crate::chess_app::data::{Turn, RuleViolation};
 
 #[derive(Clone, Debug)]
@@ -26,11 +24,9 @@ impl Display for TurnError {
     }
 }
 
-
-pub trait TurnCmdHandlerInterface {
-    fn make_turn(&self, turn: Turn) -> Result<(), TurnError>;
+hlcd::define! {
+    interface TurnCmdHandler {
+        fn make_turn(&self, turn: Turn) -> Result<(), TurnError>;
+    }
 }
 
-pub trait TurnCmdHandlerProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn TurnCmdHandlerInterface>>; 
-}

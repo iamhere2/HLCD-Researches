@@ -13,7 +13,7 @@ impl AiPlayer {
 }
 
 impl SyncPlayerProvider for AiPlayer {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn SyncPlayerInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> SyncPlayerRef {
         it
     }
 }

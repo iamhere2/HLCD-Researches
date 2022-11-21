@@ -1,4 +1,4 @@
-use std::{rc::Rc, cell::RefCell, fmt::Display};
+use std::fmt::Display;
 use super::{super::data::*, super::data::command::Command};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -13,11 +13,9 @@ impl Display for Error {
     }
 }
 
-pub trait CommandParserInterface {
-    fn parse(&self, s: &str) -> Result<Command, Error>;
-    fn get_help(&self) -> String;
-}
-
-pub trait CommandParserProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn CommandParserInterface>>; 
+hlcd::define! {
+    interface CommandParser {
+        fn parse(&self, s: &str) -> Result<Command, Error>;
+        fn get_help(&self) -> String;
+    }
 }

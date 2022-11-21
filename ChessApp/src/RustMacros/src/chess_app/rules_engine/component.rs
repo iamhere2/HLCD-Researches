@@ -32,7 +32,7 @@ impl RulesEngineInterface for RulesEngine {
 }
 
 impl RulesEngineProvider for RulesEngine {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn RulesEngineInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> RulesEngineRef {
         it
     }
 }

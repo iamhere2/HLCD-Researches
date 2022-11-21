@@ -17,12 +17,12 @@ use crate::hlcd_infra::console_app_interface::*;
 
 // Data structures
 use super::data::board;
-use super::game_flow::interface::*;
-use super::rules_engine::interface::RulesEngineInterface;
 
 // Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
-use super::{storage_interface::{*, self}};
+use super::storage_interface::{*, self};
+use super::game_flow::interface::*;
+use super::rules_engine::interface::*;
 
 // Children components and interfaces
 use self::command_cycle::component::*;
@@ -31,18 +31,20 @@ use self::command_parser::{component::*, interface::*};
 use self::game_cmd_handler::{component::*, interface::*};
 use self::turn_cmd_handler::{component::*, interface::*};
 
+
+pub(super) type ConsoleUIRef = Rc<RefCell<ConsoleUI>>; 
+
 // Component
 // Provides: ConsoleApp
 // Consumes: ConsoleUI, Storage
 pub(super) struct ConsoleUI {
 
     // Dependencies
-    console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
+    console_io: ConsoleIORef,
     storage: StorageRef,
-    rules_engine: Rc<RefCell<dyn RulesEngineInterface>>,
-    game_flow: Rc<RefCell<dyn GameFlowInterface>>,
-    flow_play: Rc<RefCell<dyn FlowPlayInterface>>,
-
+    rules_engine: RulesEngineRef,
+    game_flow: GameFlowRef,
+    flow_play: FlowPlayRef,
 
     // Children components 
     board_printer: Rc<RefCell<BoardPrinter>>,
@@ -52,21 +54,21 @@ pub(super) struct ConsoleUI {
     game_cmd_handler: Rc<RefCell<GameCmdHandler>>,
 
     // Children components' interfaces
-    board_printer_interface: Rc<RefCell<dyn BoardPrinterInterface>>,
-    command_parser_interface: Rc<RefCell<dyn CommandParserInterface>>,
-    command_cycle_console_app_interface: Rc<RefCell<dyn ConsoleAppInterface>>,
-    turn_cmd_handler_interface: Rc<RefCell<dyn TurnCmdHandlerInterface>>,
-    game_cmd_handler_interface: Rc<RefCell<dyn GameCmdHandlerInterface>>,
+    board_printer_interface: BoardPrinterRef,
+    command_parser_interface: CommandParserRef,
+    command_cycle_console_app_interface: ConsoleAppRef,
+    turn_cmd_handler_interface: TurnCmdHandlerRef,
+    game_cmd_handler_interface: GameCmdHandlerRef,
 }
 
 impl ConsoleUI {
     // Constructor with dependencies
     pub(super) fn new(
-        console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
-        storage: &Rc<RefCell<dyn StorageInterface>>,
-        game_flow: &Rc<RefCell<dyn GameFlowInterface>>,
-        flow_play: &Rc<RefCell<dyn FlowPlayInterface>>,
-        rules_engine: &Rc<RefCell<dyn RulesEngineInterface>>
+        console_io: &ConsoleIORef,
+        storage: &StorageRef,
+        game_flow: &GameFlowRef,
+        flow_play: &FlowPlayRef,
+        rules_engine: &RulesEngineRef
     ) 
     -> ConsoleUI {
         let console_io = Rc::clone(&console_io); 
@@ -122,7 +124,7 @@ impl ConsoleUI {
 
 // Provided interface - implemented partly by itself, partly - delegated
 impl ConsoleAppProvider for ConsoleUI {
-    fn get(it: Rc<RefCell<ConsoleUI>>) -> Rc<RefCell<dyn ConsoleAppInterface>> { 
+    fn get(it: Rc<RefCell<ConsoleUI>>) -> ConsoleAppRef { 
         ConsoleAppProvider::get(Rc::clone(&it.borrow().command_cycle)) 
     }
 }

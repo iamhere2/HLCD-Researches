@@ -11,3 +11,4 @@ edition = "2021"
 colored = "2.0.0"
 wildmatch = "2.1.1"
 enum-iterator = "0.8.1"
+hlcd = { path = "../hlcd" }

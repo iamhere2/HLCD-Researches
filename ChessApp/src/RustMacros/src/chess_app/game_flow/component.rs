@@ -5,8 +5,8 @@ use crate::chess_app::{data::{GameHistory, Color, Turn, BoardState, RuleViolatio
 use super::interface::*;
 
 pub struct GameFlow {
-    player_b: Rc<RefCell<dyn SyncPlayerInterface>>,
-    rules_engine: Rc<RefCell<dyn RulesEngineInterface>>,
+    player_b: SyncPlayerRef,
+    rules_engine: RulesEngineRef,
     game_history: Option<GameHistory>,
     player_a_color: Option<Color>,
     next_player_color: Option<Color>
@@ -14,8 +14,8 @@ pub struct GameFlow {
 
 impl GameFlow {
     pub fn new(
-        player_b: &Rc<RefCell<dyn SyncPlayerInterface>>,
-        rules_engine: &Rc<RefCell<dyn RulesEngineInterface>>
+        player_b: &SyncPlayerRef,
+        rules_engine: &RulesEngineRef
     ) -> Self {
         GameFlow {
             player_b: Rc::clone(player_b),
@@ -28,13 +28,13 @@ impl GameFlow {
 }
 
 impl GameFlowProvider for GameFlow {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn GameFlowInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> GameFlowRef {
         it
     }
 }
 
 impl FlowPlayProvider for GameFlow {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn FlowPlayInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> FlowPlayRef {
         it
     }
 }

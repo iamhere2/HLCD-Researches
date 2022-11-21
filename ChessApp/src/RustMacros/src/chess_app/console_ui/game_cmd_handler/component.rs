@@ -8,16 +8,16 @@ use super::interface::*;
 // Consume: ConsoleIO, GameFlow, Storage
 pub struct GameCmdHandler {
     // Dependencies
-    console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-    game_flow: Rc<RefCell<dyn GameFlowInterface>>,
-    storage: Rc<RefCell<dyn StorageInterface>>
+    console_io: ConsoleIORef,
+    game_flow: GameFlowRef,
+    storage: StorageRef
 } 
 
 impl GameCmdHandler {
     pub fn new(
-        console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
-        game_flow: &Rc<RefCell<dyn GameFlowInterface>>,
-        storage: &Rc<RefCell<dyn StorageInterface>>,
+        console_io: &ConsoleIORef,
+        game_flow: &GameFlowRef,
+        storage: &StorageRef,
     ) -> GameCmdHandler {
         GameCmdHandler {  
             console_io: Rc::clone(console_io),
@@ -28,7 +28,7 @@ impl GameCmdHandler {
 }
 
 impl GameCmdHandlerProvider for GameCmdHandler {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn GameCmdHandlerInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> GameCmdHandlerRef {
         it
     }
 }

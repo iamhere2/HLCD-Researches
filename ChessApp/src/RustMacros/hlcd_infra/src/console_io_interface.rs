@@ -1,4 +1,3 @@
-use std::{rc::Rc, cell::RefCell};
 use enum_iterator::IntoEnumIterator;
 
 #[derive(Debug, IntoEnumIterator, PartialEq, Clone, Copy)]
@@ -21,13 +20,12 @@ pub enum ConsoleColor {
     White        = 0xF
 }
 
-pub trait ConsoleIOInterface {
-    fn set_foreground(&mut self, color: ConsoleColor);
-    fn set_background(&mut self, color: ConsoleColor);
-    fn write(&self, s: &str);
-    fn read_line(&self) -> String;
+hlcd::define! {
+    interface ConsoleIO {
+        fn set_foreground(&mut self, color: ConsoleColor);
+        fn set_background(&mut self, color: ConsoleColor);
+        fn write(&self, s: &str);
+        fn read_line(&self) -> String;
+    }
 }
 
-pub trait ConsoleIOProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn ConsoleIOInterface>>; 
-}

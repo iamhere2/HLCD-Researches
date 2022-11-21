@@ -23,6 +23,8 @@ use console_ui::ConsoleUI;
 use file_storage::FileStorage;
 
 use self::ai_player::AiPlayer;
+use self::console_ui::ConsoleUIRef;
+use self::file_storage::FileStorageRef;
 use self::game_flow::component::GameFlow;
 use self::game_flow::interface::*;
 use self::player_interface::SyncPlayerProvider;
@@ -42,16 +44,16 @@ pub struct ChessApp {
     // -
 
     // Children components
-    console_ui: Rc<RefCell<ConsoleUI>>,
-    file_storage: Rc<RefCell<FileStorage>>
+    console_ui: ConsoleUIRef,
+    file_storage: FileStorageRef
 }
 
 impl ChessApp {
 
     // Constructor with dependencies
     pub(super) fn new(
-        console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-        file_io: Rc<RefCell<dyn FileIOInterface>>
+        console_io: ConsoleIORef,
+        file_io: FileIORef
     ) -> ChessApp {
         // Create & connect children components
         let file_storage = Rc::new(RefCell::new(FileStorage::new(Rc::clone(&file_io))));
@@ -102,7 +104,7 @@ impl ChessApp {
 
 // Provided interfaces, delegated to children
 impl ConsoleAppProvider for ChessApp {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn ConsoleAppInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> ConsoleAppRef {
         ConsoleAppProvider::get(Rc::clone(&it.borrow().console_ui))
     }
 }

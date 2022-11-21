@@ -12,10 +12,7 @@ use nom::{
 
 use crate::{chess_app::data::{Figure, Color, Cell, Turn}, nom_extensions::parseable::Parseable};
 
-use super::{interface::{
-        CommandParserProvider, CommandParserInterface, Error
-    }, 
-    super::data::command::Command
+use super::{interface::*, super::data::command::Command
 };
 
 pub struct CommandParser {
@@ -60,7 +57,7 @@ impl CommandParser {
 }
 
 impl CommandParserProvider for CommandParser {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn CommandParserInterface>> { it }
+    fn get(it: Rc<RefCell<Self>>) -> CommandParserRef { it }
 }
 
 impl CommandParserInterface for CommandParser {

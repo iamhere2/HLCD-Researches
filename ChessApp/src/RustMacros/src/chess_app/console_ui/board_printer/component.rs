@@ -1,25 +1,24 @@
 use std::{rc::Rc, cell::{RefCell, Ref}, io::{Stdout, Write}};
-
-use crate::{hlcd_infra::console_io_interface::{ConsoleIOInterface, ConsoleColor}, chess_app::data::{Color, board, Figure}};
+use hlcd_infra::console_io_interface::*;
+use crate::{hlcd_infra::console_io_interface::*, chess_app::data::{Color, board, Figure}};
 use crate::chess_app::data::{BoardState, Cell};
-
-use super::interface::{BoardPrinterInterface, BoardPrinterProvider};
+use super::interface::*;
 
 // Component
 // Provides: BoardPrinter
 // Consumes: ConsoleIO
 pub struct BoardPrinter {
-    console_io: Rc<RefCell<dyn ConsoleIOInterface>>
+    console_io: ConsoleIORef
 }
 
 impl BoardPrinter {
-    pub fn new(console_io: &Rc<RefCell<dyn ConsoleIOInterface>>) -> BoardPrinter {
+    pub fn new(console_io: &ConsoleIORef) -> BoardPrinter {
         BoardPrinter { console_io: Rc::clone(console_io) }
     }
 }
 
 impl BoardPrinterProvider for BoardPrinter {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn BoardPrinterInterface>> {
+    fn get(it: Rc<RefCell<Self>>) -> BoardPrinterRef {
         it
     }
 }

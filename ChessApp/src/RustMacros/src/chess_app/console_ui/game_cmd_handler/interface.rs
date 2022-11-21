@@ -1,5 +1,4 @@
-use std::{rc::Rc, cell::RefCell, fmt::Display, error::Error};
-
+use std::{fmt::Display, error::Error};
 use crate::chess_app::console_ui::data::command::Command;
 
 #[derive(Clone, Debug)]
@@ -14,10 +13,8 @@ impl Display for CmdError {
     }
 } 
 
-pub trait GameCmdHandlerInterface {
-    fn execute(&self, cmd: Command) -> Result<(), CmdError>;
-}
-
-pub trait GameCmdHandlerProvider {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn GameCmdHandlerInterface>>; 
+hlcd::define! {
+    interface GameCmdHandler {
+        fn execute(&self, cmd: Command) -> Result<(), CmdError>;
+    }
 }

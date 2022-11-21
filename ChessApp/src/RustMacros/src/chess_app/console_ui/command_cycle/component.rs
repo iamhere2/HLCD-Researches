@@ -8,9 +8,9 @@ use enum_iterator::IntoEnumIterator;
 use crate::chess_app::console_ui::data::command::Command;
 use crate::chess_app::data::Color;
 
-use crate::chess_app::game_flow::interface::GameFlowInterface;
+use crate::chess_app::game_flow::interface::{GameFlowInterface, GameFlowRef};
 // Provided interfaces
-use crate::hlcd_infra::console_app_interface::{ConsoleAppProvider, ConsoleAppInterface};
+use crate::hlcd_infra::console_app_interface::*;
 
 // Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
@@ -26,26 +26,26 @@ use super::super::game_cmd_handler::{component::*, interface::*};
 pub struct CommandCycle {
 
     // Dependencies
-    console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-    command_parser: Rc<RefCell<dyn CommandParserInterface>>,
-    turn_cmd_handler: Rc<RefCell<dyn TurnCmdHandlerInterface>>,
-    game_cmd_handler: Rc<RefCell<dyn GameCmdHandlerInterface>>,
-    board_printer: Rc<RefCell<dyn BoardPrinterInterface>>,
-    game_flow: Rc<RefCell<dyn GameFlowInterface>>
+    console_io: ConsoleIORef,
+    command_parser: CommandParserRef,
+    turn_cmd_handler: TurnCmdHandlerRef,
+    game_cmd_handler: GameCmdHandlerRef,
+    board_printer: BoardPrinterRef,
+    game_flow: GameFlowRef
 }
 
 impl ConsoleAppProvider for CommandCycle {
-    fn get(it: Rc<RefCell<Self>>) -> Rc<RefCell<dyn ConsoleAppInterface>> { it }
+    fn get(it: Rc<RefCell<Self>>) -> ConsoleAppRef { it }
 }
 
 impl CommandCycle {
     pub fn new(
-        console_io: &Rc<RefCell<dyn ConsoleIOInterface>>,
-        command_parser: &Rc<RefCell<dyn CommandParserInterface>>,
-        turn_cmd_handler: &Rc<RefCell<dyn TurnCmdHandlerInterface>>,
-        game_cmd_handler: &Rc<RefCell<dyn GameCmdHandlerInterface>>,
-        board_printer: &Rc<RefCell<dyn BoardPrinterInterface>>,
-        game_flow: &Rc<RefCell<dyn GameFlowInterface>>
+        console_io: &ConsoleIORef,
+        command_parser: &CommandParserRef,
+        turn_cmd_handler: &TurnCmdHandlerRef,
+        game_cmd_handler: &GameCmdHandlerRef,
+        board_printer: &BoardPrinterRef,
+        game_flow: &GameFlowRef
     ) -> Self {
         Self { 
             console_io: Rc::clone(console_io),
