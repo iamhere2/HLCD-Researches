@@ -19,8 +19,8 @@ version = "0.1.0"
 dependencies = [
  "colored",
  "enum-iterator",
+ "hlcd",
  "hlcd_infra",
- "hlcd_macros",
  "lazy_static",
  "nom",
  "readonly",
@@ -77,21 +77,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "hlcd"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "hlcd_infra"
 version = "0.1.0"
 dependencies = [
  "colored",
  "enum-iterator",
  "wildmatch",
-]
-
-[[package]]
-name = "hlcd_macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

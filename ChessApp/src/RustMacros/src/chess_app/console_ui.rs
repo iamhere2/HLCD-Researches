@@ -22,7 +22,7 @@ use super::rules_engine::interface::RulesEngineInterface;
 
 // Consumed interfaces
 use crate::hlcd_infra::console_io_interface::*;
-use super::{storage_interface::*};
+use super::{storage_interface::{*, self}};
 
 // Children components and interfaces
 use self::command_cycle::component::*;
@@ -38,7 +38,7 @@ pub(super) struct ConsoleUI {
 
     // Dependencies
     console_io: Rc<RefCell<dyn ConsoleIOInterface>>,
-    storage: Rc<RefCell<dyn StorageInterface>>,
+    storage: StorageRef,
     rules_engine: Rc<RefCell<dyn RulesEngineInterface>>,
     game_flow: Rc<RefCell<dyn GameFlowInterface>>,
     flow_play: Rc<RefCell<dyn FlowPlayInterface>>,

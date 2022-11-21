@@ -1,8 +1,11 @@
 use syn::{Ident, parse::{Parse, ParseStream}, braced, TraitItemMethod};
 
-use proc_macro::TokenStream;
-use quote::quote;
+use proc_macro2::TokenStream;
+use quote::{quote, ToTokens};
 
+pub mod kw {
+    syn::custom_keyword!(interface);
+}
 
 #[derive(Debug)]
 pub struct Interface {
@@ -12,6 +15,7 @@ pub struct Interface {
 
 impl Parse for Interface {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let _ = input.parse::<kw::interface>()?;
         let name: Ident = input.parse()?;
 
         let content;
@@ -29,9 +33,8 @@ impl Parse for Interface {
     }
 }
 
-impl Interface {
-    #[allow(unused)]
-    pub fn generate(&self) -> TokenStream {
+impl ToTokens for Interface {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
         let Interface {
             name: base_interface_name,
             items
@@ -46,7 +49,7 @@ impl Interface {
 
         let interface_ref_name = syn::Ident::new(&format!("{}Ref", base_interface_name), base_interface_name.span());
         let interface_ref_type = quote! {
-            type #interface_ref_name = std::rc::Rc<std::cell::RefCell<dyn #interface_trait_name>>;
+            pub type #interface_ref_name = std::rc::Rc<std::cell::RefCell<dyn #interface_trait_name>>;
         };
 
         let provider_trait_name = syn::Ident::new(&format!("{}Provider", base_interface_name), base_interface_name.span());
@@ -62,6 +65,6 @@ impl Interface {
             #provider_trait
         };
 
-        TokenStream::from(interface)
+        tokens.extend(interface)
     }
 }
