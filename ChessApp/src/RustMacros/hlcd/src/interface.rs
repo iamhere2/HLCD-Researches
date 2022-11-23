@@ -15,7 +15,7 @@ pub struct Interface {
 
 impl Parse for Interface {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let _ = input.parse::<kw::interface>()?;
+        input.parse::<kw::interface>()?;
         let name: Ident = input.parse()?;
 
         let content;

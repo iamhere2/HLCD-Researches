@@ -1,8 +1,11 @@
 use syn::parse::{Parse, ParseStream};
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
+
 use super::interface;
 use super::interface::*;
+use super::component;
+use super::component::*;
 
 #[derive(Debug)]
 pub struct Hlcd {
@@ -11,7 +14,8 @@ pub struct Hlcd {
 
 #[derive(Debug)]
 pub enum HlcdItem {
-    Interface(Interface)
+    Interface(Interface),
+    Component(Component)
 }
 
 impl Parse for Hlcd {
@@ -33,7 +37,11 @@ impl Parse for HlcdItem {
         if lookahead.peek(interface::kw::interface) {
             let interface: Interface = input.parse()?;
             Ok(HlcdItem::Interface(interface))
-        } else {
+        } else if lookahead.peek(component::kw::component) { 
+            let component: Component = input.parse()?;
+            Ok(HlcdItem::Component(component))
+        }
+        else {
             Err(lookahead.error())
         }
     }
@@ -55,7 +63,8 @@ impl ToTokens for Hlcd {
 impl ToTokens for HlcdItem {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         match self {
-            HlcdItem::Interface(interface) => interface.to_tokens(tokens)
+            HlcdItem::Interface(interface) => interface.to_tokens(tokens),
+            HlcdItem::Component(component) => component.to_tokens(tokens),
         }
     }
 }

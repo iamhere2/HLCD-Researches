@@ -4,6 +4,7 @@
 
 mod hlcd;
 mod interface;
+mod component;
 
 use proc_macro::TokenStream;
 use quote::ToTokens;

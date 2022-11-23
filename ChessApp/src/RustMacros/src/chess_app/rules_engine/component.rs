@@ -1,10 +1,55 @@
 use std::{cell::RefCell, rc::Rc};
-
 use crate::chess_app::data::{Color, Cell, Turn, RuleViolation, BoardState};
-
 use super::interface::*;
 
-pub struct RulesEngine { }
+
+hlcd::define! {
+
+     component RulesEngine {
+
+         requires {
+//             // aaa,
+//             // B: Ibbb,
+         }
+
+         provides {
+//             // Aaa: ChildrenA,
+//             // Bbb: ChildrenB.B,
+//             // Ccc, // :self
+//             // Ddd,
+             RulesEngine
+         }
+
+//         state {
+//             // x: A, 
+//             // y: B
+//         }
+
+//         children {
+//             // ChildrenA,
+//             // ChildrenB
+//         }
+
+//         impl RulesEngine {
+//             ...
+//         }
+
+//         impl {
+//             //
+//         }
+
+     }
+
+}
+
+
+
+// Component
+// Children: -
+// Consumes: -
+// State: -
+// Provides: RulesEngine (own)
+// pub struct RulesEngine { }
 
 impl RulesEngine {
     pub fn new() -> RulesEngine {
@@ -31,8 +76,3 @@ impl RulesEngineInterface for RulesEngine {
     }
 }
 
-impl RulesEngineProvider for RulesEngine {
-    fn get(it: Rc<RefCell<Self>>) -> RulesEngineRef {
-        it
-    }
-}
