@@ -207,6 +207,11 @@ impl ToTokens for Component {
 
         let private_impl = quote! {
             impl #component_struct_name {
+                
+                pub fn new() -> Self {
+                    #component_struct_name { }
+                }
+
                 #( #private_impl_items )*
             }
         };

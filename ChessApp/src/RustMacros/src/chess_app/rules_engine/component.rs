@@ -43,7 +43,7 @@ hlcd::define! {
             }
         }
 
-         impl {
+        impl {
             fn apply_move(board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
                 let (figure, color) = board.get(from).ok_or("No figure at source cell")?;
                 if color != player { return Err("Can't move figures of other color".to_string()) };
@@ -65,11 +65,11 @@ hlcd::define! {
 // Provides: RulesEngine (own)
 // pub struct RulesEngine { }
 
-impl RulesEngine {
-    pub fn new() -> RulesEngine {
-        RulesEngine {  }
-    }
-}
+// impl RulesEngine {
+//     pub fn new() -> RulesEngine {
+//         RulesEngine {  }
+//     }
+// }
 
 // fn apply_move(board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
 //     let (figure, color) = board.get(from).ok_or("No figure at source cell")?;
