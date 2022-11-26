@@ -24,7 +24,7 @@ use file_storage::FileStorage;
 
 use self::ai_player::AiPlayer;
 use self::console_ui::ConsoleUIRef;
-use self::file_storage::FileStorageRef;
+use self::file_storage::FileStorageInstanceRef;
 use self::game_flow::component::GameFlow;
 use self::game_flow::interface::*;
 use self::player_interface::SyncPlayerProvider;
@@ -45,7 +45,7 @@ pub struct ChessApp {
 
     // Children components
     console_ui: ConsoleUIRef,
-    file_storage: FileStorageRef
+    file_storage: FileStorageInstanceRef
 }
 
 impl ChessApp {
@@ -56,7 +56,7 @@ impl ChessApp {
         file_io: FileIORef
     ) -> ChessApp {
         // Create & connect children components
-        let file_storage = Rc::new(RefCell::new(FileStorage::new(Rc::clone(&file_io))));
+        let file_storage = Rc::new(RefCell::new(FileStorage::new(&file_io)));
         let storage_interface = StorageProvider::get(Rc::clone(&file_storage));
 
         let ai_player = Rc::new(RefCell::new(AiPlayer::new()));

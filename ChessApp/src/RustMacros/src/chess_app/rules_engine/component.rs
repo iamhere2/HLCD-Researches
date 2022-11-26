@@ -1,15 +1,13 @@
-use std::{cell::RefCell, rc::Rc};
 use crate::chess_app::data::{Color, Cell, Turn, RuleViolation, BoardState};
 use super::interface::*;
-
 
 hlcd::define! {
 
      component RulesEngine {
 
          requires {
-//             // aaa,
-//             // B: Ibbb,
+//             // a: Aaa,
+//             // b: Bbb,
          }
 
          provides {
@@ -51,33 +49,5 @@ hlcd::define! {
                 Ok(new_state)
             }
         }
-
      }
-
 }
-
-
-
-// Component
-// Children: -
-// Consumes: -
-// State: -
-// Provides: RulesEngine (own)
-// pub struct RulesEngine { }
-
-// impl RulesEngine {
-//     pub fn new() -> RulesEngine {
-//         RulesEngine {  }
-//     }
-// }
-
-// fn apply_move(board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
-//     let (figure, color) = board.get(from).ok_or("No figure at source cell")?;
-//     if color != player { return Err("Can't move figures of other color".to_string()) };
-//     let new_state = board.without(from).with(figure, color, to);
-//     Ok(new_state)
-// }
-
-// impl RulesEngineInterface for RulesEngine {
-// }
-

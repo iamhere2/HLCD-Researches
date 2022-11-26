@@ -92,11 +92,11 @@ impl Parse for Component {
                     let impl_content;
                     braced!(impl_content in component_content);
 
-                    let punctuated: Punctuated<ImplItem, Token![;]> = 
-                        impl_content.parse_terminated(ImplItem::parse)?;
-
-                    private_impl_items.extend(punctuated.into_iter());
-
+                    while !impl_content.is_empty() {
+                        private_impl_items.push(
+                            impl_content.parse()?    
+                        )    
+                    }
                     
                 } else if lookahead.peek(syn::Ident) {
                     
@@ -105,12 +105,16 @@ impl Parse for Component {
                     let impl_content;
                     braced!(impl_content in component_content);
 
-                    let punctuated: Punctuated<ImplItem, Token![;]> = 
-                        impl_content.parse_terminated(ImplItem::parse)?;
+                    let mut items = vec![]; 
+                    while !impl_content.is_empty() {
+                        items.push(
+                            impl_content.parse()?    
+                        )    
+                    }
 
                     let interface_impl = InterfaceImplementation { 
                         interface_name, 
-                        items: punctuated.into_iter().collect()
+                        items: items.into_iter().collect()
                     };
 
                     interface_impls.push(interface_impl);
@@ -143,7 +147,7 @@ impl ToTokens for Component {
 
         let Component {
             name,
-            // requires,
+            requires,
             provides,
             // children,
             state,
@@ -153,13 +157,51 @@ impl ToTokens for Component {
         } = self;
 
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
+        let component_ref_name = syn::Ident::new(&format!("{}InstanceRef", name), name.span());
 
         let state_fields = state.iter().map(|_s| quote!{
             // field: type
         }).collect::<Vec<_>>();
 
+        let dependency_ref_fields = requires.iter().map(|r| {
+            let ref_name = &r.ref_name;
+            let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
+
+            quote! {
+                #ref_name : #interface_ref_name
+            }
+
+        }).collect::<Vec<_>>();
+
+        let dependency_ref_assignments = requires.iter().map(|r| {
+            let ref_name = &r.ref_name;
+            quote! { #ref_name : std::rc::Rc::clone(#ref_name) , }
+        }).collect::<Vec<_>>();
+
+        let dependency_ref_name_type_list = requires.iter().map(|r| {
+            let ref_name = &r.ref_name;
+            let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
+            quote! { #ref_name : & #interface_ref_name , }
+        }).collect::<Vec<_>>();
+
+        let dependency_accessors = requires.iter().map(|r| {
+            let ref_name = &r.ref_name;
+            let interface_trait_name = syn::Ident::new(&format!("{}Interface", r.interface_name), r.interface_name.span());
+            quote! { 
+                fn #ref_name(&self) -> std::cell::Ref<dyn #interface_trait_name> {
+                    std::cell::RefCell::borrow(&self.#ref_name)
+                } 
+            }
+
+        }).collect::<Vec<_>>();
+
+        let component_ref = quote! {
+            pub type #component_ref_name = std::rc::Rc<std::cell::RefCell<#component_struct_name>>;
+        };
+
         let component_struct = quote! {
             pub struct #component_struct_name {
+                #( #dependency_ref_fields )*
                 #( #state_fields )*
             }
         };
@@ -207,16 +249,24 @@ impl ToTokens for Component {
 
         let private_impl = quote! {
             impl #component_struct_name {
-                
-                pub fn new() -> Self {
-                    #component_struct_name { }
+
+                // Constructor
+                pub fn new( 
+                    #( #dependency_ref_name_type_list )*
+                ) -> Self {
+                    #component_struct_name { 
+                        #( #dependency_ref_assignments )*
+                    }
                 }
+
+                #( #dependency_accessors )*
 
                 #( #private_impl_items )*
             }
         };
 
         let component = quote! {
+            #component_ref
             #component_struct
             #private_impl
             #( #self_interface_impls_providers )*

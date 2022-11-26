@@ -2,3 +2,4 @@
 *.~vsdx
 obj
 bin
+ChessApp/src/RustMacros/expand.rs
