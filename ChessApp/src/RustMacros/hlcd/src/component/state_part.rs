@@ -1,11 +1,12 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use syn::parse::Parse;
 
 #[derive(Debug)]
 pub struct StatePart { }
 
-impl ToTokens for StatePart {
-    fn to_tokens(&self, _tokens: &mut TokenStream) {
-        todo!()
+impl Parse for StatePart {
+    fn parse(_input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(StatePart { })
     }
 }

@@ -41,8 +41,8 @@ impl Parse for Component {
 
         let mut requires = vec![];
         let mut provides = vec![];
+        let mut state = vec![];
         let children = vec![];
-        let state = vec![];
         let interface_impls = vec![];
         let private_impl = None;
 
@@ -74,9 +74,17 @@ impl Parse for Component {
 
                 provides.extend(punctuated.into_iter());
 
+            } else if lookahead.peek(kw::state) {
+                component_content.parse::<kw::state>()?;
+
+                let state_content;
+                braced!(state_content in component_content);
+
+                let punctuated: Punctuated<StatePart, Token![,]> = 
+                    state_content.parse_terminated(StatePart::parse)?;
+
+                state.extend(punctuated.into_iter());
             // } else if lookahead.peek(kw::children) {
-            //     todo!()
-            // } else if lookahead.peek(kw::state) {
             //     todo!()
             // } else if lookahead.peek(Token![impl]) {
             //     todo!()
@@ -111,10 +119,17 @@ impl ToTokens for Component {
             ..
         } = self;
 
+        
+
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
+
+        let state_fields = state.iter().map(|_s| quote!{
+            // field: type
+        }).collect::<Vec<_>>();
+
         let component_struct = quote! {
             pub struct #component_struct_name {
-                #( #state )*
+                #( #state_fields )*
             }
         };
 

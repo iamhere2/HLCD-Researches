@@ -20,10 +20,10 @@ hlcd::define! {
              RulesEngine
          }
 
-//         state {
+         state {
 //             // x: A, 
 //             // y: B
-//         }
+         }
 
 //         children {
 //             // ChildrenA,
