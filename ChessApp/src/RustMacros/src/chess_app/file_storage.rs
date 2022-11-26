@@ -34,11 +34,9 @@ hlcd::define! {
                     build_file_name(name).as_str())?;
                 Ok(deserialize(content.as_str())?)
             }
-
         }
     }
 }
-
 
 const EXT: &str = "chess";
 

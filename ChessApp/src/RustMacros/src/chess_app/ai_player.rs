@@ -1,25 +1,12 @@
-use std::{cell::RefCell, rc::Rc};
-
 use super::{player_interface::*, data::{BoardState, Turn, RuleViolation}};
 
-pub(super) struct AiPlayer {
-}
-
-impl AiPlayer {
-    pub(super) fn new() -> AiPlayer {
-        AiPlayer { 
+hlcd::define! {
+    component AiPlayer {
+        provides { SyncPlayer }
+        impl SyncPlayer {
+            fn turn_request(&self, bs: &BoardState) -> Turn {
+                todo!()
+            }
         }
-    }
-}
-
-impl SyncPlayerProvider for AiPlayer {
-    fn get(it: Rc<RefCell<Self>>) -> SyncPlayerRef {
-        it
-    }
-}
-
-impl SyncPlayerInterface for AiPlayer {
-    fn turn_request(&self, bs: &BoardState) -> Turn {
-        todo!()
     }
 }

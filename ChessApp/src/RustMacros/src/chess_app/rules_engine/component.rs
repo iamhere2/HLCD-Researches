@@ -5,11 +5,6 @@ hlcd::define! {
 
      component RulesEngine {
 
-         requires {
-//             // a: Aaa,
-//             // b: Bbb,
-         }
-
          provides {
 //             // Aaa: ChildrenA,
 //             // Bbb: ChildrenB.B,

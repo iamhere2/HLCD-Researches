@@ -186,10 +186,15 @@ impl ToTokens for Component {
 
         let dependency_accessors = requires.iter().map(|r| {
             let ref_name = &r.ref_name;
+            let ref_name_mut = syn::Ident::new(&format!("{}_mut", ref_name), ref_name.span());
             let interface_trait_name = syn::Ident::new(&format!("{}Interface", r.interface_name), r.interface_name.span());
             quote! { 
                 fn #ref_name(&self) -> std::cell::Ref<dyn #interface_trait_name> {
                     std::cell::RefCell::borrow(&self.#ref_name)
+                } 
+
+                fn #ref_name_mut(&self) -> std::cell::RefMut<dyn #interface_trait_name> {
+                    std::cell::RefCell::borrow_mut(&self.#ref_name)
                 } 
             }
 
