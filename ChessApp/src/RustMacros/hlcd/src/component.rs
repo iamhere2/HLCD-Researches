@@ -5,7 +5,7 @@ mod state_part;
 mod interface_impl;
 mod private_impl;
 
-use syn::{Ident, parse::{Parse, ParseStream}, braced, Token, punctuated::Punctuated};
+use syn::{Ident, parse::{Parse, ParseStream}, braced, Token, punctuated::Punctuated, ImplItem};
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use required_interface::*;
@@ -13,7 +13,6 @@ use provided_interface::*;
 use child_component::*;
 use state_part::*;
 use interface_impl::*;
-use private_impl::*;
 
 pub mod kw {
     syn::custom_keyword!(component);
@@ -31,7 +30,7 @@ pub struct Component {
     pub children: Vec<ChildComponent>,
     pub state: Vec<StatePart>,
     pub interface_impls: Vec<InterfaceImplementation>,
-    pub private_impl: Option<PrivateImplementation>,
+    pub private_impl_items: Vec<ImplItem>,
 }
 
 impl Parse for Component {
@@ -43,8 +42,8 @@ impl Parse for Component {
         let mut provides = vec![];
         let mut state = vec![];
         let children = vec![];
-        let interface_impls = vec![];
-        let private_impl = None;
+        let mut interface_impls = vec![];
+        let mut private_impl_items = vec![];
 
         let component_content;
         braced!(component_content in input);
@@ -84,9 +83,43 @@ impl Parse for Component {
                     state_content.parse_terminated(StatePart::parse)?;
 
                 state.extend(punctuated.into_iter());
+            } else if lookahead.peek(syn::token::Impl) {
+                component_content.parse::<syn::token::Impl>()?;
+
+                let lookahead = component_content.lookahead1();
+                if lookahead.peek(syn::token::Brace) {
+                    
+                    let impl_content;
+                    braced!(impl_content in component_content);
+
+                    let punctuated: Punctuated<ImplItem, Token![;]> = 
+                        impl_content.parse_terminated(ImplItem::parse)?;
+
+                    private_impl_items.extend(punctuated.into_iter());
+
+                    
+                } else if lookahead.peek(syn::Ident) {
+                    
+                    let interface_name = component_content.parse::<Ident>()?;
+
+                    let impl_content;
+                    braced!(impl_content in component_content);
+
+                    let punctuated: Punctuated<ImplItem, Token![;]> = 
+                        impl_content.parse_terminated(ImplItem::parse)?;
+
+                    let interface_impl = InterfaceImplementation { 
+                        interface_name, 
+                        items: punctuated.into_iter().collect()
+                    };
+
+                    interface_impls.push(interface_impl);
+
+
+                } else {
+                    return Err(lookahead.error()) 
+                }
             // } else if lookahead.peek(kw::children) {
-            //     todo!()
-            // } else if lookahead.peek(Token![impl]) {
             //     todo!()
             } else { 
                 return Err(lookahead.error()) 
@@ -100,7 +133,7 @@ impl Parse for Component {
             children,
             state,
             interface_impls,
-            private_impl,
+            private_impl_items,
         })
     }
 }
@@ -114,12 +147,10 @@ impl ToTokens for Component {
             provides,
             // children,
             state,
-            // interface_impls,
-            // private_impl,
+            interface_impls,
+            private_impl_items,
             ..
         } = self;
-
-        
 
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
 
@@ -158,9 +189,33 @@ impl ToTokens for Component {
             }
         }).collect::<Vec<_>>();
 
+        let self_interface_impls = interface_impls.iter().map(|imp| {
+            let InterfaceImplementation {
+                interface_name,
+                items
+            } = imp;
+
+            let interface_trait_name = syn::Ident::new(&format!("{}Interface", interface_name), interface_name.span());
+            
+            quote! {
+                impl #interface_trait_name for #component_struct_name {
+                    #( #items )*
+                }
+            }
+
+        }).collect::<Vec<_>>();
+
+        let private_impl = quote! {
+            impl #component_struct_name {
+                #( #private_impl_items )*
+            }
+        };
+
         let component = quote! {
             #component_struct
+            #private_impl
             #( #self_interface_impls_providers )*
+            #( #self_interface_impls )*
         };
         
         // #private_impl
