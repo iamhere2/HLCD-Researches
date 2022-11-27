@@ -1,37 +1,8 @@
-use syn::{Ident, parse::{Parse, ParseStream}, braced, TraitItemMethod};
-
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::ToTokens;
+use quote::quote;
 
-pub mod kw {
-    syn::custom_keyword!(interface);
-}
-
-#[derive(Debug)]
-pub struct Interface {
-    pub name: Ident,
-    pub items: Vec<TraitItemMethod>
-}
-
-impl Parse for Interface {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        input.parse::<kw::interface>()?;
-        let name: Ident = input.parse()?;
-
-        let content;
-        braced!(content in input);
-
-        let mut items = Vec::new();
-        while !content.is_empty() {
-            items.push(content.parse()?);
-        }
-
-        Ok(Interface {
-            name,
-            items
-        })
-    }
-}
+use super::Interface;
 
 impl ToTokens for Interface {
     fn to_tokens(&self, tokens: &mut TokenStream) {

@@ -4,8 +4,8 @@
 
 use proc_macro::TokenStream;
 use syn::parse_macro_input;
-use hlcd_macro_internals::hlcd::Hlcd;
 use quote::ToTokens;
+use hlcd_macro_internals::hlcd::Hlcd;
 
 #[proc_macro]
 pub fn define(input: TokenStream) -> TokenStream {

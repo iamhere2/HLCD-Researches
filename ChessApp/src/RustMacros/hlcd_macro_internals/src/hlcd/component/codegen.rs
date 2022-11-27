@@ -1,139 +1,9 @@
-mod requires_section;
-mod required_interface;
-mod provided_interface;
-mod child_component;
-mod state_part;
-mod interface_impl;
-mod private_impl;
-
-use syn::{Ident, parse::{Parse, ParseStream}, braced, Token, punctuated::Punctuated, ImplItem};
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
-use requires_section::*;
-use provided_interface::*;
-use child_component::*;
-use state_part::*;
-use interface_impl::*;
-
-pub mod kw {
-    syn::custom_keyword!(component);
-    syn::custom_keyword!(provides);
-    syn::custom_keyword!(children);
-    syn::custom_keyword!(state);
-}
-
-#[derive(Debug)]
-pub struct Component {
-    pub name: Ident,
-    pub requires: RequiresSection,
-    pub provides: Vec<ProvidedInterface>,
-    pub children: Vec<ChildComponent>,
-    pub state: Vec<StatePart>,
-    pub interface_impls: Vec<InterfaceImplementation>,
-    pub private_impl_items: Vec<ImplItem>,
-}
-
-impl Parse for Component {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        input.parse::<kw::component>()?;
-        let name: Ident = input.parse()?;
-
-        let mut requires: RequiresSection = Default::default();
-        let mut provides = vec![];
-        let mut state = vec![];
-        let children = vec![];
-        let mut interface_impls = vec![];
-        let mut private_impl_items = vec![];
-
-        let component_content;
-        braced!(component_content in input);
-
-        while !component_content.is_empty() {
-            let lookahead = component_content.lookahead1();
-
-            if lookahead.peek(requires_section::kw::requires) {
-                
-                requires = component_content.parse()?;
-
-            } else if lookahead.peek(kw::provides) {
-                component_content.parse::<kw::provides>()?;
-
-                let provides_content;
-                braced!(provides_content in component_content);
-
-                let punctuated: Punctuated<ProvidedInterface, Token![,]> = 
-                    provides_content.parse_terminated(ProvidedInterface::parse)?;
-
-                provides.extend(punctuated.into_iter());
-
-            } else if lookahead.peek(kw::state) {
-                component_content.parse::<kw::state>()?;
-
-                let state_content;
-                braced!(state_content in component_content);
-
-                let punctuated: Punctuated<StatePart, Token![,]> = 
-                    state_content.parse_terminated(StatePart::parse)?;
-
-                state.extend(punctuated.into_iter());
-            } else if lookahead.peek(syn::token::Impl) {
-                component_content.parse::<syn::token::Impl>()?;
-
-                let lookahead = component_content.lookahead1();
-                if lookahead.peek(syn::token::Brace) {
-                    
-                    let impl_content;
-                    braced!(impl_content in component_content);
-
-                    while !impl_content.is_empty() {
-                        private_impl_items.push(
-                            impl_content.parse()?    
-                        )    
-                    }
-                    
-                } else if lookahead.peek(syn::Ident) {
-                    
-                    let interface_name = component_content.parse::<Ident>()?;
-
-                    let impl_content;
-                    braced!(impl_content in component_content);
-
-                    let mut items = vec![]; 
-                    while !impl_content.is_empty() {
-                        items.push(
-                            impl_content.parse()?    
-                        )    
-                    }
-
-                    let interface_impl = InterfaceImplementation { 
-                        interface_name, 
-                        items: items.into_iter().collect()
-                    };
-
-                    interface_impls.push(interface_impl);
-
-
-                } else {
-                    return Err(lookahead.error()) 
-                }
-            // } else if lookahead.peek(kw::children) {
-            //     todo!()
-            } else { 
-                return Err(lookahead.error()) 
-            }
-        }
-
-        Ok(Component {
-            name,
-            requires,
-            provides,
-            children,
-            state,
-            interface_impls,
-            private_impl_items,
-        })
-    }
-}
+use quote::ToTokens;
+use quote::quote;
+use super::Component;
+use super::parser::interface_impl::InterfaceImplementation;
+use super::parser::state_section::state_part::StatePart;
 
 impl ToTokens for Component {
     fn to_tokens(&self, tokens: &mut TokenStream) {
@@ -152,8 +22,14 @@ impl ToTokens for Component {
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
         let component_ref_name = syn::Ident::new(&format!("{}InstanceRef", name), name.span());
 
-        let state_fields = state.iter().map(|_s| quote!{
-            // field: type
+        let state_fields = state.parts.iter().map(|sp| {
+            let field = &sp.field;
+            quote!{ #field }
+        }).collect::<Vec<_>>();
+
+        let state_initial_assignments = state.parts.iter().map(|StatePart { field, initial_value, .. }| {
+            let field = &field.ident;
+            quote!{ #field : ( #initial_value ) }
         }).collect::<Vec<_>>();
 
         let dependency_ref_fields = requires.interfaces.iter().map(|r| {
@@ -168,7 +44,7 @@ impl ToTokens for Component {
 
         let dependency_ref_assignments = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
-            quote! { #ref_name : std::rc::Rc::clone(#ref_name) , }
+            quote! { #ref_name : std::rc::Rc::clone(#ref_name) }
         }).collect::<Vec<_>>();
 
         let dependency_ref_name_type_list = requires.interfaces.iter().map(|r| {
@@ -253,7 +129,8 @@ impl ToTokens for Component {
                     #( #dependency_ref_name_type_list )*
                 ) -> Self {
                     #component_struct_name { 
-                        #( #dependency_ref_assignments )*
+                        #( #dependency_ref_assignments , )*
+                        #( #state_initial_assignments , )*
                     }
                 }
 

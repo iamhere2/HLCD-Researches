@@ -1,6 +1,8 @@
+pub mod required_interface;
+
 use syn::{parse::{Parse, ParseStream}, braced, punctuated::Punctuated, token, Token};
 
-use super::required_interface::RequiredInterface;
+use required_interface::RequiredInterface;
 
 pub mod kw {
     syn::custom_keyword!(requires);

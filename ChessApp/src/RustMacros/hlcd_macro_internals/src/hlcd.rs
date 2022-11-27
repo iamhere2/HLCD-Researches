@@ -1,11 +1,13 @@
+mod interface;
+mod component;
+
 use syn::parse::{Parse, ParseStream};
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
-use super::interface;
-use super::interface::*;
-use super::component;
-use super::component::*;
+use interface::*;
+use component::*;
+
 
 #[derive(Debug)]
 pub struct Hlcd {
@@ -32,14 +34,12 @@ impl Parse for Hlcd {
 
 impl Parse for HlcdItem {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-
         let lookahead = input.lookahead1();
+        
         if lookahead.peek(interface::kw::interface) {
-            let interface: Interface = input.parse()?;
-            Ok(HlcdItem::Interface(interface))
+            Ok(HlcdItem::Interface(input.parse()?))
         } else if lookahead.peek(component::kw::component) { 
-            let component: Component = input.parse()?;
-            Ok(HlcdItem::Component(component))
+            Ok(HlcdItem::Component(input.parse()?))
         }
         else {
             Err(lookahead.error())
