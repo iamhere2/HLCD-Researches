@@ -41,19 +41,6 @@ hlcd::define! {
     }
 }
 
-// Component
-// Provides: BoardPrinter
-// Consumes: ConsoleIO
-// pub struct BoardPrinter {
-//     console_io: ConsoleIORef
-// }
-
-// impl BoardPrinter {
-//     pub fn new(console_io: &ConsoleIORef) -> BoardPrinter {
-//         BoardPrinter { console_io: Rc::clone(console_io) }
-//     }
-// }
-
 #[rustfmt::skip]
 fn figure_to_str(f: Figure) -> String {
     match f {

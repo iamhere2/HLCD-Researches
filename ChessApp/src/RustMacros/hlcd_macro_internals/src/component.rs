@@ -1,3 +1,4 @@
+mod requires_section;
 mod required_interface;
 mod provided_interface;
 mod child_component;
@@ -8,7 +9,7 @@ mod private_impl;
 use syn::{Ident, parse::{Parse, ParseStream}, braced, Token, punctuated::Punctuated, ImplItem};
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use required_interface::*;
+use requires_section::*;
 use provided_interface::*;
 use child_component::*;
 use state_part::*;
@@ -17,7 +18,6 @@ use interface_impl::*;
 pub mod kw {
     syn::custom_keyword!(component);
     syn::custom_keyword!(provides);
-    syn::custom_keyword!(requires);
     syn::custom_keyword!(children);
     syn::custom_keyword!(state);
 }
@@ -25,7 +25,7 @@ pub mod kw {
 #[derive(Debug)]
 pub struct Component {
     pub name: Ident,
-    pub requires: Vec<RequiredInterface>,
+    pub requires: RequiresSection,
     pub provides: Vec<ProvidedInterface>,
     pub children: Vec<ChildComponent>,
     pub state: Vec<StatePart>,
@@ -38,7 +38,7 @@ impl Parse for Component {
         input.parse::<kw::component>()?;
         let name: Ident = input.parse()?;
 
-        let mut requires = vec![];
+        let mut requires: RequiresSection = Default::default();
         let mut provides = vec![];
         let mut state = vec![];
         let children = vec![];
@@ -51,16 +51,9 @@ impl Parse for Component {
         while !component_content.is_empty() {
             let lookahead = component_content.lookahead1();
 
-            if lookahead.peek(kw::requires) {
-                component_content.parse::<kw::requires>()?;
-
-                let requires_content;
-                braced!(requires_content in component_content);
-
-                let punctuated: Punctuated<_, Token![,]> = 
-                    requires_content.parse_terminated(RequiredInterface::parse)?;
-
-                requires.extend(punctuated.into_iter());
+            if lookahead.peek(requires_section::kw::requires) {
+                
+                requires = component_content.parse()?;
 
             } else if lookahead.peek(kw::provides) {
                 component_content.parse::<kw::provides>()?;
@@ -163,7 +156,7 @@ impl ToTokens for Component {
             // field: type
         }).collect::<Vec<_>>();
 
-        let dependency_ref_fields = requires.iter().map(|r| {
+        let dependency_ref_fields = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
             let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
 
@@ -173,18 +166,18 @@ impl ToTokens for Component {
 
         }).collect::<Vec<_>>();
 
-        let dependency_ref_assignments = requires.iter().map(|r| {
+        let dependency_ref_assignments = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
             quote! { #ref_name : std::rc::Rc::clone(#ref_name) , }
         }).collect::<Vec<_>>();
 
-        let dependency_ref_name_type_list = requires.iter().map(|r| {
+        let dependency_ref_name_type_list = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
             let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
             quote! { #ref_name : & #interface_ref_name , }
         }).collect::<Vec<_>>();
 
-        let dependency_accessors = requires.iter().map(|r| {
+        let dependency_accessors = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
             let ref_name_mut = syn::Ident::new(&format!("{}_mut", ref_name), ref_name.span());
             let interface_trait_name = syn::Ident::new(&format!("{}Interface", r.interface_name), r.interface_name.span());
@@ -206,8 +199,8 @@ impl ToTokens for Component {
 
         let component_struct = quote! {
             pub struct #component_struct_name {
-                #( #dependency_ref_fields )*
-                #( #state_fields )*
+                #( #dependency_ref_fields , )*
+                #( #state_fields , )*
             }
         };
 

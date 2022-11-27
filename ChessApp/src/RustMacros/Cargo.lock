@@ -80,6 +80,7 @@ dependencies = [
 name = "hlcd"
 version = "0.1.0"
 dependencies = [
+ "hlcd_macro_internals",
  "proc-macro2",
  "quote",
  "syn",
@@ -93,6 +94,15 @@ dependencies = [
  "enum-iterator",
  "hlcd",
  "wildmatch",
+]
+
+[[package]]
+name = "hlcd_macro_internals"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

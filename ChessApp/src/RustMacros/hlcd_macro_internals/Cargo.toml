@@ -1,15 +1,11 @@
 [package]
-name = "hlcd"
+name = "hlcd_macro_internals"
 version = "0.1.0"
 edition = "2021"
-
-[lib]
-proc-macro = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hlcd_macro_internals = { path = "../hlcd_macro_internals" }
-syn = { version = "*", features = ["extra-traits", "full"] }
+syn = { version = "*", features = ["extra-traits", "parsing", "full"] }
 quote = "*"
 proc-macro2 = "*"
