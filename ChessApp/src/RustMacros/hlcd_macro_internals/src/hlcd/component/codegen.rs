@@ -1,9 +1,11 @@
+mod component_struct;
+mod constructor;
+
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use quote::quote;
 use super::Component;
 use super::parser::interface_impl::InterfaceImplementation;
-use super::parser::state_section::state_part::StatePart;
 
 impl ToTokens for Component {
     fn to_tokens(&self, tokens: &mut TokenStream) {
@@ -13,7 +15,7 @@ impl ToTokens for Component {
             requires,
             provides,
             // children,
-            state,
+            // state,
             interface_impls,
             private_impl_items,
             ..
@@ -21,37 +23,6 @@ impl ToTokens for Component {
 
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
         let component_ref_name = syn::Ident::new(&format!("{}InstanceRef", name), name.span());
-
-        let state_fields = state.parts.iter().map(|sp| {
-            let field = &sp.field;
-            quote!{ #field }
-        }).collect::<Vec<_>>();
-
-        let state_initial_assignments = state.parts.iter().map(|StatePart { field, initial_value, .. }| {
-            let field = &field.ident;
-            quote!{ #field : ( #initial_value ) }
-        }).collect::<Vec<_>>();
-
-        let dependency_ref_fields = requires.interfaces.iter().map(|r| {
-            let ref_name = &r.ref_name;
-            let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
-
-            quote! {
-                #ref_name : #interface_ref_name
-            }
-
-        }).collect::<Vec<_>>();
-
-        let dependency_ref_assignments = requires.interfaces.iter().map(|r| {
-            let ref_name = &r.ref_name;
-            quote! { #ref_name : std::rc::Rc::clone(#ref_name) }
-        }).collect::<Vec<_>>();
-
-        let dependency_ref_name_type_list = requires.interfaces.iter().map(|r| {
-            let ref_name = &r.ref_name;
-            let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
-            quote! { #ref_name : & #interface_ref_name , }
-        }).collect::<Vec<_>>();
 
         let dependency_accessors = requires.interfaces.iter().map(|r| {
             let ref_name = &r.ref_name;
@@ -73,12 +44,7 @@ impl ToTokens for Component {
             pub type #component_ref_name = std::rc::Rc<std::cell::RefCell<#component_struct_name>>;
         };
 
-        let component_struct = quote! {
-            pub struct #component_struct_name {
-                #( #dependency_ref_fields , )*
-                #( #state_fields , )*
-            }
-        };
+        let component_struct = component_struct::gen_struct(self);
 
         // let interface_ref_name = syn::Ident::new(&format!("{}Ref", base_interface_name), base_interface_name.span());
         // let interface_ref_type = quote! {
@@ -121,18 +87,12 @@ impl ToTokens for Component {
 
         }).collect::<Vec<_>>();
 
+        let constructor = constructor::gen_constructor(self);
+
         let private_impl = quote! {
             impl #component_struct_name {
 
-                // Constructor
-                pub fn new( 
-                    #( #dependency_ref_name_type_list )*
-                ) -> Self {
-                    #component_struct_name { 
-                        #( #dependency_ref_assignments , )*
-                        #( #state_initial_assignments , )*
-                    }
-                }
+                #constructor
 
                 #( #dependency_accessors )*
 
@@ -148,7 +108,6 @@ impl ToTokens for Component {
             #( #self_interface_impls )*
         };
         
-        // #private_impl
         // #self_interface_impls
         // #delegated_interface_providers
 
