@@ -7,13 +7,13 @@ use crate::chess_app::data::Color;
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
 
-// Consumed interfaces
+// Required interfaces
 use crate::hlcd_infra::console_io_interface::*;
 use crate::chess_app::game_flow::interface::*;
-use super::super::board_printer::{component::*, interface::*};
-use super::super::command_parser::{component::*, interface::*};
-use super::super::turn_cmd_handler::{component::*, interface::*};
-use super::super::game_cmd_handler::{component::*, interface::*};
+use super::super::board_printer::interface::*;
+use super::super::command_parser::interface::*;
+use super::super::turn_cmd_handler::interface::*;
+use super::super::game_cmd_handler::interface::*;
 
 hlcd::define! {
     component CommandCycle {
@@ -117,50 +117,3 @@ hlcd::define! {
         }
     }
 }
-
-// Component
-// Consumes: CommandParser, TurnCmdHandler, GameCmdHandler, BoardPrinter, ConsoleIO
-// Provides: ConsoleApp
-// Children: -
-// pub struct CommandCycle {
-
-//     // Dependencies
-//     console_io: ConsoleIORef,
-//     command_parser: CommandParserRef,
-//     turn_cmd_handler: TurnCmdHandlerRef,
-//     game_cmd_handler: GameCmdHandlerRef,
-//     board_printer: BoardPrinterRef,
-//     game_flow: GameFlowRef
-// }
-
-// impl ConsoleAppProvider for CommandCycle {
-//     fn get(it: Rc<RefCell<Self>>) -> ConsoleAppRef { it }
-// }
-
-// impl CommandCycle {
-//     pub fn new(
-//         console_io: &ConsoleIORef,
-//         command_parser: &CommandParserRef,
-//         turn_cmd_handler: &TurnCmdHandlerRef,
-//         game_cmd_handler: &GameCmdHandlerRef,
-//         board_printer: &BoardPrinterRef,
-//         game_flow: &GameFlowRef
-//     ) -> Self {
-//         Self { 
-//             console_io: Rc::clone(console_io),
-//             command_parser: Rc::clone(command_parser),
-//             turn_cmd_handler: Rc::clone(turn_cmd_handler),
-//             game_cmd_handler: Rc::clone(game_cmd_handler),
-//             board_printer: Rc::clone(board_printer),
-//             game_flow: Rc::clone(&game_flow)
-//         }
-//     }
-
-//     fn console(&self) -> RefMut<dyn ConsoleIOInterface> {
-//         RefCell::borrow_mut(&self.console_io)
-//     }
-
-// }
-
-// impl ConsoleAppInterface for CommandCycle {
-// }
