@@ -34,7 +34,7 @@ pub(super) fn gen_struct(component: &Component) -> TokenStream {
 
     let children_component_fields = component.children.components.iter().map(|c| {
         let field_name = c.child_name.clone();
-        let instance_ref_name = syn::Ident::new(&format!("{}InstanceRef", c.component_type), c.component_type.span());
+        let instance_ref_name = instance_ref_name(&c.component_type);
 
         quote! {
             #field_name : #instance_ref_name
@@ -50,4 +50,8 @@ pub(super) fn gen_struct(component: &Component) -> TokenStream {
             #( #children_component_fields , )*
         }
     }
+}
+
+pub fn instance_ref_name(component_name: &Ident) -> Ident {
+    syn::Ident::new(&format!("{}InstanceRef", component_name), component_name.span())
 }

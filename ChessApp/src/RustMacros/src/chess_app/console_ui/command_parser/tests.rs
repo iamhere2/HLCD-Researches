@@ -1,9 +1,12 @@
+use std::cell::RefCell;
+
 use crate::chess_app::{data::{Turn, Color, Cell}, console_ui::data::command::Command};
 
 use super::{interface::{CommandParserInterface, Error}, component::CommandParser};
 
 fn parse(s: &str) -> Result<Command, Error> {
-    CommandParserInterface::parse(&CommandParser::new(), s)
+    let parser = CommandParser::new();
+    RefCell::borrow(&parser).parse(s)
 }
 
 #[test]

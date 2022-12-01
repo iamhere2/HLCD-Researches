@@ -1,11 +1,12 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use crate::hlcd::component::{Component, parser::{state_section::state_part::StatePart, children_section::child_component::PortLink}};
-use super::{required_interface_model::{RequiredInterfaceModel, gen_port_name}, component_struct::struct_name, provider_trait_impl::provider_trait_name};
+use super::{required_interface_model::{RequiredInterfaceModel, gen_port_name}, component_struct::{struct_name, instance_ref_name}, provider_trait_impl::provider_trait_name};
 
 pub(super) fn gen_constructor(component: &Component) -> TokenStream {
 
     let requires: Vec::<_> = component.requires.interfaces.iter().map(|r| r.into()).collect();
+    let instance_ref_name = instance_ref_name(&component.name);
 
     let dependency_ref_name_type_list = requires.iter().map(
         |RequiredInterfaceModel { port_name, interface_ref_name, .. }| {
@@ -70,25 +71,25 @@ pub(super) fn gen_constructor(component: &Component) -> TokenStream {
             }).collect::<Vec<_>>();
 
             quote! {
-                let #local_name = ::std::rc::Rc::new(::std::cell::RefCell::new(#child_struct_name::new(
+                let #local_name = #child_struct_name::new(
                     #( #port_args , )*
-                ))) 
+                ) 
             }
         }).collect::<Vec<_>>();
     
     quote! {
         pub fn new( 
             #( #dependency_ref_name_type_list , )*
-        ) -> Self {
+        ) -> #instance_ref_name {
 
             #( #dependency_ref_locals_creations ; )*
             #( #children_local_creations ; )*
 
-            Self { 
+            ::std::rc::Rc::new(::std::cell::RefCell::new(Self { 
                 #( #dependency_ref_assignments , )*
                 #( #state_initial_assignments , )*
                 #( #children_local_assignments , )*
-            }
+            }))
         }
     }
 }
