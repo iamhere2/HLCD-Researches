@@ -1,4 +1,4 @@
-use crate::nom_extensions::parseable::Parseable;
+use nom_extensions::parseable::Parseable;
 use super::*;
 use nom::{IResult, combinator::map, sequence::tuple, character::complete::one_of};
 

@@ -1,5 +1,5 @@
 use super::*;
-use crate::nom_extensions::parseable::Parseable;
+use nom_extensions::parseable::Parseable;
 
 #[test]
 fn test_parse() {

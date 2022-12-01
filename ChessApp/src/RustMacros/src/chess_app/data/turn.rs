@@ -29,7 +29,7 @@ impl Display for Turn {
     }
 }
 
-use crate::nom_extensions::parseable::{Parseable, ParseError};
+use nom_extensions::parseable::{Parseable, ParseError};
 impl TryFrom<&str> for Turn {
     type Error = ParseError;
     

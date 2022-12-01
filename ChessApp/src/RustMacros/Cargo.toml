@@ -13,6 +13,7 @@ readonly = "0.2.2"
 colored = "2.0.0"
 enum-iterator = "0.8.1"
 nom = "7.1.1"
+nom_extensions = { path = "nom_extensions" }
 wildmatch = "2.1.1"
 serde = { version = "1.0.147", features = ["derive"]} 
 serde_json = "1.0.87"

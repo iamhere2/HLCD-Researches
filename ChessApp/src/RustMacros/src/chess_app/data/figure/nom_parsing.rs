@@ -1,5 +1,5 @@
 use super::*;
-use crate::nom_extensions::parseable::Parseable;
+use nom_extensions::parseable::Parseable;
 use nom::{IResult, combinator::map, branch::alt, bytes::complete::tag_no_case};
 
 impl Parseable for Figure {

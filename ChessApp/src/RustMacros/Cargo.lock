@@ -23,6 +23,7 @@ dependencies = [
  "hlcd_infra",
  "lazy_static",
  "nom",
+ "nom_extensions",
  "readonly",
  "serde",
  "serde_json",
@@ -153,6 +154,13 @@ checksum = "a8903e5a29a317527874d0402f867152a3d21c908bb0b933e416c65e301d4c36"
 dependencies = [
  "memchr",
  "minimal-lexical",
+]
+
+[[package]]
+name = "nom_extensions"
+version = "0.1.0"
+dependencies = [
+ "nom",
 ]
 
 [[package]]

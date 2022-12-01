@@ -1,5 +1,5 @@
 use super::*;
-use crate::nom_extensions::parseable::Parseable;
+use nom_extensions::parseable::Parseable;
 use nom::{branch::alt, combinator::map, bytes::complete::tag_no_case, IResult};
 
 impl Parseable for Color {

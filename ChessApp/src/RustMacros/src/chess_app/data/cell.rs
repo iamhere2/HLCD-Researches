@@ -37,7 +37,7 @@ impl Display for Cell {
 }
 
 
-use crate::nom_extensions::parseable::{Parseable, ParseError};
+use nom_extensions::parseable::{Parseable, ParseError};
 impl TryFrom<&str> for Cell {
     type Error = ParseError;
     

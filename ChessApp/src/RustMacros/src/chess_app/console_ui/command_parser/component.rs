@@ -7,7 +7,8 @@ use nom::{
     character::complete::{alpha1, space1}, 
     multi::many1};
 
-use crate::{chess_app::data::{Color, Turn}, nom_extensions::parseable::Parseable};
+use crate::{chess_app::data::{Color, Turn}};
+use nom_extensions::parseable::Parseable;
 use super::{interface::*, super::data::command::Command};
 
 hlcd::define! {

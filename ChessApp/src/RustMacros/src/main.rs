@@ -1,5 +1,4 @@
 use hlcd_infra;
-mod nom_extensions;
 mod chess_app;
 
 use std::process;

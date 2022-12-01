@@ -1,6 +1,5 @@
 use hlcd_infra::console_io_interface::*;
-use crate::{chess_app::data::{Color, board, Figure}};
-use crate::chess_app::data::{BoardState, Cell};
+use crate::chess_app::data::{Color, board, Figure, BoardState, Cell};
 use super::interface::*;
 
 hlcd::define! {
