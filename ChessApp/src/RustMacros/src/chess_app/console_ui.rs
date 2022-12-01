@@ -25,7 +25,7 @@ use self::turn_cmd_handler::{component::*, interface::*};
 hlcd::define! {
     component ConsoleUI {
 
-        provides { ConsoleApp via command_cycle }
+        provides { ConsoleApp by command_cycle }
 
         requires {
             ConsoleIO,
@@ -42,10 +42,10 @@ hlcd::define! {
             turn_cmd_handler: TurnCmdHandler(RulesEngine, FlowPlay),
             command_cycle: CommandCycle(
                 ConsoleIO,
-                command_parser for CommandParser,
-                turn_cmd_handler for TurnCmdHandler,
-                game_cmd_handler for GameCmdHandler,
-                board_printer for BoardPrinter,
+                CommandParser by command_parser,
+                TurnCmdHandler by turn_cmd_handler,
+                GameCmdHandler by game_cmd_handler,
+                BoardPrinter by board_printer,
                 GameFlow
             )
         }

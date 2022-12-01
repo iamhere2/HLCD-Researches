@@ -1,13 +1,13 @@
 use syn::{parse::{Parse, ParseStream}, Ident};
 
 mod kw {
-    syn::custom_keyword!(via);
+    syn::custom_keyword!(by);
 }
 
 #[derive(Debug)]
 pub struct ProvidedInterface { 
     pub interface_name: Ident,
-    _via: Option<kw::via>,
+    _via: Option<kw::by>,
     pub child_component_name: Option<Ident>
 }
 
@@ -19,7 +19,7 @@ impl Parse for ProvidedInterface {
 
         let lookahead = input.lookahead1();
 
-        if lookahead.peek(kw::via) {
+        if lookahead.peek(kw::by) {
             _via = input.parse()?;
             child_component_name = input.parse()?;
         } 

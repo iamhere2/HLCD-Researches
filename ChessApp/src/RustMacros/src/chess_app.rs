@@ -24,22 +24,22 @@ use self::storage_interface::*;
 
 hlcd::define! {
     component ChessApp {
-        provides { ConsoleApp via console_ui }
+        provides { ConsoleApp by console_ui }
         requires { ConsoleIO, FileIO }
         children {
             file_storage: FileStorage(FileIO),
             ai_player: AiPlayer(),
             rules_engine: RulesEngine(),
             game_flow: GameFlow(
-                ai_player for SyncPlayer,
-                rules_engine for RulesEngine
+                SyncPlayer by ai_player,
+                RulesEngine by rules_engine 
             ),
             console_ui: ConsoleUI(
                 ConsoleIO,
-                file_storage for Storage,
-                rules_engine for RulesEngine,
-                game_flow for GameFlow,
-                game_flow for FlowPlay    
+                Storage by file_storage,
+                RulesEngine by rules_engine,
+                GameFlow by game_flow,
+                FlowPlay by game_flow     
             )
         }
     }

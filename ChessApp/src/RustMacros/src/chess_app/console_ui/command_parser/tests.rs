@@ -6,7 +6,8 @@ use super::{interface::{CommandParserInterface, Error}, component::CommandParser
 
 fn parse(s: &str) -> Result<Command, Error> {
     let parser = CommandParser::new();
-    RefCell::borrow(&parser).parse(s)
+    let parser = RefCell::borrow(&parser);
+    parser.parse(s)
 }
 
 #[test]
