@@ -22,6 +22,10 @@ impl Cell {
         if !Cell::is_valid(v, h) { panic!("Invalid V or H {v}{h}") };
         Cell {v, h}
     }
+
+    pub fn v_num(&self) -> u8 {
+        (self.v as u32 - board::V_LEFT as u32) as u8
+    }
 }
 
 impl std::fmt::Debug for Cell {
