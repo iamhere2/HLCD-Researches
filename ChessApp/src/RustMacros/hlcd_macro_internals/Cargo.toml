@@ -9,3 +9,4 @@ edition = "2021"
 syn = { version = "*", features = ["extra-traits", "parsing", "full"] }
 quote = "*"
 proc-macro2 = "*"
+convert_case = "*"

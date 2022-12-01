@@ -1,22 +1,20 @@
 pub mod requires_section;
 pub mod state_section;
-pub mod provided_interface;
-pub mod child_component;
+pub mod provides_section;
+pub mod children_section;
 pub mod interface_impl;   
 pub mod private_impl;
 
-use syn::{parse::{Parse, ParseStream}, Ident, braced, punctuated::Punctuated, Token};
+use syn::{parse::{Parse, ParseStream}, Ident, braced};
 use super::Component;
 use requires_section::RequiresSection;
 use state_section::StateSection;
-use provided_interface::ProvidedInterface;
+use provides_section::ProvidesSection;
 use interface_impl::InterfaceImplementation;
-use child_component::ChildComponent;
+use children_section::ChildrenSection;
 
 pub mod kw {
     syn::custom_keyword!(component);
-    syn::custom_keyword!(provides);
-    syn::custom_keyword!(children);
     syn::custom_keyword!(state);
 }
 
@@ -26,45 +24,34 @@ impl Parse for Component {
         let name: Ident = input.parse()?;
 
         let mut requires: RequiresSection = Default::default();
-        let mut provides = vec![];
+        let mut provides: ProvidesSection = Default::default();
         let mut state: StateSection = Default::default();
-        let children: Vec<ChildComponent> = vec![];
+        let mut children: ChildrenSection = Default::default();
         let mut interface_impls = vec![];
         let mut private_impl_items = vec![];
 
-        let component_content;
-        braced!(component_content in input);
+        let content;
+        braced!(content in input);
 
-        while !component_content.is_empty() {
-            let lookahead = component_content.lookahead1();
+        while !content.is_empty() {
+            let la = content.lookahead1();
 
-            if lookahead.peek(requires_section::kw::requires) {
-                
-                requires = component_content.parse()?;
+            if la.peek(requires_section::kw::requires) {
+                requires = content.parse()?;
+            } else if la.peek(provides_section::kw::provides) {
+                provides = content.parse()?;
+            } else if la.peek(state_section::kw::state) {
+                state = content.parse()?;
+            } else if la.peek(children_section::kw::children) {
+                children = content.parse()?;
+            } else if la.peek(syn::token::Impl) {
+                content.parse::<syn::token::Impl>()?;
 
-            } else if lookahead.peek(kw::provides) {
-                component_content.parse::<kw::provides>()?;
-
-                let provides_content;
-                braced!(provides_content in component_content);
-
-                let punctuated: Punctuated<ProvidedInterface, Token![,]> = 
-                    provides_content.parse_terminated(ProvidedInterface::parse)?;
-
-                provides.extend(punctuated.into_iter());
-
-            } else if lookahead.peek(state_section::kw::state) {
-
-                state = component_content.parse()?;
-
-            } else if lookahead.peek(syn::token::Impl) {
-                component_content.parse::<syn::token::Impl>()?;
-
-                let lookahead = component_content.lookahead1();
+                let lookahead = content.lookahead1();
                 if lookahead.peek(syn::token::Brace) {
                     
                     let impl_content;
-                    braced!(impl_content in component_content);
+                    braced!(impl_content in content);
 
                     while !impl_content.is_empty() {
                         private_impl_items.push(
@@ -74,10 +61,10 @@ impl Parse for Component {
                     
                 } else if lookahead.peek(syn::Ident) {
                     
-                    let interface_name = component_content.parse::<Ident>()?;
+                    let interface_name = content.parse::<Ident>()?;
 
                     let impl_content;
-                    braced!(impl_content in component_content);
+                    braced!(impl_content in content);
 
                     let mut items = vec![]; 
                     while !impl_content.is_empty() {
@@ -97,10 +84,8 @@ impl Parse for Component {
                 } else {
                     return Err(lookahead.error()) 
                 }
-            // } else if lookahead.peek(kw::children) {
-            //     todo!()
             } else { 
-                return Err(lookahead.error()) 
+                return Err(la.error()) 
             }
         }
 

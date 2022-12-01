@@ -1,9 +1,14 @@
 mod component_struct;
 mod constructor;
+mod required_interface_model;
+mod provider_trait_impl;
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use quote::quote;
+use self::provider_trait_impl::gen_provider_trait_impls;
+use self::required_interface_model::RequiredInterfaceModel;
+
 use super::Component;
 use super::parser::interface_impl::InterfaceImplementation;
 
@@ -13,7 +18,7 @@ impl ToTokens for Component {
         let Component {
             name,
             requires,
-            provides,
+            // provides,
             // children,
             // state,
             interface_impls,
@@ -21,24 +26,25 @@ impl ToTokens for Component {
             ..
         } = self;
 
+        let requires: Vec::<_> = requires.interfaces.iter().map(|r| r.into()).collect();
+
         let component_struct_name = syn::Ident::new(&format!("{}", name), name.span());
         let component_ref_name = syn::Ident::new(&format!("{}InstanceRef", name), name.span());
 
-        let dependency_accessors = requires.interfaces.iter().map(|r| {
-            let ref_name = &r.ref_name;
-            let ref_name_mut = syn::Ident::new(&format!("{}_mut", ref_name), ref_name.span());
-            let interface_trait_name = syn::Ident::new(&format!("{}Interface", r.interface_name), r.interface_name.span());
-            quote! { 
-                fn #ref_name(&self) -> std::cell::Ref<dyn #interface_trait_name> {
-                    std::cell::RefCell::borrow(&self.#ref_name)
-                } 
+        let dependency_accessors = requires.iter().map(
+            |RequiredInterfaceModel { port_name, interface_name, .. }| {
+                let port_name_mut = syn::Ident::new(&format!("{}_mut", port_name), interface_name.span());
+                let interface_trait_name = syn::Ident::new(&format!("{}Interface", interface_name), interface_name.span());
+                quote! { 
+                    fn #port_name(&self) -> std::cell::Ref<dyn #interface_trait_name> {
+                        std::cell::RefCell::borrow(&self.#port_name)
+                    } 
 
-                fn #ref_name_mut(&self) -> std::cell::RefMut<dyn #interface_trait_name> {
-                    std::cell::RefCell::borrow_mut(&self.#ref_name)
-                } 
-            }
-
-        }).collect::<Vec<_>>();
+                    fn #port_name_mut(&self) -> std::cell::RefMut<dyn #interface_trait_name> {
+                        std::cell::RefCell::borrow_mut(&self.#port_name)
+                    } 
+                }
+            }).collect::<Vec<_>>();
 
         let component_ref = quote! {
             pub type #component_ref_name = std::rc::Rc<std::cell::RefCell<#component_struct_name>>;
@@ -58,18 +64,20 @@ impl ToTokens for Component {
         //     }
         // };
 
-        let self_interface_impls_providers = provides.iter().map(|p| {
-            let provider_trait_name = syn::Ident::new(&format!("{}Provider", p.name), p.name.span());
-            let interface_ref_name = syn::Ident::new(&format!("{}Ref", p.name), p.name.span());
+        // let self_interface_impls_providers = provides.interfaces.iter().map(|p| {
+        //     let provider_trait_name = syn::Ident::new(&format!("{}Provider", p.interface_name), p.interface_name.span());
+        //     let interface_ref_name = syn::Ident::new(&format!("{}Ref", p.interface_name), p.interface_name.span());
 
-            quote! {
-                impl #provider_trait_name for #component_struct_name {
-                    fn get(it: std::rc::Rc<std::cell::RefCell<Self>>) -> #interface_ref_name {
-                        it
-                    }
-                }
-            }
-        }).collect::<Vec<_>>();
+        //     quote! {
+        //         impl #provider_trait_name for #component_struct_name {
+        //             fn get(it: std::rc::Rc<std::cell::RefCell<Self>>) -> #interface_ref_name {
+        //                 it
+        //             }
+        //         }
+        //     }
+        // }).collect::<Vec<_>>();
+
+        let provider_trait_impls = gen_provider_trait_impls(self);
 
         let self_interface_impls = interface_impls.iter().map(|imp| {
             let InterfaceImplementation {
@@ -104,7 +112,7 @@ impl ToTokens for Component {
             #component_ref
             #component_struct
             #private_impl
-            #( #self_interface_impls_providers )*
+            #( #provider_trait_impls )*
             #( #self_interface_impls )*
         };
         

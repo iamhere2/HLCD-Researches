@@ -23,7 +23,7 @@ use console_ui::ConsoleUI;
 use file_storage::FileStorage;
 
 use self::ai_player::AiPlayer;
-use self::console_ui::ConsoleUIRef;
+use self::console_ui::ConsoleUIInstanceRef;
 use self::file_storage::FileStorageInstanceRef;
 use self::game_flow::component::GameFlow;
 use self::game_flow::interface::*;
@@ -44,7 +44,7 @@ pub struct ChessApp {
     // -
 
     // Children components
-    console_ui: ConsoleUIRef,
+    console_ui: ConsoleUIInstanceRef,
     file_storage: FileStorageInstanceRef
 }
 
@@ -75,9 +75,9 @@ impl ChessApp {
         let console_ui = Rc::new(RefCell::new(ConsoleUI::new(
             &Rc::clone(&console_io), 
             &Rc::clone(&storage_interface),
+            &Rc::clone(&rules_engine_interface),
             &Rc::clone(&game_flow_interface),
-            &Rc::clone(&flow_play_interface),
-            &Rc::clone(&rules_engine_interface)
+            &Rc::clone(&flow_play_interface)
         )));
 
         // Instantiate this component and assign children

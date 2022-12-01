@@ -3,15 +3,15 @@ use syn::Ident;
 use quote::quote;
 
 use crate::hlcd::component::parser::state_section::state_part::StatePart;
-use super::super::Component;
+use super::{super::Component, required_interface_model::RequiredInterfaceModel};
 
-pub(super) fn struct_name(component: &Component) -> Ident {
-    syn::Ident::new(&format!("{}", component.name), component.name.span())
+pub(super) fn struct_name(component_name: &Ident) -> Ident {
+    syn::Ident::new(&format!("{}", component_name), component_name.span())
 } 
 
 pub(super) fn gen_struct(component: &Component) -> TokenStream {
 
-    let struct_name = struct_name(component);
+    let struct_name = struct_name(&component.name);
     
     let state_fields = component.state.parts.iter().map(|StatePart{ field, .. }| {
         quote! { 
@@ -20,11 +20,24 @@ pub(super) fn gen_struct(component: &Component) -> TokenStream {
     }).collect::<Vec<_>>();
 
     let dependency_ref_fields = component.requires.interfaces.iter().map(|r| {
-        let ref_name = &r.ref_name;
-        let interface_ref_name = syn::Ident::new(&format!("{}Ref", r.interface_name), r.interface_name.span());
+        let RequiredInterfaceModel { 
+            port_name, 
+            interface_ref_name,
+            .. 
+        } = r.into();
 
         quote! {
-            #ref_name : #interface_ref_name
+            #port_name : #interface_ref_name
+        }
+
+    }).collect::<Vec<_>>();
+
+    let children_component_fields = component.children.components.iter().map(|c| {
+        let field_name = c.child_name.clone();
+        let instance_ref_name = syn::Ident::new(&format!("{}InstanceRef", c.component_type), c.component_type.span());
+
+        quote! {
+            #field_name : #instance_ref_name
         }
 
     }).collect::<Vec<_>>();
@@ -33,6 +46,7 @@ pub(super) fn gen_struct(component: &Component) -> TokenStream {
         pub struct #struct_name {
             #( #dependency_ref_fields , )*
             #( #state_fields , )*
+            #( #children_component_fields , )*
         }
     }
 }

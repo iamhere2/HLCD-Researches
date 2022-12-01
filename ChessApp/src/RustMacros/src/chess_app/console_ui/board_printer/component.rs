@@ -4,7 +4,6 @@ use crate::{hlcd_infra::console_io_interface::*, chess_app::data::{Color, board,
 use crate::chess_app::data::{BoardState, Cell};
 use super::interface::*;
 
-
 hlcd::define! {
     component BoardPrinter {
         requires { console_io: ConsoleIO }
