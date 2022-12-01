@@ -8,11 +8,8 @@ pub const H_BOTTOM: u8 = 1;
 pub const H_TOP: u8 = 8;
 
 pub fn color_of(cell: Cell) -> Color {
-    match (cell.v as u32 - V_LEFT as u32 + cell.h as u32 - H_BOTTOM as u32) % 2 {
-        0 => Color::Black,
-        1 => Color::White,
-        _ => !unreachable!()
-    }
+    let hv_ndx = (cell.v as u32 - V_LEFT as u32 + cell.h as u32 - H_BOTTOM as u32) % 2;
+    if hv_ndx == 0 { Color::Black } else { Color::White }
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]

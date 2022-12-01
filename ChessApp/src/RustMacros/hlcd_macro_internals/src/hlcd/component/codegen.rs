@@ -18,9 +18,6 @@ impl ToTokens for Component {
         let Component {
             name,
             requires,
-            // provides,
-            // children,
-            // state,
             interface_impls,
             private_impl_items,
             ..
@@ -52,31 +49,6 @@ impl ToTokens for Component {
 
         let component_struct = component_struct::gen_struct(self);
 
-        // let interface_ref_name = syn::Ident::new(&format!("{}Ref", base_interface_name), base_interface_name.span());
-        // let interface_ref_type = quote! {
-        //     pub type #interface_ref_name = std::rc::Rc<std::cell::RefCell<dyn #interface_trait_name>>;
-        // };
-
-        // let provider_trait_name = syn::Ident::new(&format!("{}Provider", base_interface_name), base_interface_name.span());
-        // let provider_trait = quote! {
-        //     pub trait #provider_trait_name {
-        //         fn get(it: std::rc::Rc<std::cell::RefCell<Self>>) -> #interface_ref_name; 
-        //     }
-        // };
-
-        // let self_interface_impls_providers = provides.interfaces.iter().map(|p| {
-        //     let provider_trait_name = syn::Ident::new(&format!("{}Provider", p.interface_name), p.interface_name.span());
-        //     let interface_ref_name = syn::Ident::new(&format!("{}Ref", p.interface_name), p.interface_name.span());
-
-        //     quote! {
-        //         impl #provider_trait_name for #component_struct_name {
-        //             fn get(it: std::rc::Rc<std::cell::RefCell<Self>>) -> #interface_ref_name {
-        //                 it
-        //             }
-        //         }
-        //     }
-        // }).collect::<Vec<_>>();
-
         let provider_trait_impls = gen_provider_trait_impls(self);
 
         let self_interface_impls = interface_impls.iter().map(|imp| {
@@ -99,11 +71,8 @@ impl ToTokens for Component {
 
         let private_impl = quote! {
             impl #component_struct_name {
-
                 #constructor
-
                 #( #dependency_accessors )*
-
                 #( #private_impl_items )*
             }
         };
@@ -116,9 +85,6 @@ impl ToTokens for Component {
             #( #self_interface_impls )*
         };
         
-        // #self_interface_impls
-        // #delegated_interface_providers
-
         tokens.extend(component)
     }
 }

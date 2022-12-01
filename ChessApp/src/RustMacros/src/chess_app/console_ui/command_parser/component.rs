@@ -1,14 +1,13 @@
 use nom::{
     IResult, 
-    error::{ErrorKind, ParseError}, 
     branch::alt, 
-    bytes::complete::{tag, tag_no_case},    
+    bytes::complete::tag_no_case,    
     combinator::{map, recognize}, 
-    sequence::{separated_pair, tuple}, 
-    character::complete::{char, alpha1, multispace1, space1, one_of, space0}, 
+    sequence::separated_pair, 
+    character::complete::{alpha1, space1}, 
     multi::many1};
 
-use crate::{chess_app::data::{Figure, Color, Cell, Turn}, nom_extensions::parseable::Parseable};
+use crate::{chess_app::data::{Color, Turn}, nom_extensions::parseable::Parseable};
 use super::{interface::*, super::data::command::Command};
 
 hlcd::define! {
@@ -23,7 +22,6 @@ hlcd::define! {
             fn parse<'a>(&self, input: &'a str) -> IResult<&'a str, Command> {
                 let ident = Self::ident;
                 let color = Color::nom_parse;
-                let cell = Cell::nom_parse;
         
                 let exit = map(tag_no_case("exit"), |_| Command::Exit);
                 let help = map(tag_no_case("help"), |_| Command::Help);
@@ -46,7 +44,8 @@ hlcd::define! {
         
                 alt((exit, help, list, load, save, del, new, turn))
                 (input)
-            }    }
+            }    
+        }
 
         impl CommandParser {
             fn parse(&self, s: &str) -> Result<Command, Error> {

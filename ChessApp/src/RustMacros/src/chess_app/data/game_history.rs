@@ -1,4 +1,3 @@
-use std::{fmt::Display};
 use super::{BoardState, Turn, board};
 
 pub struct GameHistory { 

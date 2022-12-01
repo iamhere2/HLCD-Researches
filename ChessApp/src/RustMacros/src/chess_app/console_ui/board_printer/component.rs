@@ -1,6 +1,5 @@
-use std::io::{Stdout, Write};
 use hlcd_infra::console_io_interface::*;
-use crate::{hlcd_infra::console_io_interface::*, chess_app::data::{Color, board, Figure}};
+use crate::{chess_app::data::{Color, board, Figure}};
 use crate::chess_app::data::{BoardState, Cell};
 use super::interface::*;
 
@@ -15,7 +14,7 @@ hlcd::define! {
         
                 for h in (1..=8).rev() {
         
-                    for v in ('A'..='H') {
+                    for v in 'A'..='H' {
                         
                         let cell = Cell::at(v, h);
                         con.set_background(color_to_bg(board::color_of(cell)));
@@ -65,9 +64,3 @@ fn color_to_fg(c: Color) -> ConsoleColor {
         Color::Black => ConsoleColor::Black
     }
 }
-
-fn reset_colors(con: &mut dyn ConsoleIOInterface) {
-    con.set_background(ConsoleColor::Black);
-    con.set_background(ConsoleColor::LightGray);
-}
-

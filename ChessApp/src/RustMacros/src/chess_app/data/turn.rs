@@ -3,8 +3,7 @@ pub mod nom_parsing;
 #[cfg(test)]
 mod tests;
 
-use std::fmt::{Display, format};
-
+use std::fmt::Display;
 use super::{Cell, Figure};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -35,7 +34,6 @@ impl TryFrom<&str> for Turn {
     type Error = ParseError;
     
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        use nom_parsing;
         Parseable::parse(s)
     }
 }

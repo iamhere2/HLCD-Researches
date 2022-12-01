@@ -1,10 +1,11 @@
 use std::{error::Error, fmt::Display};
-use strum::Display;
 use crate::chess_app::data::{Turn, RuleViolation};
 
 #[derive(Clone, Debug)]
 pub enum TurnError {
     RuleViolation(RuleViolation),
+
+    #[allow(unused)]
     Other(String)
 }
 

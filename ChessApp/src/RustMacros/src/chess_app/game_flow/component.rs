@@ -1,4 +1,4 @@
-use crate::chess_app::{data::{GameHistory, Color, Turn, BoardState, RuleViolation}, player_interface::*, rules_engine::{interface::*, self}};
+use crate::chess_app::{data::{GameHistory, Color, Turn, BoardState, RuleViolation}, player_interface::*, rules_engine::interface::*};
 use super::interface::*;
 
 hlcd::define! {

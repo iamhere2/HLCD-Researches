@@ -63,7 +63,7 @@ pub(super) fn gen_constructor(component: &Component) -> TokenStream {
                         // just clone from required interface local
                         let local_interface_ref_name = gen_port_name(&p.interface_name);
                         quote! { 
-                            &Rc::clone(&#local_interface_ref_name) 
+                            &::std::rc::Rc::clone(&#local_interface_ref_name) 
                         }
                     }
                 }

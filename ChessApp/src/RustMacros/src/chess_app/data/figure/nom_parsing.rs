@@ -1,6 +1,6 @@
 use super::*;
 use crate::nom_extensions::parseable::Parseable;
-use nom::{IResult, combinator::map, sequence::tuple, character::complete::one_of, branch::alt, bytes::complete::tag_no_case};
+use nom::{IResult, combinator::map, branch::alt, bytes::complete::tag_no_case};
 
 impl Parseable for Figure {
     const MESSAGE: &'static str = "invalid figure; expected one of: Knight, King, Rook, Bishop, Queen, Pawn";

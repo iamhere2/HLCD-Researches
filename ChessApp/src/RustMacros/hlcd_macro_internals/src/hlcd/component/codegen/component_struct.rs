@@ -43,6 +43,7 @@ pub(super) fn gen_struct(component: &Component) -> TokenStream {
     }).collect::<Vec<_>>();
 
     quote! {
+        #[allow(unused)]
         pub struct #struct_name {
             #( #dependency_ref_fields , )*
             #( #state_fields , )*

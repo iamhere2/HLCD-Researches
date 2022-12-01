@@ -2,10 +2,7 @@
 mod tests;
 mod storage_model;
 
-use std::str::FromStr;
-
-use crate::chess_app::data::{GameHistory, Color, game_history, BoardState, Turn, self};
-use serde::{Deserialize, Serialize, de::Visitor, ser::{SerializeStruct, SerializeSeq, SerializeMap}};
+use crate::chess_app::data::{GameHistory, Color};
 
 #[derive(Clone, Debug)]
 pub(super) struct Error(pub String);

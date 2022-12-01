@@ -1,6 +1,4 @@
-use std::time::Duration;
-use std::sync::mpsc::{Receiver, Sender, RecvTimeoutError};
-use super::data::{BoardState, Turn, RuleViolation};
+use super::data::{BoardState, Turn};
 
 hlcd::define! {
     interface SyncPlayer {

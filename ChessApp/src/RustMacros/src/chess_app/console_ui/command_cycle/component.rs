@@ -2,7 +2,6 @@
 use enum_iterator::IntoEnumIterator;
 
 use crate::chess_app::console_ui::data::command::Command;
-use crate::chess_app::data::Color;
 
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
@@ -83,7 +82,7 @@ hlcd::define! {
                     self.print(ConsoleColor::Yellow, "> ");
                     
                     let cmd_str = {
-                        let mut con = self.console();
+                        let con = self.console();
                         con.read_line()
                     };
 
