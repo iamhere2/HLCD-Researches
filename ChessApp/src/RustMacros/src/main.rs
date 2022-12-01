@@ -1,5 +1,3 @@
-#![feature(io_error_more)]
-
 use hlcd_infra;
 mod nom_extensions;
 mod chess_app;
