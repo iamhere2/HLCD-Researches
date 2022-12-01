@@ -71,12 +71,9 @@ hlcd::define! {
                         let board = flow.game_history().map(|h| h.states().last().unwrap());
 
                         if let Some(board) = board {
-                            dbg!("board found");
                             let printer = self.printer();
                             printer.print(board);
-                        } else {
-                            dbg!("board not found");
-                        }
+                        } 
                     }
 
                     self.print(ConsoleColor::Yellow, "> ");
@@ -99,7 +96,7 @@ hlcd::define! {
                         },
                         Ok(Command::MakeTurn(t)) => {
                                 let turn_cmd_handler = self.turn_cmd_handler();
-                                if let Err(e) = turn_cmd_handler.make_turn(dbg!(t)) {
+                                if let Err(e) = turn_cmd_handler.make_turn(t) {
                                     self.print_error(format!("Invalid turn {t}"), e)
                                 }
                             },

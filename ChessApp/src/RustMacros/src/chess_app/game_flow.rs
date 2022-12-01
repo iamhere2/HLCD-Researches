@@ -56,7 +56,6 @@ pub(super) mod component {
                 fn start_from(&mut self, game_history: GameHistory, player_a_color: Color) {
                     if game_history.is_finished() { panic!("Can't continue finished game") };
             
-                    dbg!("New game creating...");
                     self.game_history = Some(game_history);
                     self.player_a_color = Some(player_a_color);
                     self.next_player_color = Some(player_a_color);
