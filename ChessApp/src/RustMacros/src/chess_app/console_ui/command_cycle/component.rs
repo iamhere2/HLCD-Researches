@@ -3,6 +3,8 @@ use enum_iterator::IntoEnumIterator;
 
 use crate::chess_app::console_ui::data::command::Command;
 
+use crate::chess_app::data::Color;
+use crate::chess_app::data::Turn;
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
 
@@ -54,6 +56,10 @@ hlcd::define! {
                 self.print(ConsoleColor::LightRed, format!("{}: {e}\n", prefix.as_ref().to_string()));
                 self.print(ConsoleColor::Gray, format!("DEBUG INFO:\n{e:?}\n"));
             }
+
+            fn print_turn(&self, c: Color, t: Turn) {
+                self.print(ConsoleColor::White, format!("{}:{:?}\n", c, t));
+            }
         }
 
         impl ConsoleApp {
@@ -65,7 +71,6 @@ hlcd::define! {
                 self.print(ConsoleColor::White, "\n");
 
                 loop {
-                    dbg!("Looking for board/request...");
                     {
                         let flow = self.flow();
                         let board = flow.game_history().map(|h| h.states().last().unwrap());
@@ -73,10 +78,11 @@ hlcd::define! {
                         if let Some(board) = board {
                             let printer = self.printer();
                             printer.print(board);
-                        } 
+                            self.print(ConsoleColor::Yellow, format!("{:?} > ", flow.player_a_color().unwrap()));
+                        } else {
+                            self.print(ConsoleColor::Yellow, "cmd > ");
+                        }
                     }
-
-                    self.print(ConsoleColor::Yellow, "> ");
                     
                     let cmd_str = {
                         let con = self.console();
@@ -95,10 +101,16 @@ hlcd::define! {
                             self.print(ConsoleColor::White, format!("{}\n", parser.get_help()))
                         },
                         Ok(Command::MakeTurn(t)) => {
+                                self.print_turn(self.flow().next_player_color().unwrap(), t);
+
                                 let turn_cmd_handler = self.turn_cmd_handler();
                                 if let Err(e) = turn_cmd_handler.make_turn(t) {
                                     self.print_error(format!("Invalid turn {t}"), e)
-                                }
+                                };
+
+                                self.print_turn(
+                                    !self.flow().next_player_color().unwrap(), 
+                                    *self.flow().game_history().unwrap().turns().last().unwrap());
                             },
                         Ok(cmd) => {
                             let game_cmd_handler = self.game_cmd_handler();
