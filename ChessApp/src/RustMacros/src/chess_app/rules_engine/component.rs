@@ -25,6 +25,10 @@ hlcd::define! {
 
         impl {
             fn apply_move(board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
+                if board.next_player_color() != player {
+                    return Err("It's another player's turn now".to_string()) 
+                };
+
                 let (figure, color) = board.get(from)
                     .ok_or("No figure at source cell")?;
 
@@ -71,9 +75,9 @@ hlcd::define! {
                 };
 
                 let new_state = if board.get(to).is_some() { 
-                    board.without(from).without(to).with(figure, color, to) 
+                    board.without(from).without(to).with(figure, color, to).with_another_player() 
                 } else { 
-                    board.without(from).with(figure, color, to)
+                    board.without(from).with(figure, color, to).with_another_player()
                 };
 
                 Ok(new_state)

@@ -6,13 +6,14 @@ pub(super) mod interface {
             fn game_history(&self) -> Option<&GameHistory>;
             fn player_a_color(&self) -> Option<Color>;
             fn player_b_color(&self) -> Option<Color>;
+            fn next_player_color(&self) -> Option<Color>;
     
             fn new_game(&mut self, player_a_color: Color);
             fn start_from(&mut self, game_history: GameHistory, player_a_color: Color);
         } 
     
         interface FlowPlay {
-            fn make_turn(&mut self, t: Turn) -> Result<BoardState, RuleViolation>;
+            fn make_turn(&mut self, t: Turn) -> Result<&BoardState, RuleViolation>;
         } 
     } 
 }
@@ -31,7 +32,6 @@ pub(super) mod component {
             state {
                 game_history: Option<GameHistory> = None,
                 player_a_color: Option<Color> = None,
-                next_player_color: Option<Color> = None
             }
     
             provides { GameFlow, FlowPlay }
@@ -48,6 +48,10 @@ pub(super) mod component {
                 fn player_b_color(&self) -> Option<Color> {
                     self.player_a_color.map(|c| !c)
                 }
+
+                fn next_player_color(&self) -> Option<Color> {
+                    self.game_history.as_ref().map(|h| h.states().last().unwrap().next_player_color())
+                }
             
                 fn new_game(&mut self, player_a_color: Color) {
                     Self::start_from(self, GameHistory::classic_initial(), player_a_color)
@@ -58,27 +62,47 @@ pub(super) mod component {
             
                     self.game_history = Some(game_history);
                     self.player_a_color = Some(player_a_color);
-                    self.next_player_color = Some(player_a_color);
+
+                    if self.next_player_color().unwrap() == !player_a_color {
+                        self.make_player_b_turn();
+                    }
+                }
+            }
+            
+            impl {
+                fn make_player_b_turn(&mut self) {
+                    let state = self.game_history.as_ref().unwrap().states().last().unwrap();
+                    let history;
+    
+                    let player_b_turn = self.player_b().turn_request(&state); 
+                    let new_state_b;
+                    {
+                        history = self.game_history.as_ref().unwrap();
+                        new_state_b = self.rules_engine().apply(&state, self.player_b_color().unwrap(), player_b_turn).unwrap();
+                    }
+    
+                    self.game_history = Some(history.with(player_b_turn, new_state_b, false));
                 }
             }
     
             impl FlowPlay {
-                fn make_turn(&mut self, t: Turn) -> Result<BoardState, RuleViolation> {
-                    let player;
-                    let new_state;
+                fn make_turn(&mut self, player_a_turn: Turn) -> Result<&BoardState, RuleViolation> {
+                    // Player A
+                    let new_state_a;
                     let history;
+
                     {
-                        let rules_engine = self.rules_engine();
                         history = self.game_history.as_ref().expect("Game not started");
                         let state = history.states().last().unwrap();
-                        player = self.next_player_color.unwrap();
-                        new_state = rules_engine.apply(&state, player, t)?;
+                        new_state_a = self.rules_engine().apply(&state, self.player_a_color.unwrap(), player_a_turn)?;
                     }
             
-                    self.next_player_color = Some(!player);
-                    self.game_history = Some(history.with(t, new_state.clone(), false));
-            
-                    Ok(new_state)
+                    self.game_history = Some(history.with(player_a_turn, new_state_a.clone(), false));
+
+                    // PlayerB
+                    self.make_player_b_turn();
+
+                    Ok(self.game_history.as_ref().unwrap().states().last().unwrap())
                 }            
             }
         }

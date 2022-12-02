@@ -14,10 +14,15 @@ pub fn color_of(cell: Cell) -> Color {
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct BoardState {
-    figures: HashMap<Cell, (Figure, Color)>
+    figures: HashMap<Cell, (Figure, Color)>,
+    next_player_color: Color,
 }
 
 impl BoardState {
+    pub fn next_player_color(&self) -> Color {
+        self.next_player_color
+    }
+
     pub fn get(&self, c: Cell) -> Option<(Figure, Color)> {
         self.figures.get(&c).map(|&x| x)
     }
@@ -25,13 +30,22 @@ impl BoardState {
     pub fn with(&self, f: Figure, col: Color, c: Cell) -> Self {
         let mut figures = self.figures.clone();
         figures.insert(c, (f, col));
-        BoardState { figures }
+        BoardState { figures, next_player_color: self.next_player_color }
     }
 
     pub fn without(&self, c: Cell) -> Self {
         let mut figures = self.figures.clone();
         figures.remove(&c);
-        BoardState { figures }
+        BoardState { figures, next_player_color: self.next_player_color  }
+    }
+
+    pub fn with_next_player(&self, c: Color) -> Self {
+        let figures = self.figures.clone();
+        BoardState { figures, next_player_color: c  }
+    }
+
+    pub fn with_another_player(&self) -> Self {
+        self.with_next_player(!self.next_player_color())
     }
 
     pub fn figures(&self) -> &HashMap<Cell, (Figure, Color)> {
@@ -40,9 +54,10 @@ impl BoardState {
 }
 
 pub fn empty() -> BoardState {
-    BoardState { figures: HashMap::new() }
+    BoardState { figures: HashMap::new(), next_player_color: Color::White }
 }
 
+#[rustfmt::skip]
 pub fn classic_initial() -> BoardState {
     empty()
         .with(Figure::Rook,   Color::White, Cell::at('A', 1))

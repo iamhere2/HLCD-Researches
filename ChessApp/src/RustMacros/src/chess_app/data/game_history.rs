@@ -10,7 +10,7 @@ impl GameHistory {
     pub fn new(state: BoardState, is_finished: bool) -> GameHistory {
         GameHistory {  
             is_finished,
-            states: vec![ state ],
+            states: vec![state],
             turns: Vec::new()
         }
     }

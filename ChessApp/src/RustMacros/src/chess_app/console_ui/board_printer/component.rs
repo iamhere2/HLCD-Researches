@@ -32,7 +32,8 @@ hlcd::define! {
                 }
         
                 con.set_background(ConsoleColor::Black);
-                con.write("\n");
+                con.set_foreground(ConsoleColor::White);
+                con.write(format!("Next player: {}\n", board.next_player_color()).as_str());
             }
         }
     }

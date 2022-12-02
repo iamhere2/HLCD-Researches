@@ -1,7 +1,5 @@
 use std::collections::HashMap;
-
 use serde::{Serialize, Deserialize};
-
 use crate::chess_app::data::{Color, figure, BoardState, board, Cell, game_history, Turn};
 
 #[derive(Serialize, Deserialize)]
@@ -19,7 +17,8 @@ pub(super) struct GameHistory {
 
 #[derive(Serialize, Deserialize)]
 pub(super) struct State {
-    pub figures: HashMap<String, Figure>
+    pub figures: HashMap<String, Figure>,
+    pub next_player_color: String
 }
 
 #[derive(Serialize, Deserialize)]
@@ -64,8 +63,9 @@ impl From<&BoardState> for State {
         let figures = HashMap::from_iter(bs.figures().iter().map(
             |(cell, (figure, color))| (cell.to_string(), (*figure, *color).into()))
         );
+        let next_player_color = bs.next_player_color().to_string();
 
-        State { figures }
+        State { figures, next_player_color }
     }
 }
 
@@ -78,7 +78,7 @@ impl From<&State> for BoardState {
             let cell = Cell::try_from(c.as_str()).unwrap();
             bs = bs.with(figure, color, cell);
         }
-        bs
+        bs.with_next_player(Color::try_from(state.next_player_color.as_str()).unwrap())
     }
 }
 
