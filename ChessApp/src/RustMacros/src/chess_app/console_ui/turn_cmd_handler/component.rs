@@ -5,14 +5,14 @@ hlcd::define! {
     component TurnCmdHandler {
         requires {
             rules_engine: RulesEngine,
-            flow_play: FlowPlay
+            flow: ForActivePlayer
         }
 
         provides { TurnCmdHandler }
 
         impl TurnCmdHandler {
             fn make_turn(&self, turn: Turn) -> Result<(), TurnError> {
-                self.flow_play_mut().make_turn(turn)
+                self.flow_mut().make_turn(turn)
                     .map(|_| ())
                     .map_err(|rv| TurnError::RuleViolation(rv))
             }

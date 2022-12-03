@@ -31,22 +31,22 @@ hlcd::define! {
             ConsoleIO,
             Storage,
             RulesEngine,
-            GameFlow,
-            FlowPlay 
+            GameFlowControl,
+            ForActivePlayer 
         }
 
         children {
             command_parser: CommandParser(),
             board_printer: BoardPrinter(ConsoleIO),
-            game_cmd_handler: GameCmdHandler(ConsoleIO, GameFlow, Storage),
-            turn_cmd_handler: TurnCmdHandler(RulesEngine, FlowPlay),
+            game_cmd_handler: GameCmdHandler(ConsoleIO, GameFlowControl, Storage),
+            turn_cmd_handler: TurnCmdHandler(RulesEngine, ForActivePlayer),
             command_cycle: CommandCycle(
                 ConsoleIO,
                 CommandParser by command_parser,
                 TurnCmdHandler by turn_cmd_handler,
                 GameCmdHandler by game_cmd_handler,
                 BoardPrinter by board_printer,
-                GameFlow
+                GameFlowControl
             )
         }
     }

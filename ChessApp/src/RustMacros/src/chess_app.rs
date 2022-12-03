@@ -30,16 +30,16 @@ hlcd::define! {
             file_storage: FileStorage(FileIO),
             ai_player: AiPlayer(),
             rules_engine: RulesEngine(),
-            game_flow: GameFlow(
-                SyncPlayer by ai_player,
+            game_flow: ActivePassiveSyncGameFlow(
+                PassiveSyncPlayer by ai_player,
                 RulesEngine by rules_engine 
             ),
             console_ui: ConsoleUI(
                 ConsoleIO,
                 Storage by file_storage,
                 RulesEngine by rules_engine,
-                GameFlow by game_flow,
-                FlowPlay by game_flow     
+                GameFlowControl by game_flow,
+                ForActivePlayer by game_flow     
             )
         }
     }

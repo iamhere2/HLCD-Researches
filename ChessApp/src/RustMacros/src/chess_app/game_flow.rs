@@ -2,7 +2,7 @@ pub(super) mod interface {
     use crate::chess_app::data::{GameHistory, Color, BoardState, Turn, RuleViolation};
 
     hlcd::define! {
-        interface GameFlow {
+        interface GameFlowControl {
             fn game_history(&self) -> Option<&GameHistory>;
             fn player_a_color(&self) -> Option<Color>;
             fn player_b_color(&self) -> Option<Color>;
@@ -12,7 +12,7 @@ pub(super) mod interface {
             fn start_from(&mut self, game_history: GameHistory, player_a_color: Color);
         } 
     
-        interface FlowPlay {
+        interface ForActivePlayer {
             fn make_turn(&mut self, t: Turn) -> Result<&BoardState, RuleViolation>;
         } 
     } 
@@ -23,9 +23,9 @@ pub(super) mod component {
     use super::interface::*;
     
     hlcd::define! {
-        component GameFlow {
+        component ActivePassiveSyncGameFlow {
             requires {
-                player_b: SyncPlayer,
+                player_b: PassiveSyncPlayer,
                 rules_engine: RulesEngine
             }
     
@@ -34,9 +34,9 @@ pub(super) mod component {
                 player_a_color: Option<Color> = None,
             }
     
-            provides { GameFlow, FlowPlay }
+            provides { GameFlowControl, ForActivePlayer }
     
-            impl GameFlow {
+            impl GameFlowControl {
                 fn game_history(&self) -> Option<&GameHistory> {
                     self.game_history.as_ref()
                 }
@@ -85,7 +85,7 @@ pub(super) mod component {
                 }
             }
     
-            impl FlowPlay {
+            impl ForActivePlayer {
                 fn make_turn(&mut self, player_a_turn: Turn) -> Result<&BoardState, RuleViolation> {
                     // Player A
                     let new_state_a;

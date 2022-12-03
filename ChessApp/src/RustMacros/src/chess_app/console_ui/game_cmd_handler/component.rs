@@ -6,7 +6,7 @@ hlcd::define! {
 
         requires {
             console_io: ConsoleIO,
-            game_flow: GameFlow,
+            game_flow: GameFlowControl,
             storage: Storage
         }
 

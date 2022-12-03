@@ -1,7 +1,7 @@
 use super::data::{BoardState, Turn};
 
 hlcd::define! {
-    interface SyncPlayer {
+    interface PassiveSyncPlayer {
         fn turn_request(&self, bs: &BoardState) -> Turn;
     }
 }

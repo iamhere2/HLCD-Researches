@@ -1,8 +1,6 @@
 
 use enum_iterator::IntoEnumIterator;
-
 use crate::chess_app::console_ui::data::command::Command;
-
 use crate::chess_app::data::Color;
 use crate::chess_app::data::Turn;
 // Provided interfaces
@@ -26,7 +24,7 @@ hlcd::define! {
             turn_cmd_handler: TurnCmdHandler, 
             game_cmd_handler: GameCmdHandler, 
             printer: BoardPrinter,
-            flow: GameFlow,
+            flow: GameFlowControl,
         }
 
         impl {
