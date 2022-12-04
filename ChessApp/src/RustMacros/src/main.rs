@@ -1,18 +1,15 @@
 #![feature(mixed_integer_ops)]
-
-use hlcd_infra;
 mod chess_app;
 
+use hlcd_infra;
+use hlcd_infra::console_app_interface::ConsoleAppProvider;
 use std::process;
-
 use chess_app::ChessApp;
-use hlcd_infra::{get_console_io, get_file_io, console_app_interface::ConsoleAppProvider};
 
 fn main() {
-
     // Main app component dependencies
-    let console_io = get_console_io();
-    let file_io = get_file_io();
+    let console_io = hlcd_infra::get_console_io();
+    let file_io = hlcd_infra::get_file_io();
 
     // Create main app component
     let chess_app = ChessApp::new(&console_io, &file_io);
