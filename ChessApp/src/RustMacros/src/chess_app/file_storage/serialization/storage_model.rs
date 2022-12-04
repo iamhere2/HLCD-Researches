@@ -27,8 +27,8 @@ pub(super) struct Figure {
     pub color: String
 }
 
-impl From<(Color, game_history::GameHistory)> for Game {
-    fn from(g: (Color, game_history::GameHistory)) -> Self {
+impl From<(Color, &game_history::GameHistory)> for Game {
+    fn from(g: (Color, &game_history::GameHistory)) -> Self {
         let (c, gh) = g;
         let player_color = c.to_string();
         let game_history = GameHistory::from(gh);
@@ -82,8 +82,8 @@ impl From<&State> for BoardState {
     }
 }
 
-impl From<game_history::GameHistory> for GameHistory {
-    fn from(gh: game_history::GameHistory) -> Self {
+impl From<&game_history::GameHistory> for GameHistory {
+    fn from(gh: &game_history::GameHistory) -> Self {
         let is_finished = gh.is_finished();
         let turns = gh.turns().iter().map(|t| t.to_string()).collect();
         let states = gh.states().iter().map(|s| s.into()).collect();

@@ -12,6 +12,9 @@ hlcd::define! {
                 let mut con = self.console_io_mut();
         
                 for h in (1..=8).rev() {
+
+                    con.set_foreground(ConsoleColor::Cyan);
+                    con.write(format!("{h} ").as_str());
         
                     for v in 'A'..='H' {
                         
@@ -32,6 +35,9 @@ hlcd::define! {
                 }
         
                 con.set_background(ConsoleColor::Black);
+                con.set_foreground(ConsoleColor::Cyan);
+                con.write("  A B C D E F G H\n");
+
                 con.set_foreground(ConsoleColor::White);
                 con.write(format!("Next player: {}\n", board.next_player_color()).as_str());
             }

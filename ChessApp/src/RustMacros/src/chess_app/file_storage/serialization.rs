@@ -13,7 +13,7 @@ impl From<serde_json::Error> for Error {
     }
 } 
 
-pub(super) fn serialize(game_history: GameHistory, player_color: Color) -> Result<String, Error> {
+pub(super) fn serialize(game_history: &GameHistory, player_color: Color) -> Result<String, Error> {
     let player_color = player_color.to_string();
     let game_history = storage_model::GameHistory::from(game_history);
 

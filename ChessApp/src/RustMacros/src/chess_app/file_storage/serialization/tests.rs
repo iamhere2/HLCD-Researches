@@ -5,7 +5,7 @@ use super::deserialize;
 #[test]
 fn test_initial_serde() {
     let gh = GameHistory::classic_initial();
-    let s = serialize(gh, Color::Black).unwrap();
+    let s = serialize(&gh, Color::Black).unwrap();
 
     let (gh, color) = deserialize(s.as_str()).unwrap();
     assert_eq!(color, Color::Black, "expected color is Black");
@@ -22,7 +22,7 @@ fn test_e2e4_serde() {
                 .with(Figure::Pawn, Color::White, Cell::at('E', 4)),
             false);
 
-    let s = serialize(gh, Color::White).unwrap();
+    let s = serialize(&gh, Color::White).unwrap();
 
     let (gh, color) = deserialize(s.as_str()).unwrap();
     assert_eq!(color, Color::White, "expected color is White");

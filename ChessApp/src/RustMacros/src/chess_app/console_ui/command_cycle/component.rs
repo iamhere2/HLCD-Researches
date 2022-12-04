@@ -66,7 +66,7 @@ hlcd::define! {
                 self.print_hello();
                 self.print_rainbow();
                 self.print_rainbow();
-                self.print(ConsoleColor::White, "\n");
+                self.print(ConsoleColor::White, "\n\n");
 
                 loop {
                     {

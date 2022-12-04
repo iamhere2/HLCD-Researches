@@ -22,7 +22,7 @@ hlcd::define! {
                 Ok(io.list_files(&io.get_current_directory()?, format!("*.{EXT}").as_str())?)
             }
         
-            fn save_game(&self, gh: GameHistory, color: Color, name: &str) -> Result<(), Error> {
+            fn save_game(&self, gh: &GameHistory, color: Color, name: &str) -> Result<(), Error> {
                 Ok(self.file_io().write_file(
                     build_file_name(name).as_str(), 
                     serialize(gh, color)?.as_str())?
