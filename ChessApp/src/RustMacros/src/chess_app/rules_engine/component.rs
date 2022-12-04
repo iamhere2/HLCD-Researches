@@ -66,25 +66,23 @@ hlcd::define! {
                     Some((f, c)) => (Some(f), Some(c)),
                     None => (None, None)
                 };
-                dbg!((to_figure, to_color));
 
                 if to_color.is_some() && to_color.unwrap() == color { 
                     return Err("Can't eat your own color".to_string()) 
                 };
 
                 let (dv, dh) = to - from;
-                dbg!((dv, dh));
 
                 let can_move_that_way = 
-                    match dbg!(figure) {
+                    match figure {
                         Figure::King => dh == 0 && dv.abs() == 1 || dh.abs() == 1 && dv == 0,
                         Figure::Rook => dh == 0 || dv == 0,
                         Figure::Queen => dh == 0 || dv == 0 || dh.abs() == dv.abs(),
                         Figure::Bishop => dh.abs() == dv.abs(),
                         Figure::Pawn => 
-                               (color == Color::White && dh == 1 && dv == 0 && to_figure.is_none())
+                               (color == Color::White && dh ==  1 && dv == 0 && to_figure.is_none())
                             || (color == Color::Black && dh == -1 && dv == 0 && to_figure.is_none())
-                            || dbg!(color == Color::White && from.h == 2 && dh == 2 && dv == 0 && to_figure.is_none())
+                            || (color == Color::White && from.h == 2 && dh ==  2 && dv == 0 && to_figure.is_none())
                             || (color == Color::Black && from.h == 7 && dh == -2 && dv == 0 && to_figure.is_none())
                             || (color == Color::White && dh.abs() == 1 && dv ==  1 && to_figure.is_some())
                             || (color == Color::Black && dh.abs() == 1 && dv == -1 && to_figure.is_some()),
