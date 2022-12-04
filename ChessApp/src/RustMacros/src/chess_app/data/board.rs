@@ -8,7 +8,7 @@ pub const H_BOTTOM: u8 = 1;
 pub const H_TOP: u8 = 8;
 
 pub fn color_of(cell: Cell) -> Color {
-    let hv_ndx = (cell.v as u32 - V_LEFT as u32 + cell.h as u32 - H_BOTTOM as u32) % 2;
+    let hv_ndx = (cell.v as u8 - V_LEFT as u8 + cell.h - H_BOTTOM) % 2;
     if hv_ndx == 0 { Color::Black } else { Color::White }
 }
 

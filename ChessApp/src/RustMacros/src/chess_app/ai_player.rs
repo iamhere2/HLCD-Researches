@@ -1,11 +1,12 @@
-use super::{player_interface::*, data::{BoardState, Turn, Cell}};
+use super::{player_interface::*, data::{Turn, GameHistory}, rules_engine::interface::*};
 
 hlcd::define! {
-    component AiPlayer {
+    component StupidAiPlayer {
+        requires { RulesEngine }
         provides { PassiveSyncPlayer }
         impl PassiveSyncPlayer {
-            fn turn_request(&self, _bs: &BoardState) -> Turn {
-                Turn::Move(Cell::at('E', 7), Cell::at('E', 6))
+            fn turn_request(&self, gh: &GameHistory) -> Turn {
+                *self.rules_engine().get_valid_turns(gh).first().unwrap()
             }
         }
     }

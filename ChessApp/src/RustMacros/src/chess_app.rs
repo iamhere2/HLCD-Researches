@@ -28,8 +28,10 @@ hlcd::define! {
         requires { ConsoleIO, FileIO }
         children {
             file_storage: FileStorage(FileIO),
-            ai_player: AiPlayer(),
             rules_engine: RulesEngine(),
+            ai_player: StupidAiPlayer(
+                RulesEngine by rules_engine
+            ),
             game_flow: ActivePassiveSyncGameFlow(
                 PassiveSyncPlayer by ai_player,
                 RulesEngine by rules_engine 

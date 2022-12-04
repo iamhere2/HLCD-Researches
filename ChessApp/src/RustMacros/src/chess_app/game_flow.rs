@@ -71,15 +71,13 @@ pub(super) mod component {
             
             impl {
                 fn make_player_b_turn(&mut self) {
-                    let state = self.game_history.as_ref().unwrap().states().last().unwrap();
-                    let history;
-    
-                    let player_b_turn = self.player_b().turn_request(&state); 
-                    let new_state_b;
-                    {
-                        history = self.game_history.as_ref().unwrap();
-                        new_state_b = self.rules_engine().apply(&state, self.player_b_color().unwrap(), player_b_turn).unwrap();
-                    }
+                    let history = self.game_history.as_ref().unwrap();
+                    let player_b_turn = self.player_b().turn_request(history); 
+                    let new_state_b = self.rules_engine().apply(
+                        history.states().last().unwrap(),
+                        self.player_b_color().unwrap(), 
+                        player_b_turn
+                    ).unwrap();
     
                     self.game_history = Some(history.with(player_b_turn, new_state_b, false));
                 }

@@ -1,7 +1,7 @@
-use super::data::{BoardState, Turn};
+use super::data::{Turn, GameHistory};
 
 hlcd::define! {
     interface PassiveSyncPlayer {
-        fn turn_request(&self, bs: &BoardState) -> Turn;
+        fn turn_request(&self, gh: &GameHistory) -> Turn;
     }
 }
