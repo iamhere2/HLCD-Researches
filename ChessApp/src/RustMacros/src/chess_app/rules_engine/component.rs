@@ -83,13 +83,13 @@ hlcd::define! {
 
                 // 1. All paths as if there are no any other figures
                 let paths: Vec<Path> = match figure {
-                    Figure::Knight => skip_empty(vec![
-                        vec![from + (2, 1)],   vec![from + (2, -1)],   vec![from + (-2, 1)],   vec![from + (-2, -1)],
-                        vec![from + (1, 2)],   vec![from + (1, -2)],   vec![from + (-1, 2)],   vec![from + (-1, -2)]
-                    ]),
-                    Figure::King => skip_empty(vec![
-                        vec![from + (0, 1)],   vec![from + (1, 0)],    vec![from + (-1, 0)],   vec![from + (0, -1)],
-                    ]),
+                    Figure::Knight => skip_empty([
+                        [from + (2, 1)],  [from + (2, -1)],  [from + (-2, 1)],  [from + (-2, -1)],
+                        [from + (1, 2)],  [from + (1, -2)],  [from + (-1, 2)],  [from + (-1, -2)]
+                    ].map(|a| a.to_vec()).into_iter().collect()),
+                    Figure::King => skip_empty([
+                        [from + (0, 1)],  [from + (1,  0)],  [from + (-1, 0)],  [from + ( 0, -1)],
+                    ].map(|a| a.to_vec()).into_iter().collect()),
                     Figure::Rook => on_straights(from),
                     Figure::Bishop => on_diags(from),
                     Figure::Queen => [ &on_straights(from)[..], &on_diags(from)[..] ].concat(),
