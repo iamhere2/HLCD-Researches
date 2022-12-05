@@ -6,7 +6,7 @@ mod tests;
 use std::fmt::Display;
 use super::board;
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy, PartialOrd)]
 #[readonly::make]
 pub struct Cell {
     pub v: char,

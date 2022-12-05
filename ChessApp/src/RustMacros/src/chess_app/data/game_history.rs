@@ -54,4 +54,8 @@ impl GameHistory {
     pub fn states(&self) -> &Vec<BoardState> {
         &self.states
     }
+
+    pub fn current_state(&self) -> &BoardState {
+        self.states.last().unwrap()
+    }
 }

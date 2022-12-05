@@ -15,7 +15,7 @@ hlcd::define! {
         impl RulesEngine {
             fn apply(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<BoardState, RuleViolation> {
                 match turn {
-                    Turn::Move(from, to) => Self::apply_move(bs, player, from, to),
+                    Turn::Move(from, to) => self.apply_move(bs, player, from, to),
                     Turn::PawnTransform(_, _) => unimplemented!(),
                     Turn::Draw => todo!(),
                     Turn::Reject => todo!(),
@@ -28,7 +28,7 @@ hlcd::define! {
             }
 
             fn get_valid_turns(&self, gh: &GameHistory) -> Vec<Turn> {
-                let board = gh.states().last().unwrap();
+                let board = gh.current_state();
                 let player = board.next_player_color();
                 let mut turns = vec![];
                 let from_cells = board.figures().iter()
@@ -46,7 +46,7 @@ hlcd::define! {
         }
 
         impl {
-            fn apply_move(board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
+            fn apply_move(&self, board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
                 if board.next_player_color() != player {
                     return Err("It's another player's turn now".to_string()) 
                 };
@@ -58,42 +58,10 @@ hlcd::define! {
                     return Err("Can't move figures of other color".to_string()) 
                 };
 
-                if from == to { 
-                    return Err("Can't move to the same cell".to_string()) 
-                };
-
-                let (to_figure, to_color) = match board.get(to) {
-                    Some((f, c)) => (Some(f), Some(c)),
-                    None => (None, None)
-                };
-
-                if to_color.is_some() && to_color.unwrap() == color { 
-                    return Err("Can't eat your own color".to_string()) 
-                };
-
-                let (dv, dh) = to - from;
-
-                let can_move_that_way = 
-                    match figure {
-                        Figure::King => dh == 0 && dv.abs() == 1 || dh.abs() == 1 && dv == 0,
-                        Figure::Rook => dh == 0 || dv == 0,
-                        Figure::Queen => dh == 0 || dv == 0 || dh.abs() == dv.abs(),
-                        Figure::Bishop => dh.abs() == dv.abs(),
-                        Figure::Pawn => 
-                               (color == Color::White && dh ==  1 && dv == 0 && to_figure.is_none())
-                            || (color == Color::Black && dh == -1 && dv == 0 && to_figure.is_none())
-                            || (color == Color::White && from.h == 2 && dh ==  2 && dv == 0 && to_figure.is_none())
-                            || (color == Color::Black && from.h == 7 && dh == -2 && dv == 0 && to_figure.is_none())
-                            || (color == Color::White && dh.abs() == 1 && dv ==  1 && to_figure.is_some())
-                            || (color == Color::Black && dh.abs() == 1 && dv == -1 && to_figure.is_some()),
-                        Figure::Knight => 
-                               dh.abs() == 2 && dv.abs() == 1
-                            || dh.abs() == 1 && dv.abs() == 2
-                    };
-
-                if !dbg!(can_move_that_way) { 
-                    return Err(format!("{figure} doesn't move that way")) 
-                };
+                let valid_moves = self.get_figure_valid_moves(board, from);
+                if valid_moves.iter().position(|c| *c == to).is_none() {
+                    return Err(format!("{} at {} isn't allowed to move/eat {}", figure, from, to)); 
+                }
 
                 let new_state = if board.get(to).is_some() { 
                     board.without(from).without(to).with(figure, color, to).with_another_player() 
@@ -108,6 +76,11 @@ hlcd::define! {
             fn get_figure_valid_moves(&self, board: &BoardState, from: Cell) -> Vec<Cell> {
                 let (figure, color) = board.get(from).unwrap();
 
+                let any_at = |s: Shift| -> bool {
+                    let at = from + s;
+                    at.is_some() && board.get(at.unwrap()).is_some()
+                };
+
                 // 1. All paths as if there are no any other figures
                 let paths: Vec<Path> = match figure {
                     Figure::Knight => skip_empty(vec![
@@ -120,7 +93,28 @@ hlcd::define! {
                     Figure::Rook => on_straights(from),
                     Figure::Bishop => on_diags(from),
                     Figure::Queen => [ &on_straights(from)[..], &on_diags(from)[..] ].concat(),
-                    Figure::Pawn => vec![], // TODO!
+                    Figure::Pawn => skip_empty(vec![
+                        match (color, from.h) {
+                            (Color::White, 2) if !any_at((0,  2)) => vec![from + (0,  2)],
+                            (Color::Black, 7) if !any_at((0, -2)) => vec![from + (0, -2)],
+                            _ => vec![]
+                        },
+                        match color {
+                            Color::White if !any_at((0,  1)) => vec![from + (0,  1)],
+                            Color::Black if !any_at((0, -1)) => vec![from + (0, -1)],
+                            _ => vec![]
+                        },
+                        match color {
+                            Color::White if any_at(( 1,  1)) => vec![from + ( 1,  1)],
+                            Color::Black if any_at(( 1, -1)) => vec![from + ( 1, -1)],
+                            _ => vec![]
+                        },
+                        match color {
+                            Color::White if any_at((-1,  1)) => vec![from + (-1,  1)],
+                            Color::Black if any_at((-1, -1)) => vec![from + (-1, -1)],
+                            _ => vec![]
+                        }
+                    ]), 
                 };
 
                 // 2. Each non-empty path - only up to the first figure on the path
@@ -199,12 +193,13 @@ fn on_diags(from: Cell) -> Vec<Path> {
 fn on_dir(from: Cell, dir: Shift) -> Path {
     let mut cells = vec![];
     let mut cur = from;
-    loop {
-        match cur + dir {
-            Some(next) => { cells.push(next); cur = next },
-            None => return cells
-        }
+
+    while let Some(next) = cur + dir {
+        cells.push(next); 
+        cur = next
     }
+
+    cells
 }
 
 #[cfg(test)]
@@ -225,5 +220,4 @@ mod tests {
             ])
         );
     }
-
 }

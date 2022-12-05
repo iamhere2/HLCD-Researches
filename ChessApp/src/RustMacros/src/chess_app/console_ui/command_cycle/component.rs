@@ -71,7 +71,7 @@ hlcd::define! {
                 loop {
                     {
                         let flow = self.flow();
-                        let board = flow.game_history().map(|h| h.states().last().unwrap());
+                        let board = flow.game_history().map(|h| h.current_state());
 
                         if let Some(board) = board {
                             let printer = self.printer();

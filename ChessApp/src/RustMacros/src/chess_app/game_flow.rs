@@ -50,7 +50,7 @@ pub(super) mod component {
                 }
 
                 fn next_player_color(&self) -> Option<Color> {
-                    self.game_history.as_ref().map(|h| h.states().last().unwrap().next_player_color())
+                    self.game_history.as_ref().map(|h| h.current_state().next_player_color())
                 }
             
                 fn new_game(&mut self, player_a_color: Color) {
@@ -74,7 +74,7 @@ pub(super) mod component {
                     let history = self.game_history.as_ref().unwrap();
                     let player_b_turn = self.player_b().turn_request(history); 
                     let new_state_b = self.rules_engine().apply(
-                        history.states().last().unwrap(),
+                        history.current_state(),
                         self.player_b_color().unwrap(), 
                         player_b_turn
                     ).unwrap();
@@ -91,7 +91,7 @@ pub(super) mod component {
 
                     {
                         history = self.game_history.as_ref().expect("Game not started");
-                        let state = history.states().last().unwrap();
+                        let state = history.current_state();
                         new_state_a = self.rules_engine().apply(&state, self.player_a_color.unwrap(), player_a_turn)?;
                     }
             
@@ -100,7 +100,7 @@ pub(super) mod component {
                     // PlayerB
                     self.make_player_b_turn();
 
-                    Ok(self.game_history.as_ref().unwrap().states().last().unwrap())
+                    Ok(self.game_history.as_ref().unwrap().current_state())
                 }            
             }
         }
