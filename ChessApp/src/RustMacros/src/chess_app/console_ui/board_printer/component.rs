@@ -1,5 +1,5 @@
 use hlcd_infra::console_io_interface::*;
-use crate::chess_app::data::{Color, board, Figure, BoardState, Cell};
+use crate::chess_app::data::{Color, board, Piece, BoardState, Cell};
 use super::interface::*;
 
 hlcd::define! {
@@ -46,14 +46,14 @@ hlcd::define! {
 }
 
 #[rustfmt::skip]
-fn figure_to_str(f: Figure) -> String {
+fn figure_to_str(f: Piece) -> String {
     match f {
-        Figure::Knight => "Kn".to_string(),
-        Figure::King   => "Kg".to_string(),
-        Figure::Rook   => "Rk".to_string(),
-        Figure::Bishop => "Bs".to_string(),
-        Figure::Queen  => "Qn".to_string(),
-        Figure::Pawn   => "pw".to_string(),
+        Piece::Knight => "Kn".to_string(),
+        Piece::King   => "Kg".to_string(),
+        Piece::Rook   => "Rk".to_string(),
+        Piece::Bishop => "Bs".to_string(),
+        Piece::Queen  => "Qn".to_string(),
+        Piece::Pawn   => "pw".to_string(),
     }
 }
 

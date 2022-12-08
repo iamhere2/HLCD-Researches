@@ -4,9 +4,9 @@ pub mod nom_parsing;
 mod tests;
 
 use std::ops::Not;
-use strum::{EnumString, Display};
+use strum::{EnumString, Display, EnumIter};
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy, EnumString, Display)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy, EnumString, Display, EnumIter)]
 pub enum Color {
     Black,
     White

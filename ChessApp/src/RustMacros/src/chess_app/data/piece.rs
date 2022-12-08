@@ -6,11 +6,11 @@ mod tests;
 use strum::{Display, EnumString, FromRepr};
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug, Display, EnumString, FromRepr)]
-pub enum Figure {
+pub enum Piece {
     Knight,
     King,
     Rook,
     Bishop,
-    Queen,
+    Queen, 
     Pawn
 }

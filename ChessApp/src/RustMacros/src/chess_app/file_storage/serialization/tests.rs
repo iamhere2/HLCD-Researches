@@ -1,4 +1,4 @@
-use crate::chess_app::{data::{Color, GameHistory, board, Turn, Cell, Figure}, file_storage::serialization::serialize};
+use crate::chess_app::{data::{Color, GameHistory, board, Turn, Cell, Piece}, file_storage::serialization::serialize};
 
 use super::deserialize;
 
@@ -19,7 +19,7 @@ fn test_e2e4_serde() {
             Turn::Move(Cell::at('E', 2), Cell::at('E', 4)), 
             board::classic_initial()
                 .without(Cell::at('E', 2))
-                .with(Figure::Pawn, Color::White, Cell::at('E', 4)),
+                .with(Piece::Pawn, Color::White, Cell::at('E', 4)),
             false);
 
     let s = serialize(&gh, Color::White).unwrap();

@@ -1,6 +1,9 @@
-use std::ops::{Add, Sub};
+#[cfg(test)]
+mod tests;
 
-use crate::chess_app::data::{Color, Cell, Turn, RuleViolation, BoardState, Figure, GameHistory, board};
+use std::{ops::{Add, Sub}, collections::HashSet};
+use strum::IntoEnumIterator;
+use crate::chess_app::data::{Color, Cell, Turn, RuleViolation, BoardState, Piece, GameHistory, board};
 use super::interface::*;
 
 type Shift = (i8, i8);
@@ -43,6 +46,22 @@ hlcd::define! {
 
                 turns
             }
+
+            fn get_conditions(&self, gh: &GameHistory) -> HashSet<(Condition, Color)> {
+                let mut conditions = HashSet::new();
+                let turns = self.get_valid_turns(gh);
+                let board = gh.current_state();
+
+
+                for color in Color::iter() {
+                    let king = Some((Piece::King, color));
+                    if turns.iter().any(|t| matches!(t, Turn::Move(_, to) if board.get(*to) == king)) {
+                        conditions.insert((Condition::Check, color));
+                    }
+                }
+                
+                conditions
+            }
         }
 
         impl {
@@ -81,19 +100,19 @@ hlcd::define! {
                     at.is_some() && board.get(at.unwrap()).is_some()
                 };
 
-                // 1. All paths as if there are no any other figures
+                // 1. All paths as if there were no any other figures
                 let paths: Vec<Path> = match figure {
-                    Figure::Knight => skip_empty([
+                    Piece::Knight => skip_empty([
                         [from + (2, 1)],  [from + (2, -1)],  [from + (-2, 1)],  [from + (-2, -1)],
                         [from + (1, 2)],  [from + (1, -2)],  [from + (-1, 2)],  [from + (-1, -2)]
                     ].map(|a| a.to_vec()).into_iter().collect()),
-                    Figure::King => skip_empty([
+                    Piece::King => skip_empty([
                         [from + (0, 1)],  [from + (1,  0)],  [from + (-1, 0)],  [from + ( 0, -1)],
                     ].map(|a| a.to_vec()).into_iter().collect()),
-                    Figure::Rook => on_straights(from),
-                    Figure::Bishop => on_diags(from),
-                    Figure::Queen => [ &on_straights(from)[..], &on_diags(from)[..] ].concat(),
-                    Figure::Pawn => skip_empty(vec![
+                    Piece::Rook => on_straights(from),
+                    Piece::Bishop => on_diags(from),
+                    Piece::Queen => [ &on_straights(from)[..], &on_diags(from)[..] ].concat(),
+                    Piece::Pawn => skip_empty(vec![
                         match (color, from.h) {
                             (Color::White, 2) if !any_at((0,  2)) => vec![from + (0,  2)],
                             (Color::Black, 7) if !any_at((0, -2)) => vec![from + (0, -2)],
@@ -202,22 +221,3 @@ fn on_dir(from: Cell, dir: Shift) -> Path {
     cells
 }
 
-#[cfg(test)]
-mod tests {
-    use std::collections::HashSet;
-    use super::*;
-
-    #[test]
-    fn knight_at_corner_of_empty_board() {
-        let cell = Cell::at('A', 1);
-        let board = board::empty().with(Figure::Knight, Color::White, cell);
-        let rules_engine = RulesEngine::new();
-        let moves: HashSet<Cell> = HashSet::from_iter(rules_engine.borrow().get_figure_valid_moves(&board, cell).into_iter());
-        assert_eq!(
-            moves, 
-            HashSet::from_iter(vec![
-                Cell::at('B', 3), Cell::at('C', 2)
-            ])
-        );
-    }
-}

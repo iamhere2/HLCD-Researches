@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
-use crate::chess_app::data::{Color, figure, BoardState, board, Cell, game_history, Turn};
+use crate::chess_app::data::{Color, piece, BoardState, board, Cell, game_history, Turn};
 
 #[derive(Serialize, Deserialize)]
 pub(super) struct Game {
@@ -44,17 +44,17 @@ impl From<Game> for (Color, game_history::GameHistory) {
     }
 }
 
-impl From<(figure::Figure, Color)> for Figure {
-    fn from(x: (figure::Figure, Color)) -> Self {
+impl From<(piece::Piece, Color)> for Figure {
+    fn from(x: (piece::Piece, Color)) -> Self {
         let (figure, color) = x;
         let (figure, color) = (figure.to_string(), color.to_string());
         Figure { figure, color }
     }
 }
 
-impl From<Figure> for (figure::Figure, Color) {
+impl From<Figure> for (piece::Piece, Color) {
     fn from(x: Figure) -> Self {
-        (figure::Figure::try_from(x.figure.as_str()).unwrap(), Color::try_from(x.color.as_str()).unwrap())
+        (piece::Piece::try_from(x.figure.as_str()).unwrap(), Color::try_from(x.color.as_str()).unwrap())
     }
 }
 
@@ -73,7 +73,7 @@ impl From<&State> for BoardState {
     fn from(state: &State) -> Self {
         let mut bs = board::empty();
         for (c, f) in state.figures.iter() {
-            let figure = figure::Figure::try_from(f.figure.as_str()).unwrap();
+            let figure = piece::Piece::try_from(f.figure.as_str()).unwrap();
             let color = Color::try_from(f.color.as_str()).unwrap();
             let cell = Cell::try_from(c.as_str()).unwrap();
             bs = bs.with(figure, color, cell);

@@ -1,8 +1,8 @@
-
 use enum_iterator::IntoEnumIterator;
 use crate::chess_app::console_ui::data::command::Command;
 use crate::chess_app::data::Color;
 use crate::chess_app::data::Turn;
+
 // Provided interfaces
 use crate::hlcd_infra::console_app_interface::*;
 

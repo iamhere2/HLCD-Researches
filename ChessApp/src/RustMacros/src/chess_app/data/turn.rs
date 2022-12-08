@@ -4,12 +4,12 @@ pub mod nom_parsing;
 mod tests;
 
 use std::fmt::Display;
-use super::{Cell, Figure};
+use super::{Cell, Piece};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Turn {
     Move(Cell, Cell),
-    PawnTransform(Cell, Figure),
+    PawnTransform(Cell, Piece),
     Draw,
     Reject,
     Castle(Cell)
