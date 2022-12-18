@@ -6,7 +6,7 @@ mod tests;
 use std::fmt::Display;
 use super::{Cell, Piece};
 
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
 pub enum Turn {
     Move(Cell, Cell),
     PawnTransform(Cell, Piece),

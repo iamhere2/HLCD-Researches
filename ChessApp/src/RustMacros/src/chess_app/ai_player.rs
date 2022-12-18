@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use rand::Rng;
+
 use crate::chess_app::data::Piece;
 use super::{player_interface::*, data::{Turn, GameHistory}, rules_engine::interface::*};
 
@@ -10,11 +14,24 @@ hlcd::define! {
                 let state = gh.current_state();
                 let player = state.next_player_color();
                 let valid_turns = self.rules_engine().get_valid_turns(gh);
-                valid_turns.into_iter().max_by_key(|t|{
-                    let board_after = { self.rules_engine().apply(state, player, *t).unwrap() };
-                    let gh_after = gh.with(*t, board_after, false);    
-                    self.get_2nd_turn_position_rank(&gh_after)
-                }).unwrap()
+                let turns_with_ranks: HashMap<Turn, i32> = HashMap::from_iter(
+                    valid_turns.into_iter().map(|t|{
+                        let board_after = { self.rules_engine().apply(state, player, t).unwrap() };
+                        let gh_after = gh.with(t, board_after, false);    
+                        let rank = self.get_2nd_turn_position_rank(&gh_after);
+                        dbg!(format!("{t}: {rank}"));
+                        (t, rank)
+                    }));
+                
+                // select random turn from the highest ranks
+                let max_rank = *turns_with_ranks.values().max().unwrap();
+                let max_rank_turns = turns_with_ranks.iter()
+                    .filter(|(_, &r)| r == max_rank)
+                    .map(|(&t, _)| t)
+                    .collect::<Vec<_>>();
+                let mut rng = rand::thread_rng();
+                let rnd_ndx = rng.gen_range(0..max_rank_turns.len());
+                max_rank_turns[rnd_ndx]
             }
         }
 
