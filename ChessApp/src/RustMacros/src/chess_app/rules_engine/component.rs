@@ -32,7 +32,44 @@ hlcd::define! {
 
             fn get_valid_turns(&self, gh: &GameHistory) -> Vec<Turn> {
                 let board = gh.current_state();
-                let player = board.next_player_color();
+                self.get_valid_turns_for(gh, board.next_player_color())
+            }
+
+            fn get_conditions(&self, gh: &GameHistory) -> HashSet<(Condition, Color)> {
+                let mut conditions = HashSet::new();
+
+                for color in Color::iter() {
+                    if self.is_check(gh, color) {
+                        conditions.insert((Condition::Check, color));
+
+                        // For mate condition, any valid turn should keep the Check condition
+                        let board = gh.current_state().with_next_player(color);
+                        let turns = self.get_valid_turns_for(gh, color);
+                        let mut is_mate = true;
+
+                        for &t in turns.iter() {
+                            let board_after = self.apply(&board, color, t).unwrap();
+                            let gh_after = gh.with(t, board_after, false);
+                            if !self.is_check(&gh_after, color) {
+                                is_mate = false;
+                                break;
+                            }
+                        }
+
+                        if is_mate { 
+                            conditions.insert((Condition::Mate, color));
+                        }
+                    }
+                }
+                
+                conditions
+            }
+        }
+
+        impl {
+
+            fn get_valid_turns_for(&self, gh: &GameHistory, player: Color) -> Vec<Turn> {
+                let board = gh.current_state();
                 let mut turns = vec![];
                 let from_cells = board.figures().iter()
                     .filter(|(_, (_, c))| *c == player)
@@ -47,24 +84,13 @@ hlcd::define! {
                 turns
             }
 
-            fn get_conditions(&self, gh: &GameHistory) -> HashSet<(Condition, Color)> {
-                let mut conditions = HashSet::new();
-                let turns = self.get_valid_turns(gh);
+            fn is_check(&self, gh: &GameHistory, color: Color) -> bool {
+                let turns = self.get_valid_turns_for(gh, !color);
                 let board = gh.current_state();
-
-
-                for color in Color::iter() {
-                    let king = Some((Piece::King, color));
-                    if turns.iter().any(|t| matches!(t, Turn::Move(_, to) if board.get(*to) == king)) {
-                        conditions.insert((Condition::Check, color));
-                    }
-                }
-                
-                conditions
+                let king = Some((Piece::King, color));
+                turns.iter().any(|t| matches!(t, Turn::Move(_, to) if board.get(*to) == king))
             }
-        }
 
-        impl {
             fn apply_move(&self, board: &BoardState, player: Color, from: Cell, to: Cell) -> Result<BoardState, String> {
                 if board.next_player_color() != player {
                     return Err("It's another player's turn now".to_string()) 
