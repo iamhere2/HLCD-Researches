@@ -37,7 +37,8 @@ hlcd::define! {
 
             fn delete_game(&self, name: &str) -> Result<(), Error> {
                 let io = self.file_io();
-                Ok(io.delete_file(build_file_name(format!("{name}.{EXT}").as_str()).as_str())?)
+                let file_name = build_file_name(name);
+                Ok(io.delete_file(file_name.as_str())?)
             }
         }
     }

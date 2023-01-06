@@ -18,7 +18,9 @@ hlcd::define! {
                     Command::MakeTurn(_) => unreachable!(),
                     Command::Exit => unreachable!(),
                     Command::Help => unreachable!(),
-                    Command::NewGame(c) => { self.game_flow_mut().new_game(c); },
+                    Command::NewGame(c) => { 
+                        self.game_flow_mut().new_game(c); 
+                    },
                     Command::ListGames => {
                         let con = self.console_io();
                         for name in self.storage().list_saved_games().unwrap() {
@@ -41,7 +43,6 @@ hlcd::define! {
                 Ok(())
             }
         }
-
     }
 }
 
