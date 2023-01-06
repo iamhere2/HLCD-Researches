@@ -1,5 +1,6 @@
 use super::data::{game_history::GameHistory, Color};
 
+#[derive(Debug)]
 pub struct Error(pub String);
 
 hlcd::define! {
