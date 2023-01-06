@@ -34,6 +34,11 @@ hlcd::define! {
                     build_file_name(name).as_str())?;
                 Ok(deserialize(content.as_str())?)
             }
+
+            fn delete_game(&self, name: &str) -> Result<(), Error> {
+                let io = self.file_io();
+                Ok(io.delete_file(build_file_name(format!("{name}.{EXT}").as_str()).as_str())?)
+            }
         }
     }
 }

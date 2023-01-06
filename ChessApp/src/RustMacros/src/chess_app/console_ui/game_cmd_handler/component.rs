@@ -26,7 +26,9 @@ hlcd::define! {
                         }
                     },
                     Command::LoadGame(_) => todo!(),
-                    Command::DeleteGame(_) => todo!(),
+                    Command::DeleteGame(name) => {
+                        self.storage().delete_game(&name)?
+                    },
                     Command::SaveGame(name) => {
                         let flow = self.game_flow();
                         if let Some(gh) = flow.game_history() {
