@@ -19,7 +19,12 @@ hlcd::define! {
                     Command::Exit => unreachable!(),
                     Command::Help => unreachable!(),
                     Command::NewGame(c) => { self.game_flow_mut().new_game(c); },
-                    Command::ListGames => todo!(),
+                    Command::ListGames => {
+                        let con = self.console_io();
+                        for name in self.storage().list_saved_games().unwrap() {
+                            con.write(format!("{name}\n").as_str());
+                        }
+                    },
                     Command::LoadGame(_) => todo!(),
                     Command::DeleteGame(_) => todo!(),
                     Command::SaveGame(name) => {
