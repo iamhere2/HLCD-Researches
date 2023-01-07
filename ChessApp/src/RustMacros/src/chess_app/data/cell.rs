@@ -3,7 +3,7 @@ pub mod nom_parsing;
 #[cfg(test)]
 mod tests;
 
-use std::fmt::Display;
+use std::fmt::{Display, Formatter};
 use super::board;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, PartialOrd)]
@@ -15,7 +15,8 @@ pub struct Cell {
 
 impl Cell {
     pub fn is_valid(v: char, h: u8) -> bool {
-        v >= board::V_LEFT && v <= board::V_RIGHT && h >= board::H_BOTTOM && h <= board::H_TOP
+        use board::*;
+        v >= V_LEFT && v <= V_RIGHT && h >= H_BOTTOM && h <= H_TOP
     }
 
     pub fn at(v: char, h: u8) -> Cell {
@@ -25,13 +26,13 @@ impl Cell {
 }
 
 impl std::fmt::Debug for Cell {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         Display::fmt(&self, f)
     }
 }
 
 impl Display for Cell {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}{}", self.v, self.h)
     }
 }

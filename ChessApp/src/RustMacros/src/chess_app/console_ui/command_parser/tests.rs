@@ -12,14 +12,15 @@ fn parse(s: &str) -> Result<Command, Error> {
 
 #[test]
 fn test_parse() {
-    assert_eq!(parse("exit"), Ok(Command::Exit));
-    assert_eq!(parse("Exit"), Ok(Command::Exit));
-    assert_eq!(parse("List"), Ok(Command::ListGames));
+    use Command::*;
+    assert_eq!(parse("exit"), Ok(Exit));
+    assert_eq!(parse("Exit"), Ok(Exit));
+    assert_eq!(parse("List"), Ok(ListGames));
     assert!(matches!(parse("NotACommand"), Err(Error(_))));
-    assert_eq!(parse("load AAA"), Ok(Command::LoadGame("AAA".to_string())));
-    assert_eq!(parse("save AAA"), Ok(Command::SaveGame("AAA".to_string())));
-    assert_eq!(parse("del AAA"), Ok(Command::DeleteGame("AAA".to_string())));
-    assert_eq!(parse("new Black"), Ok(Command::NewGame(Color::Black)));
-    assert_eq!(parse("E2 - E4"), Ok(Command::MakeTurn(Turn::Move(Cell::at('E', 2), Cell::at('E', 4)))));
-    assert_eq!(parse("g3-h7"), Ok(Command::MakeTurn(Turn::Move(Cell::at('G', 3), Cell::at('H', 7)))));
+    assert_eq!(parse("load AAA"), Ok(LoadGame("AAA".to_string())));
+    assert_eq!(parse("save AAA"), Ok(SaveGame("AAA".to_string())));
+    assert_eq!(parse("del AAA"), Ok(DeleteGame("AAA".to_string())));
+    assert_eq!(parse("new Black"), Ok(NewGame(Color::Black)));
+    assert_eq!(parse("E2 - E4"), Ok(MakeTurn(Turn::Move(Cell::at('E', 2), Cell::at('E', 4)))));
+    assert_eq!(parse("g3-h7"), Ok(MakeTurn(Turn::Move(Cell::at('G', 3), Cell::at('H', 7)))));
 }
