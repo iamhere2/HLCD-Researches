@@ -1,4 +1,4 @@
-pub mod nom_parsing;
+pub mod parsing;
 
 #[cfg(test)]
 mod tests;

@@ -1,7 +1,7 @@
-use super::*;
-use Piece::*;
-use Color::*;
-use Condition::*;
+use std::collections::HashSet;
+use super::super::{interface::*, component::*};
+use super::super::super::data::{Piece::*, Color::*, board, Cell, GameHistory};
+use super::super::super::Condition::*;
 
 #[test]
 fn simple_white_check() {
@@ -35,7 +35,7 @@ fn valid_moves_of_knight_at_corner_of_empty_board() {
     let cell = Cell::at('A', 1);
     let board = board::empty().with(Knight, White, cell);
     let rules_engine = RulesEngine::new();
-    let moves: HashSet<Cell> = HashSet::from_iter(rules_engine.borrow().get_figure_valid_moves(&board, cell).into_iter());
+    let moves = HashSet::from_iter(rules_engine.borrow().get_figure_valid_moves(&board, cell).into_iter());
     assert_eq!(
         moves, 
         HashSet::from([
