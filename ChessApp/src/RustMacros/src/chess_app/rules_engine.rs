@@ -40,7 +40,7 @@ pub mod component {
                 fn apply(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<BoardState, RuleViolation> {
                     match turn {
                         Turn::Move(from, to) => self.apply_move(bs, player, from, to),
-                        Turn::PawnTransform(_, _) => unimplemented!(),
+                        Turn::PromotePawn(_, _) => unimplemented!(),
                         Turn::Draw => todo!(),
                         Turn::Reject => todo!(),
                         Turn::Castle(_) => todo!(),
