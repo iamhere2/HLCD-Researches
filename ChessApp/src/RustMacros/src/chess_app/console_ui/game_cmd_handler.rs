@@ -61,7 +61,9 @@ pub mod component {
                         Command::SaveGame(name) => {
                             let flow = self.game_flow();
                             if let Some(gh) = flow.game_history() {
-                                self.storage().save_game(gh, flow.player_a_color().unwrap(), name.as_str())?
+                                self.storage().save_game(gh, flow.player_a_color().unwrap(), name.as_str())?;
+                                let con = self.console_io();
+                                con.write(format!("Game saved to '{name}'...\n").as_str());
                             } else {
                                 return Err(CmdError("No active game to save".to_string()))
                             }

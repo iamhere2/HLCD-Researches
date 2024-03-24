@@ -27,13 +27,13 @@ pub mod interface {
 
 pub mod component {
     use nom::{
-        IResult, 
         branch::alt, 
-        bytes::complete::tag_no_case,    
+        bytes::complete::tag_no_case, 
+        character::complete::{alpha1, digit1, space1}, 
         combinator::{map, recognize}, 
+        multi::many1, 
         sequence::separated_pair, 
-        character::complete::{alpha1, space1}, 
-        multi::many1};
+        IResult};
     
     use crate::chess_app::data::{Color, Turn};
     use nom_extensions::parseable::Parseable;
@@ -45,7 +45,7 @@ pub mod component {
     
             impl {
                 fn ident(input: &str) -> IResult<&str, &str> {
-                    recognize(many1(alpha1))(input)
+                    recognize(many1(alt((alpha1, digit1))))(input)
                 }
             
                 fn parse<'a>(&self, input: &'a str) -> IResult<&'a str, Command> {
