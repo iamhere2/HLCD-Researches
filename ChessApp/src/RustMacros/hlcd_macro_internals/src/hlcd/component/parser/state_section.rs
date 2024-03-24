@@ -21,7 +21,7 @@ impl Parse for StateSection {
         Ok(StateSection {
             _state: input.parse()?,
             _braced: braced!(content in input),
-            parts: content.parse_terminated(StatePart::parse)?,
+            parts: content.parse_terminated(StatePart::parse, Token![,])?,
         })
     }
 }

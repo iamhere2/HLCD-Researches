@@ -1,4 +1,3 @@
-#![feature(mixed_integer_ops)]
 mod chess_app;
 
 use hlcd_infra;

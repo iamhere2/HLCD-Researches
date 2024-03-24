@@ -35,7 +35,7 @@ pub mod component {
         character::complete::{alpha1, space1}, 
         multi::many1};
     
-    use crate::{chess_app::data::{Color, Turn}};
+    use crate::chess_app::data::{Color, Turn};
     use nom_extensions::parseable::Parseable;
     use super::{interface::*, super::data::command::Command};
     

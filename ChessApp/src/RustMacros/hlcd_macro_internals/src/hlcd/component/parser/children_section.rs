@@ -20,7 +20,7 @@ impl Parse for ChildrenSection {
         Ok(ChildrenSection {
             _children: input.parse()?,
             _braced: braced!(content in input),
-            components: content.parse_terminated(ChildComponent::parse)?,
+            components: content.parse_terminated(ChildComponent::parse, Token![,])?,
         })
     }
 }

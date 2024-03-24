@@ -20,7 +20,7 @@ impl Parse for ProvidesSection {
         Ok(ProvidesSection {
             _provides: input.parse()?,
             _braced: braced!(content in input),
-            interfaces: content.parse_terminated(ProvidedInterface::parse)?,
+            interfaces: content.parse_terminated(ProvidedInterface::parse, Token![,])?,
         })
     }
 }

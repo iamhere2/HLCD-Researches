@@ -75,7 +75,7 @@ impl Parse for ChildComponent {
             _colon: input.parse()?,
             component_type: input.parse()?,
             _paren: parenthesized!(content in input),
-            ports: content.parse_terminated(PortLink::parse)?
+            ports: content.parse_terminated(PortLink::parse, Token![,])?
         })
     }
 }

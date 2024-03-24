@@ -1,6 +1,5 @@
-use std::collections::HashSet;
 use super::super::{interface::*, component::*};
-use super::super::super::data::{Piece::*, Color::*, board, Cell, GameHistory};
+use super::super::super::data::{Piece::*, Color::*};
 use super::super::super::Condition::*;
 
 #[test]

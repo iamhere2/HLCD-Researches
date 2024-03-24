@@ -19,7 +19,6 @@ hlcd::define! {
                         let board_after = { self.rules_engine().apply(state, player, t).unwrap() };
                         let gh_after = gh.with(t, board_after, false);    
                         let rank = self.get_2nd_turn_position_rank(&gh_after);
-                        dbg!(format!("{t}: {rank}"));
                         (t, rank)
                     }));
                 

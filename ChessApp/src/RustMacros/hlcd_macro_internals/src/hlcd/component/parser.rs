@@ -3,7 +3,7 @@ pub mod state_section;
 pub mod provides_section;
 pub mod children_section;
 pub mod interface_impl;   
-pub mod private_impl;
+// pub mod private_impl;
 
 use syn::{parse::{Parse, ParseStream}, Ident, braced};
 use super::Component;
