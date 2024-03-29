@@ -1,5 +1,5 @@
 hlcd::define! {
     interface ConsoleApp {
-        fn run(&self) -> i32; 
+        fn run(&self, args: &[String]) -> i32; 
     }
 }

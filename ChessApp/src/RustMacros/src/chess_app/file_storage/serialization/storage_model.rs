@@ -102,7 +102,6 @@ impl From<GameHistory> for game_history::GameHistory {
                 let state = BoardState::from(&gh.states[turn_ndx + 1]);
                 let is_finished = gh.is_finished && turn_ndx == gh.turns.len() - 1;
                 history = history.with(turn, state, is_finished);
-
             }
         }
         

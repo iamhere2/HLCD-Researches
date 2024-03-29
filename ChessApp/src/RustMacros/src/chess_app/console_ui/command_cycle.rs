@@ -62,7 +62,7 @@ pub mod component {
             }
 
             impl ConsoleApp {
-                fn run(&self) -> i32 {
+                fn run(&self, _: &[String]) -> i32 {
                     
                     self.print_hello();
                     self.print_rainbow();

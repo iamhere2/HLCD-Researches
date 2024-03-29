@@ -14,6 +14,7 @@ fn main() {
     let chess_app = ChessApp::new(&console_io, &file_io);
 
     // Run application
-    let exit_code = ConsoleAppProvider::get(chess_app).borrow_mut().run();
+    let args: Vec<String> = std::env::args().collect();
+    let exit_code = ConsoleAppProvider::get(chess_app).borrow_mut().run(&args[..]);
     process::exit(exit_code);
 }
