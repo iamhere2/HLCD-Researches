@@ -10,7 +10,7 @@ pub mod interface {
     
     hlcd::define! {
         interface RulesEngine {
-            fn validate(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<(), RuleViolation>;
+            // fn validate(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<(), RuleViolation>;
             fn apply(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<BoardState, RuleViolation>;
             fn get_valid_turns(&self, gh: &GameHistory) -> Vec<Turn>;
             fn get_conditions(&self, gh: &GameHistory) -> HashSet<(Condition, Color)>;
@@ -47,9 +47,9 @@ pub mod component {
                     }.map_err(|e| RuleViolation::new(bs.clone(), player, turn, e))
                 }
     
-                fn validate(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<(), RuleViolation> {
-                    self.apply(bs, player, turn).map(|_| ())
-                }
+                // fn validate(&self, bs: &BoardState, player: Color, turn: Turn) -> Result<(), RuleViolation> {
+                //     self.apply(bs, player, turn).map(|_| ())
+                // }
     
                 fn get_valid_turns(&self, gh: &GameHistory) -> Vec<Turn> {
                     let board = gh.current_state();
